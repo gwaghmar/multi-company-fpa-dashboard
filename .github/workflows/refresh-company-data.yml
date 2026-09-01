@@ -1,0 +1,70 @@
+name: Refresh SEC company data
+
+on:
+  schedule:
+    - cron: "17 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-sec-company-data
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SEC_USER_AGENT: "Govind Waghmare sec-contact@example.invalid"
+      VERCEL_ORG: govindwaghmare93-3021s-projects
+      VERCEL_PROJECT: apple-dashboard
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Rebuild standardized SEC dataset
+        run: python tools/fetch_company_sources.py
+
+      - name: Verify AI evidence and calculations
+        run: npm test
+
+      - name: Detect refreshed data
+        id: changes
+        run: |
+          if git diff --quiet -- companies.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit verified data
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add companies.json
+          git commit -m "Refresh SEC company data"
+          git push
+
+      - name: Install Vercel CLI
+        if: steps.changes.outputs.changed == 'true'
+        run: npm install --global vercel@58.8.0
+
+      - name: Deploy refreshed dashboard
+        if: steps.changes.outputs.changed == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          test -n "$VERCEL_TOKEN"
+          deploy_dir=$(mktemp -d)
+          rsync -a --exclude='.git' --exclude='.vercel' --exclude='.env*' --exclude='node_modules' ./ "$deploy_dir/"
+          vercel deploy "$deploy_dir" --prod --yes --project "$VERCEL_PROJECT" --scope "$VERCEL_ORG" --token "$VERCEL_TOKEN"

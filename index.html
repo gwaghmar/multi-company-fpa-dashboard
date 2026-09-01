@@ -64,7 +64,7 @@ body{
   padding:0 20px; height:38px; background:var(--page);
   border-bottom:1px solid var(--ink); position:sticky; top:0; z-index:20;
 }
-.brand{font:650 14px/1 "Inter Tight",Inter,sans-serif; letter-spacing:-.01em; white-space:nowrap}
+.brand{font:650 14px/1 "Inter Tight",Inter,sans-serif; letter-spacing:-.01em; white-space:nowrap;flex:0 0 auto}
 .brand span{color:var(--muted); font-weight:500}
 nav{display:flex; gap:2px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex:1; scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
@@ -90,10 +90,15 @@ nav::-webkit-scrollbar{display:none}
   border-radius:99px; padding:0 11px; height:16px; font:600 9.5px/1 "Inter",sans-serif; cursor:pointer; white-space:nowrap;
 }
 .icon-btn:hover{border-color:var(--ink)}
-.source-picker{display:flex;align-items:center;gap:6px;margin-left:auto;flex:0 0 auto}
+.source-tools{display:flex;align-items:center;gap:6px;margin-left:auto;flex:0 0 auto}
+.source-picker{display:flex;align-items:center;gap:6px;flex:0 0 auto}
 .source-picker label{font:600 9px/1 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
-.source-picker select{height:28px;max-width:132px;border:1px solid var(--axis);border-radius:8px;background:var(--surface);color:var(--ink);padding:0 24px 0 8px;font:600 11px/1 "Inter",sans-serif;cursor:pointer}
+.source-picker select{height:30px;width:164px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink);padding:0 30px 0 10px;font:600 11px/1 "Inter",sans-serif;cursor:pointer}
 .source-picker select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.reports-btn{height:30px;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--axis);border-radius:9px;background:var(--surface);color:var(--ink);padding:0 11px;font:650 11px/1 "Inter",sans-serif;cursor:pointer;white-space:nowrap}
+.reports-btn:hover{border-color:var(--ink)}
+.reports-btn[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--page)}
+.reports-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* expands the tap target to >=40px on touch without growing the visible pill -- see .perbtn::after */
 .icon-btn::after{content:""; position:absolute; inset:-12px}
 .icon-btn:disabled{opacity:.4; cursor:not-allowed}
@@ -312,7 +317,7 @@ main{flex:1 1 auto; overflow:hidden; position:relative}
 .company-chart h3{border-top-color:var(--s1)}
 .company-chart:nth-child(2) h3{border-top-color:var(--s4)}
 @media(max-width:760px){.variance-chart-grid{grid-template-columns:1fr}}
-@media(max-width:760px){.company-chart-grid{grid-template-columns:1fr}.source-picker label{display:none}.source-picker select{max-width:104px}}
+@media(max-width:760px){.company-chart-grid{grid-template-columns:1fr}.source-picker label{display:none}.source-picker select{width:164px}.reports-btn{padding-inline:9px}}
 .card h3{
   display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;
   font:650 10.5px/1.3 "Inter",sans-serif; text-transform:uppercase; letter-spacing:.07em;
@@ -421,7 +426,7 @@ tr.tot td{font-weight:650; color:var(--ink); border-top:1px solid var(--axis)}
 #home .home-tools{padding-top:1px}
 #home .home-actions{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-top:16px}
 #home .home-actions button{position:relative; min-height:38px; border-radius:11px; padding:0 16px; cursor:pointer; font:600 12.5px/1 "Inter",sans-serif}
-#home .home-primary{border:1px solid var(--accent); background:var(--accent); color:#fff; box-shadow:0 5px 16px color-mix(in srgb, var(--accent) 24%, transparent)}
+#home .home-primary{border:1px solid #3154d8; background:#3154d8; color:#fff; box-shadow:0 5px 16px color-mix(in srgb, var(--accent) 24%, transparent)}
 #home .home-primary:hover{filter:brightness(.96); transform:translateY(-1px)}
 #home .home-secondary{border:1px solid var(--axis); background:var(--surface); color:var(--ink)}
 #home .home-secondary:hover{border-color:var(--accent); color:var(--accent)}
@@ -528,7 +533,7 @@ tr.tot td{font-weight:650; color:var(--ink); border-top:1px solid var(--axis)}
 .srccard .t{font:600 12px/1.3 "Inter",sans-serif; margin-bottom:3px}
 .srccard .d{font-size:11px; color:var(--ink2); line-height:1.45}
 footer{
-  flex:0 0 auto; padding:6px 20px 7px; font-size:10.5px; color:var(--muted);
+  flex:0 0 auto; padding:6px 20px 7px; font-size:10.5px; color:var(--ink2);
   border-top:1px solid var(--ring); background:var(--page);
 }
 /* ---- Glass UI tab: glassmorphism look, now theme-aware (light + dark) via the same --ink/--page/
@@ -652,6 +657,17 @@ footer{
   font:600 11.5px/1 "Inter",sans-serif; box-shadow:0 6px 20px var(--glass-shadow);
   backdrop-filter:blur(18px) saturate(1.7); -webkit-backdrop-filter:blur(18px) saturate(1.7);
 }
+/* The expanded finance navigation no longer fits on one row at common laptop widths. Keep the
+   desktop dashboard layout, but give the tabs their own scrollable header row with a visible cue. */
+@media (min-width:1100px) and (max-width:1399px){
+  .topbar{height:auto;flex-wrap:wrap;padding:7px 20px;gap:7px 10px}
+  nav{order:3;flex:1 1 100%;width:100%;
+    mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
+  .nav-chevron{display:flex}
+  .tab{min-height:32px;display:inline-flex;align-items:center}
+  .source-tools{margin-left:auto}
+}
 /* ---- mobile ---- */
 /* ---- mobile / narrow desktop, ~390px and up. Desktop (>=1100px) is untouched by this block. ---- */
 @media (max-width:1099px){
@@ -758,6 +774,116 @@ footer{
   }
   .filterspanel .fp-checks{grid-template-columns:1fr}
 }
+
+/* Executive home and company-tailored planning spine */
+#home .home-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
+.home-primary-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.7fr);gap:12px;min-height:260px;flex:0 0 auto}
+.home-primary-chart{min-height:260px}
+.executive-overview{background:var(--ink);color:var(--page);border-radius:17px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.executive-overview-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.executive-overview h2{font:650 21px/1.05 "Inter Tight",sans-serif;letter-spacing:-.02em}
+.executive-overview-head>span{font:650 10px/1 "Inter",sans-serif;letter-spacing:.08em;border:1px solid color-mix(in srgb,var(--page) 22%,transparent);padding:6px 8px;border-radius:99px}
+.section-kicker{display:block;font:650 9px/1.2 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.09em;color:var(--cfo);margin-bottom:6px}
+.overview-signal-list{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid color-mix(in srgb,var(--page) 18%,transparent)}
+.overview-signal-list>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--page) 13%,transparent)}
+.overview-signal-list span{font-size:10.5px;color:color-mix(in srgb,var(--page) 68%,transparent)}
+.overview-signal-list strong{font:650 12px/1.2 "Inter Tight",sans-serif;text-align:right}
+.overview-watch>span{font:650 9px/1 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--cfo)}
+.overview-watch p{font-size:10.5px;line-height:1.35;margin-top:5px;color:color-mix(in srgb,var(--page) 78%,transparent)}
+.market-context{margin-top:auto;border:1px solid color-mix(in srgb,var(--page) 18%,transparent);border-radius:12px;padding:10px;display:grid;grid-template-columns:1fr auto;gap:3px 8px}
+.market-context>span{font:600 10px/1.2 "Inter",sans-serif}.market-context>strong{font:650 10px/1.2 "Inter",sans-serif;color:#ff9a9a}.market-context small{grid-column:1/-1;color:color-mix(in srgb,var(--page) 58%,transparent);font-size:9.5px;line-height:1.35}
+.home-operating-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.65fr);gap:12px;flex:0 0 auto}
+.home-workflow-card,.home-coverage-card,.home-reports{background:var(--surface);border:1px solid var(--ring);border-radius:18px;padding:15px}
+.home-workflow-card .home-section-head,.home-coverage-card .home-section-head{align-items:flex-start}
+.home-section-head>div h2{font:650 22px/1.05 "Inter Tight",sans-serif;letter-spacing:-.025em}
+.planning-spine{list-style:none;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin:16px 0 12px;position:relative}
+.planning-spine::before{content:"";position:absolute;left:5%;right:5%;top:15px;height:2px;background:linear-gradient(90deg,var(--cfo),color-mix(in srgb,var(--cfo) 24%,var(--axis)))}
+.planning-spine li{position:relative;padding:38px 10px 0 0;min-width:0}
+.planning-spine li::after{content:"";position:absolute;top:11px;left:27px;width:8px;height:8px;border-radius:99px;background:var(--surface);border:2px solid var(--cfo);z-index:1}
+.planning-spine .spine-index{position:absolute;top:0;left:0;font:650 9px/1 "Inter",sans-serif;color:var(--cfo);letter-spacing:.05em}
+.planning-spine strong{display:block;font:650 12px/1.2 "Inter Tight",sans-serif}.planning-spine li>span:last-child{display:block;font-size:9.5px;line-height:1.35;color:var(--muted);margin-top:4px}
+.workflow-boundary{font-size:10px;line-height:1.45;color:var(--ink2);background:color-mix(in srgb,var(--cfo) 5%,var(--page));border-left:2px solid var(--cfo);padding:8px 10px}
+.coverage-list{display:flex;flex-direction:column}
+.coverage-row{display:grid;grid-template-columns:9px minmax(0,1fr) auto;gap:8px;align-items:start;padding:8px 0;border-top:1px solid var(--ring)}
+.coverage-row:first-child{border-top:0}.coverage-dot{width:7px;height:7px;border-radius:99px;margin-top:4px;background:var(--muted)}.coverage-dot[data-state="connected"]{background:var(--up)}.coverage-dot[data-state="partial"]{background:var(--s2)}.coverage-dot[data-state="missing"]{background:var(--down)}
+.coverage-row strong{display:block;font:600 10.5px/1.2 "Inter",sans-serif}.coverage-row small{display:block;font-size:9.5px;line-height:1.3;color:var(--muted);margin-top:2px}.coverage-row>b{font:650 9px/1.2 "Inter",sans-serif;color:var(--muted);white-space:nowrap}.coverage-row>b[data-state="connected"]{color:var(--up)}.coverage-row>b[data-state="partial"]{color:var(--s2)}.coverage-row>b[data-state="missing"]{color:var(--down)}
+.report-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.report-card{border:1px solid var(--ring);border-radius:14px;background:var(--page);color:var(--ink);padding:14px;text-align:left;display:flex;flex-direction:column;min-height:132px;cursor:pointer;font:inherit;transition:transform .15s ease,border-color .15s ease}
+.report-card:hover,.report-card:focus-visible{transform:translateY(-2px);border-color:var(--cfo);outline:none}.report-code{font:650 9px/1 "Inter",sans-serif;letter-spacing:.08em;color:var(--cfo);margin-bottom:15px}.report-card strong{font:650 17px/1.1 "Inter Tight",sans-serif}.report-card>span:nth-child(3){font-size:10.5px;line-height:1.4;color:var(--muted);margin-top:5px}.report-card em{font:600 10px/1 "Inter",sans-serif;font-style:normal;margin-top:auto;padding-top:12px;color:var(--ink)}
+.home-details{background:var(--surface);border:1px solid var(--ring);border-radius:14px;padding:11px 14px}.home-details summary{cursor:pointer;font:650 11px/1.3 "Inter",sans-serif;color:var(--ink)}.home-details[open] summary{margin-bottom:12px}.home-details .srcgrid{margin-top:0}.home-details a{color:var(--cfo);font-weight:600}
+.executive-overview .section-kicker,.executive-overview .overview-watch>span{color:#ff8797}
+#home .home-section-head>span,.planning-spine li>span:last-child,.coverage-row small,.coverage-row>b,.report-card>span:nth-child(3){color:var(--ink2)}
+:root[data-theme="light"] .perbtn{color:#3154d8;border-color:#3154d8}
+:root[data-theme="light"] #home .home-section-head .section-kicker,
+:root[data-theme="light"] .report-code{color:#b92742}
+:root[data-theme="light"] .coverage-row>b[data-state="connected"]{color:#147238}
+:root[data-theme="light"] .coverage-row>b[data-state="partial"]{color:#a7441f}
+:root[data-theme="light"] .coverage-row>b[data-state="missing"]{color:#bd3030}
+:root[data-theme="light"] #home .home-details summary{color:#3154d8}
+:root[data-theme="light"] .vhead .badge{color:#147238}
+:root[data-theme="light"] .report-toolbar button>span,
+:root[data-theme="light"] .report-sheet header p,
+:root[data-theme="light"] .report-status small,
+:root[data-theme="light"] .report-table th{color:var(--ink2)}
+:root[data-theme="light"] .report-toolbar button[aria-pressed="true"]>span{color:#d8d8dc}
+:root[data-theme="light"] .report-callout.unavailable>span{color:#bd3030}
+:root[data-theme="light"] .report-callout>p,
+:root[data-theme="light"] .report-sheet>footer{color:var(--ink2)}
+:root[data-theme="light"] .sowhat{color:#b92742;border-color:#b92742}
+:root[data-theme="light"] .tile .k,
+:root[data-theme="light"] .plan-input small{color:var(--ink2)!important}
+:root[data-theme="light"] .tile .up.d,
+:root[data-theme="light"] .note>.badge,
+:root[data-theme="light"] .fp-head>.badge{color:#147238}
+:root[data-theme="light"] .gp-preset[aria-pressed="true"]{color:#3154d8}
+:root[data-theme="light"] #home .finance-architecture .section-kicker{color:#ff8797}
+:root[data-theme="light"] #home .finance-architecture .home-section-head>span{color:#b9b9c0}
+:root[data-theme="light"] .down{color:#bd3030}
+:root[data-theme="light"] .scrollbox th,
+:root[data-theme="light"] .decision-sensitivity th,
+:root[data-theme="light"] .subnote{color:var(--ink2)}
+:root[data-theme="light"] .decision-lab-head>.badge,
+:root[data-theme="light"] .decision-sensitivity td[data-value="positive"]{color:#147238}
+:root[data-theme="light"] .decision-sensitivity td[data-value="negative"]{color:#bd3030}
+
+/* Finance operating architecture: the single signature visual on Home. */
+.finance-architecture{--arch-bg:#111113;--arch-fg:#fafaf8;background:var(--arch-bg);color:var(--arch-fg);border-radius:18px;padding:18px;overflow:hidden;flex:0 0 auto}
+.finance-architecture .home-section-head{margin-bottom:15px}.finance-architecture .home-section-head h2{font-size:25px}.finance-architecture .home-section-head>span{max-width:420px;text-align:right;color:#b9b9c0}
+.finance-architecture .section-kicker{color:#ff8797}.architecture-scroll-hint{display:none;font:600 9px/1 "Inter",sans-serif;color:#d8d8dc;margin:-4px 0 9px}.architecture-flow{list-style:none;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.architecture-flow>li{position:relative;background:#1a1a1e;border:1px solid #35353c;border-radius:12px;padding:12px;min-width:0}
+.architecture-stage-head{display:flex;align-items:center;gap:7px;color:#ff8797;font:650 8.5px/1.2 "Inter",sans-serif;letter-spacing:.06em;text-transform:uppercase}
+.architecture-stage-head i{font-size:16px}.architecture-flow ul{list-style:none;padding:11px 0 0;display:grid;gap:6px}.architecture-flow ul li{font:500 10px/1.3 "Inter",sans-serif;color:#e0e0e4;border-top:1px solid #2b2b31;padding-top:6px}
+.architecture-arrow{position:absolute;z-index:2;right:-15px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:99px;background:#ff8797;color:#111113;display:grid;place-items:center;font-size:12px;box-shadow:0 0 0 4px var(--arch-bg)}
+.architecture-rails{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}.architecture-rails>div{border:1px solid #35353c;border-radius:10px;padding:9px 11px;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px 12px}
+.architecture-rails span{font:650 8px/1 "Inter",sans-serif;letter-spacing:.08em;color:#ff8797}.architecture-rails strong{font:600 10px/1.3 "Inter",sans-serif}.architecture-rails small{grid-column:2;font-size:9px;line-height:1.35;color:#ababB3}.architecture-source-note{font-size:8.5px;line-height:1.4;color:#9d9da5;margin-top:10px}.architecture-source-note a{color:#ff9aaa;font-weight:600}
+.operating-cadence{background:var(--surface);border:1px solid var(--ring);border-radius:18px;padding:15px;flex:0 0 auto}.cadence-flow{list-style:none;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));margin-top:12px}
+.cadence-flow li{position:relative;border-left:1px solid var(--ring);padding:2px 11px 5px;min-width:0}.cadence-flow li:first-child{border-left:0;padding-left:0}.cadence-flow li>span{display:block;font:650 8px/1 "Inter",sans-serif;letter-spacing:.08em;color:var(--cfo)}.cadence-flow strong{display:block;font:650 12px/1.2 "Inter Tight",sans-serif;margin-top:7px}.cadence-flow small{display:block;font-size:9px;color:var(--ink2);margin-top:3px}.cadence-flow b{display:block;font:600 9px/1.3 "Inter",sans-serif;color:var(--ink);margin-top:10px}
+
+/* Strategic Finance Decision Lab extends the existing planning workflow without adding a tab. */
+.decision-lab{background:var(--surface);border:1px solid var(--ring);border-radius:18px;padding:16px;margin-top:6px;display:flex;flex-direction:column;gap:13px;flex:0 0 auto}
+.decision-lab-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.decision-lab-head h2{font:650 24px/1.05 "Inter Tight",sans-serif;letter-spacing:-.025em}.decision-lab-head p{font-size:10.5px;color:var(--ink2);margin-top:6px;max-width:720px}
+.decision-layout{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:9px}.decision-inputs{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.decision-inputs label{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid var(--ring);border-radius:10px;padding:8px 9px;background:var(--page)}
+.decision-inputs label>span{font:600 9.5px/1.2 "Inter",sans-serif}.decision-inputs small{display:block;font-size:8.5px;color:var(--ink2);margin-top:2px}.decision-inputs input{width:84px;border:1px solid var(--axis);border-radius:7px;background:var(--surface);color:var(--ink);padding:6px;text-align:right;font:600 11px/1 "Inter",sans-serif}.decision-inputs input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.decision-result{grid-column:span 4;background:var(--ink);color:var(--page);border-radius:13px;padding:14px;display:flex;flex-direction:column;align-items:flex-start}.decision-result>span{font:650 8px/1 "Inter",sans-serif;letter-spacing:.09em;color:#ff8797}.decision-result>strong{font:650 20px/1.08 "Inter Tight",sans-serif;margin-top:8px}.decision-result>p{font-size:9.5px;line-height:1.4;color:color-mix(in srgb,var(--page) 74%,transparent);margin-top:7px}.decision-result button{border:0;background:transparent;color:var(--page);padding:0;margin-top:auto;padding-top:14px;cursor:pointer;font:600 9.5px/1 "Inter",sans-serif}.decision-result button:hover{text-decoration:underline}.decision-result[data-attractive="false"]>strong{color:#ff9aaa}
+.decision-kpis{grid-column:span 8;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--ring);border-radius:13px;overflow:hidden}.decision-kpis>div{padding:13px;border-left:1px solid var(--ring)}.decision-kpis>div:first-child{border-left:0}.decision-kpis>div>span{display:block;font:650 8px/1 "Inter",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2)}.decision-kpis>div>strong{display:block;font:650 22px/1 "Inter Tight",sans-serif;letter-spacing:-.025em;margin-top:9px}.decision-kpis small{font-size:8.5px;color:var(--ink2)}
+.decision-sensitivity{display:grid;grid-template-columns:190px minmax(0,1fr);gap:14px;align-items:start;border-top:1px solid var(--ring);padding-top:12px}.decision-sensitivity h3{font:650 13px/1.2 "Inter Tight",sans-serif}.decision-sensitivity h3 span{font:500 9px/1 "Inter",sans-serif;color:var(--ink2)}.decision-sensitivity p{font-size:9px;color:var(--ink2);margin-top:4px}.decision-sensitivity table{width:100%;border-collapse:collapse;font-size:9.5px}.decision-sensitivity th,.decision-sensitivity td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--ring)}.decision-sensitivity th:first-child{text-align:left}.decision-sensitivity td[data-value="positive"]{color:var(--up);font-weight:600}.decision-sensitivity td[data-value="negative"]{color:var(--down);font-weight:600}.decision-boundary{font-size:9.5px;line-height:1.45;color:var(--ink2);border-left:2px solid var(--cfo);padding-left:9px}
+
+/* Source-aware variance and management follow-up */
+.comparison-state-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.comparison-state-grid>div{border:1px solid var(--ring);border-radius:12px;background:var(--surface);padding:10px 12px;display:grid;gap:2px}.comparison-state-grid span{font:600 10px/1.2 "Inter",sans-serif;color:var(--ink2)}.comparison-state-grid strong{font:650 13px/1.2 "Inter Tight",sans-serif}.comparison-state-grid small{font-size:9.5px;color:var(--muted)}.comparison-state-grid [data-state="connected"] strong{color:var(--up)}.comparison-state-grid [data-state="missing"] strong{color:var(--down)}
+.management-followup ol{list-style:none;padding:0}.management-followup li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--ring)}.management-followup li>span{font:600 11px/1.2 "Inter",sans-serif}.management-followup li>strong{font:650 12px/1.2 "Inter Tight",sans-serif;color:var(--cfo)}.management-followup li>small{grid-column:1/-1;font-size:9.5px;color:var(--muted)}.action-boundary{margin-top:auto;padding-top:9px;font-size:9.5px;color:var(--muted)}
+.variance-detail{background:var(--surface);border:1px solid var(--ring);border-radius:12px;padding:9px 12px}.variance-detail summary{cursor:pointer;font:600 10.5px/1.3 "Inter",sans-serif;color:var(--ink2)}.variance-detail[open] summary{margin-bottom:8px}
+
+/* Standardized report center */
+.report-toolbar{display:flex;align-items:stretch;gap:7px;flex-wrap:wrap}.report-toolbar button{border:1px solid var(--ring);border-radius:10px;background:var(--surface);color:var(--ink);padding:8px 10px;cursor:pointer;font:600 10px/1.2 "Inter",sans-serif}.report-toolbar button>span{display:block;font-size:8px;letter-spacing:.08em;color:var(--muted);margin-bottom:2px}.report-toolbar button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--page)}.report-toolbar .report-print{margin-left:auto}.report-toolbar .report-ai{border-color:color-mix(in srgb,var(--cfo) 45%,var(--ring));color:var(--cfo)}
+.report-sheet{width:min(1040px,100%);margin:4px auto 18px;background:var(--surface);border:1px solid var(--ring);box-shadow:0 16px 42px rgba(17,17,19,.08);padding:28px 32px;display:flex;flex-direction:column;gap:22px}.report-sheet>header{display:flex;justify-content:space-between;gap:24px;border-bottom:2px solid var(--ink);padding-bottom:18px}.report-sheet>header span,.report-status>span{font:650 9px/1 "Inter",sans-serif;letter-spacing:.09em;color:var(--cfo)}.report-sheet h1{font:700 32px/1 "Inter Tight",sans-serif;letter-spacing:-.035em;margin-top:6px}.report-sheet header p{font-size:11px;color:var(--muted);margin-top:7px}.report-status{text-align:right;display:flex;flex-direction:column;gap:4px}.report-status strong{font:650 12px/1.2 "Inter",sans-serif}.report-status small{font-size:9.5px;color:var(--muted)}
+.report-sheet section>h3{font:650 10px/1.3 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.08em;border-top:2px solid var(--ink);padding-top:8px;margin-bottom:9px}.report-sheet section>h3 span{color:var(--cfo);font-size:8px;margin-left:5px}.report-sheet section p,.report-sheet section li{font-size:11px;line-height:1.55;color:var(--ink2)}.report-sheet section ul,.report-sheet section ol{padding-left:18px}.report-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}.report-table{width:100%;border-collapse:collapse;font-size:10.5px}.report-table th,.report-table td{text-align:right;padding:7px;border-bottom:1px solid var(--ring);white-space:nowrap}.report-table th{font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.report-table th:first-child,.report-table td:first-child{text-align:left;font-weight:600}.report-table a{color:var(--cfo)}
+.report-callout{border:1px solid var(--ring);border-radius:12px;padding:13px}.report-callout>span{font:650 8px/1 "Inter",sans-serif;letter-spacing:.08em}.report-callout>strong{display:block;font:650 13px/1.2 "Inter Tight",sans-serif;margin-top:7px}.report-callout>p{font-size:10px;line-height:1.45;color:var(--muted);margin-top:4px}.report-callout.unavailable>span{color:var(--down)}.report-callout.connected>span{color:var(--up)}.report-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.report-facts div{background:var(--page);padding:10px;border-radius:10px}.report-facts dt{font-size:9px;color:var(--muted)}.report-facts dd{font:650 16px/1.2 "Inter Tight",sans-serif;margin-top:3px}.report-note{font-size:9.5px!important;color:var(--muted)!important;margin-top:6px}.report-sheet>footer{border-top:1px solid var(--ring);padding-top:10px;font-size:9px;color:var(--muted)}
+
+@media(max-width:900px){.home-primary-grid,.home-operating-grid{grid-template-columns:1fr}.planning-spine{grid-template-columns:repeat(3,1fr);row-gap:18px}.planning-spine::before{display:none}.report-card-grid{grid-template-columns:1fr}.report-columns{grid-template-columns:1fr}.report-toolbar .report-print{margin-left:0}.report-sheet{padding:20px}.comparison-state-grid{grid-template-columns:1fr}.architecture-scroll-hint{display:block}.architecture-flow{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:210px;overflow-x:auto;padding-bottom:6px}.architecture-arrow{display:none}.architecture-rails{grid-template-columns:1fr}.cadence-flow{grid-template-columns:repeat(3,1fr);row-gap:14px}.cadence-flow li:nth-child(4){border-left:0}.decision-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.decision-result{grid-column:1/-1}.decision-kpis{grid-column:1/-1}}
+@media(max-width:600px){#home .home-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.planning-spine{grid-template-columns:repeat(2,1fr)}.report-sheet>header{flex-direction:column}.report-status{text-align:left}.report-table{min-width:620px}.report-sheet section{overflow-x:auto}.finance-architecture .home-section-head>span{text-align:left}.architecture-rails>div{grid-template-columns:1fr}.architecture-rails small{grid-column:1}.cadence-flow{grid-template-columns:repeat(2,1fr)}.cadence-flow li:nth-child(odd){border-left:0;padding-left:0}.decision-inputs{grid-template-columns:1fr}.decision-inputs input{font-size:16px}.decision-kpis{grid-template-columns:repeat(2,1fr)}.decision-kpis>div:nth-child(3){border-left:0;border-top:1px solid var(--ring)}.decision-kpis>div:nth-child(4){border-top:1px solid var(--ring)}.decision-sensitivity{grid-template-columns:1fr}}
+@media print{
+  body{display:block;overflow:visible;background:#fff;color:#111}.topbar,.filterbar,#foot,.ai-drawer,.sel-pill,.report-toolbar,.vhead,.sowhat,.note{display:none!important}main,.view{position:static!important;display:block!important;overflow:visible!important;padding:0!important}.view>*:not(.report-sheet){display:none!important}.report-sheet{display:flex!important;width:100%;margin:0;border:0;box-shadow:none;padding:0;color:#111;background:#fff}.report-sheet *{color:#111!important}.report-sheet a{text-decoration:none}.report-callout,.report-facts div{break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -766,7 +892,10 @@ footer{
   <div class="brand">Example Dashboard</div>
   <nav id="nav" role="tablist"></nav>
   <span class="nav-chevron" id="navChevron" aria-hidden="true">›</span>
-  <div class="source-picker"><label for="companySelect">Company</label><select id="companySelect" aria-label="Dashboard company"></select></div>
+  <div class="source-tools">
+    <div class="source-picker"><label for="companySelect">Company</label><select id="companySelect" aria-label="Dashboard company"></select></div>
+    <button class="reports-btn" id="reportsBtn" type="button" aria-pressed="false">Reports</button>
+  </div>
   <button class="icon-btn ai-btn" id="aiBtn">✦ Ask AI</button>
   <button class="icon-btn" id="themeBtn">Dark</button>
 </div>
@@ -798,7 +927,7 @@ footer{
 </aside>
 <button class="sel-pill" id="selPill">✦ Ask AI</button>
 
-<script src="./company-dashboard.js"></script>
+<script src="./company-dashboard.js?v=20260831c"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -1997,18 +2126,19 @@ function csvCompany(){
 /* ---------- views ---------- */
 const VIEWS=[
   {id:"home", name:"Home"},
-  {id:"company", name:"Company Overview"},
-  {id:"glass", name:"Exec Summary"},
+  {id:"glass", name:"Executive Review"},
   {id:"revenue", name:"Revenue"},
   {id:"variance", name:"Variance Analysis"},
   {id:"plan", name:"Planning & Scenarios"},
   {id:"profit", name:"Profitability & Opex"},
-  {id:"balance", name:"Balance Sheet · AR/AP"},
-  {id:"fx", name:"FX & Capital Returns"},
-  {id:"people", name:"Headcount & R&D"},
-  {id:"outlook", name:"Outlook"},
-  {id:"env", name:"Environment (CSRD)"}
+  {id:"balance", name:"Liquidity & Working Capital"},
+  {id:"fx", name:"Treasury & Capital"},
+  {id:"people", name:"Workforce & Investment"},
+  {id:"outlook", name:"Outlook & IR"},
+  {id:"env", name:"Sustainability"},
+  {id:"reports", name:"Reports"}
 ];
+function visibleViews(){ return VIEWS.filter(view=>view.id!=="env"||companySlug==="apple"); }
 let current="home";
 
 function tile(k,v,d,up){
@@ -2255,35 +2385,22 @@ function renderHome(v){
       </div>
       <span class="vhead-right home-tools"><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span>
     </div>
-    <div class="home-metrics" aria-label="Key performance indicators for ${lbl}">
+    <div class="home-metrics" role="region" aria-label="Key performance indicators for ${lbl}">
       <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-currency-dollar"></i></span><div class="ck">Net sales</div></div><div class="cv">${money(rev)}</div><div class="metric-compare"><span class="metric-delta"><i class="ph ph-arrow-up"></i>${delta(revYoy)}</span><span class="metric-baseline">vs prior-year period</span></div></div>
       <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-chart-pie-slice"></i></span><div class="ck">Gross margin</div></div><div class="cv">${pct(gm)}</div><div class="metric-compare"><span class="metric-delta"><i class="ph ph-arrow-up"></i>${gmYoy!=null?`${sgn(gmYoy)} pts`:"n/a"}</span><span class="metric-baseline">vs prior-year period</span></div></div>
       <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-trend-up"></i></span><div class="ck">Operating income</div></div><div class="cv">${money(opInc)}</div><div class="metric-compare"><span class="metric-delta"><i class="ph ph-arrow-up"></i>${delta(opYoy)}</span><span class="metric-baseline">vs prior-year period</span></div></div>
       <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-money"></i></span><div class="ck">Free cash flow</div></div><div class="cv">${money(fcf)}</div><div class="metric-compare"><span class="metric-baseline">Operating cash less capex</span></div></div>
-      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-user"></i></span><div class="ck">Diluted EPS</div></div><div class="cv">${eps==null?"n/a"+epsUnavailableInfo():"$"+eps.toFixed(2)}</div><div class="metric-compare"><span class="metric-baseline">${eps!=null&&aggEPSFiledLabel(qIdxs)?aggEPSFiledLabel(qIdxs):"Filed period value"}</span></div></div>
-      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-leaf"></i></span><div class="ck">Carbon footprint 2025</div></div><div class="cv">${(D.env.total2025/1e6).toFixed(2)}M <span class="unit">tCO2e</span></div><div class="metric-compare"><span class="metric-baseline">As filed · CY2025</span>${infoFlag("Annual carbon footprint from Apple's 2026 Environmental Progress Report.")}</div></div>
+    </div>
+    <div class="home-primary-grid">
+      <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $M</span></h3><div class="fill"><svg id="appleHomeRevenue"></svg></div></div>
+      ${companyExecutiveOverview()}
     </div>
     ${companyHomeSections()}
-    <section class="home-explore" aria-labelledby="exploreHeading">
-      <div class="home-section-head"><h2 id="exploreHeading">Explore the dashboard</h2><span>Dive into the data across every area of Apple’s performance.</span></div>
-      <div class="home-explore-grid">
-        ${exploreCard("glass","Executive Summary","Key movements, risks, and takeaways","Net sales",money(rev),delta(revYoy),"ph-file-text",trendIdxs.map(k=>D.is.totalRev[k]),"line","money",trendLabels)}
-        ${exploreCard("revenue","Revenue","Sales by product, geography, and quarter","Net sales",money(rev),delta(revYoy),"ph-chart-bar",trendIdxs.map(k=>D.is.totalRev[k]),"bars","money",trendLabels)}
-        ${exploreCard("profit","Profitability & Opex","Margin and operating expense drivers","Gross margin",pct(gm),gmYoy!=null?`${sgn(gmYoy)} pts`:"","ph-trend-up",trendIdxs.map(k=>D.q.gmPct[k]),"line","pct",trendLabels)}
-        ${exploreCard("balance","Balance Sheet · AR/AP","Cash, debt, receivables, and payables","Cash + securities",money(cashSec),money(cashSec),"ph-credit-card",trendIdxs.map(k=>D.bs.cash[k+1]+D.bs.mktSecCurrent[k+1]+D.bs.mktSecNonCurrent[k+1]),"bars","money",trendLabels)}
-        ${exploreCard("fx","FX & Capital Returns","Currency, buybacks, and dividends","Latest quarter buyback",money(D.cf.buybacks[lastQ]),money(D.cf.buybacks[lastQ]),"ph-arrows-clockwise",{a:trendIdxs.map(k=>D.cf.buybacks[k]),b:trendIdxs.map(k=>D.cf.dividends[k])},"grouped","money",trendLabels)}
-        ${exploreCard("people","Headcount & R&D","Workforce and R&D investment","R&D investment",money(D.is.rd[lastQ]),money(D.is.rd[lastQ]),"ph-users-three",trendIdxs.map(k=>D.is.rd[k]),"line","money",trendLabels)}
-        ${exploreCard("outlook","Outlook","Guidance and forward-looking signals","Q4 revenue guide",D.fwd.revGuide,"FY26 guide","ph-compass",trendIdxs.map(k=>D.q.yoy[k]),"line","pct",trendLabels)}
-        ${exploreCard("env","Environment (CSRD)","Emissions and environmental progress","Carbon footprint",`${(D.env.total2025/1e6).toFixed(2)}M`,`${(D.env.total2025/1e6).toFixed(2)}M tCO2e`,"ph-leaf",[D.env.total2024,D.env.total2025],"line","carbon",["CY2024","CY2025"])}
-      </div>
-    </section>
   </div>`;
   document.getElementById("homeExecBtn").addEventListener("click",()=>go("glass"));
   document.getElementById("homeAiBtn").addEventListener("click",openAI);
-  document.querySelectorAll("#home .explore-card").forEach(card=>card.addEventListener("click",()=>go(card.dataset.target)));
-  document.querySelectorAll("#home .explore-chart:not(.no-chart)").forEach(svg=>homeMiniChart(svg,svg.dataset.homeValues.split(",").map(Number),svg.dataset.homeKind,svg.dataset.homeValuesB?svg.dataset.homeValuesB.split(",").map(Number):null));
-  document.querySelector("#home .home-details").addEventListener("toggle",e=>{ if(e.target.open) requestAnimationFrame(drawFlow); });
-  drawFlow();
+  chartTable(document.getElementById("appleHomeRevenue"),"bar",{labels:D.meta.quarters,values:D.is.totalRev,active:lastQ,fmt:B});
+  wireCompanyHomeSections();
 }
 function csvHome(){
   const qIdxs=selQ();
@@ -2462,7 +2579,7 @@ function renderGlass(v){
   const cashSec=b.cash[bsIdx]+b.mktSecCurrent[bsIdx]+b.mktSecNonCurrent[bsIdx];
   const may25Used=100*(c.may2025Program-c.remainingMay2025)/c.may2025Program;
   v.innerHTML=`
-  <div class="vhead"><h2>Financial Summary · ${lbl}</h2>
+  <div class="vhead"><h2>Executive Review · ${lbl}</h2>
     <span class="sub">all figures as reported</span>
     <span class="vhead-right"><span class="gpill">Total assets&nbsp;<b style="font:650 13px 'Inter Tight'">${B(b.totalAssets[bsIdx])}</b></span><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${homeSoWhat(sq)}
@@ -2802,7 +2919,7 @@ function renderBalance(v){
   const opCashAgg=aggSum(cf.opCash,sq), lbl=periodLabel(sq);
   const multi=sq.length>1;
   v.innerHTML=`
-  <div class="vhead"><h2>Balance Sheet · Receivables &amp; Payables</h2>
+  <div class="vhead"><h2>Liquidity &amp; Working Capital</h2>
     <span class="sub">as of ${b.dates[bsIdx]} · $B</span>
     <span class="vhead-right"><span class="badge">Real · Apple 10-Q/10-K balance sheet</span><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${balanceSoWhat()}
@@ -2909,7 +3026,7 @@ function renderFX(v){
   const buybacksAgg=aggSum(cf.buybacks,sq), dividendsAgg=aggSum(cf.dividends,sq);
   const shareChgPct=100*(c.sharesOutJun26-c.sharesOutSep25)/c.sharesOutSep25;
   v.innerHTML=`
-  <div class="vhead"><h2>FX Hedging &amp; Capital Returns</h2>
+  <div class="vhead"><h2>Treasury &amp; Capital Allocation</h2>
     <span class="sub">as of Q3 FY26 · $B</span>
     <span class="vhead-right">${notFilteredNote("hedging notionals not affected by quarter filter")}<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${fxSoWhat()}
@@ -3012,7 +3129,7 @@ function renderPeople(v){
   const scissors=sq.length>=2;
   const rsuAsOf=D.bs.dates[D.bs.dates.length-1];
   v.innerHTML=`
-  <div class="vhead"><h2>Headcount, Equity Comp &amp; R&amp;D</h2>
+  <div class="vhead"><h2>Workforce &amp; Investment</h2>
     <span class="sub">as of Q3 FY26</span>
     <span class="vhead-right">${notFilteredNote("FTE & RSU rollforward are 9mo/point-in-time facts")}<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${peopleSoWhat()}
@@ -3116,7 +3233,7 @@ function renderOutlook(v){
   const ceoDateMatch=/effective\s+([A-Za-z]+ \d{1,2},\s*\d{4})/.exec(f.ceoTransition);
   const ceoDate=ceoDateMatch?ceoDateMatch[1]:"n/a";
   v.innerHTML=`
-  <div class="vhead"><h2>Outlook</h2>
+  <div class="vhead"><h2>Outlook &amp; Investor Relations</h2>
     <span class="sub">Q3 FY26 earnings call · July 30, 2026</span>
     <span class="vhead-right">${notFilteredNote("guidance & quotes are tied to the Q3 FY26 call")}<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${outlookSoWhat()}
@@ -3172,7 +3289,7 @@ function renderEnv(v){
   const mt=x=>(x/1e6).toFixed(2)+"M";
   const ist=envIntensityStats();
   v.innerHTML=`
-  <div class="vhead"><h2>Environment (CSRD)</h2>
+  <div class="vhead"><h2>Sustainability</h2>
     <span class="sub">as of CY2025</span>
     <span class="vhead-right">${notFilteredNote("annual disclosure, calendar year")}<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${envSoWhat()}
@@ -3260,7 +3377,7 @@ function csvEnv(){
 
 /* ---------- shell ---------- */
 function buildNav(){
-  document.getElementById("nav").innerHTML=VIEWS.map(v=>
+  document.getElementById("nav").innerHTML=visibleViews().filter(v=>v.id!=="reports").map(v=>
     `<button class="tab" role="tab" data-id="${v.id}" aria-selected="${v.id===current}">${v.name}</button>`).join("");
   document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>go(t.dataset.id)));
   const nav=document.getElementById("nav");
@@ -3274,7 +3391,7 @@ function buildNav(){
 function positionNavChevron(){
   const nav=document.getElementById("nav"), chev=document.getElementById("navChevron"), bar=document.querySelector(".topbar");
   if(!nav||!chev||!bar) return;
-  if(matchMedia("(min-width:1100px)").matches){ chev.style.display="none"; return; }
+  if(matchMedia("(min-width:1400px)").matches){ chev.style.display="none"; return; }
   const scrollable = nav.scrollWidth > nav.clientWidth+2;
   const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth-2;
   if(!scrollable || atEnd){ chev.style.display="none"; return; }
@@ -3439,6 +3556,8 @@ function go(id){
   document.querySelectorAll(".tab").forEach(t=>{
     const sel=t.dataset.id===id; t.setAttribute("aria-selected",String(sel)); if(sel) activeTab=t;
   });
+  const reportsBtn=document.getElementById("reportsBtn");
+  if(reportsBtn) reportsBtn.setAttribute("aria-pressed",String(id==="reports"));
   // keep the active tab in view on the horizontally-scrolling nav strip (mobile: nav is often
   // wider than the viewport), so a deep link or tab switch never lands off-screen
   if(activeTab){
@@ -3458,9 +3577,9 @@ function syncThemeBtn(){
   btn.textContent=dark?"Light":"Dark";
 }
 const RENDER={home:renderHome,company:renderCompany,glass:renderGlass,revenue:renderRevenue,plan:renderPlan,profit:renderProfit,
-  variance:renderVariance,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv};
+  variance:renderVariance,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv,reports:renderReports};
 const CSV_FN={home:csvHome,company:csvCompany,glass:csvGlass,revenue:csvRevenue,plan:csvPlan,profit:csvProfit,
-  variance:csvVariance,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv};
+  variance:csvVariance,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv,reports:csvReports};
 // relocateFiltersUnit: the Filters button+panel+summary is ONE node (#filtersUnit), built once
 // in buildFiltersBar(). Home keeps it on the dedicated line under the header (#filterbar,
 // visible); every other tab instead hosts it inline in that tab's own .vhead-right cluster,
@@ -3500,7 +3619,7 @@ function render(){
   });
   const rangeTxt = periodLabel();
   document.getElementById("foot").textContent =
-    companySlug!=="apple" || current==="company" || current==="plan"
+    companySlug!=="apple" || current==="company" || current==="plan" || current==="reports"
     ? `Source: ${COMPANY_DATA.companies[companySlug].name} SEC filings via SEC Company Facts. Filed values are shown directly; derived Q4/YTD arithmetic and modeled scenarios are labeled. Showing ${rangeTxt}. Built by Govind Waghmare · govindwaghmare.me`
     : current==="home"
     ? `Sources: Apple Inc. FY25 Form 10-K (filed Oct 31, 2025); FY25 Q1–Q3 and FY26 Q1–Q3 Form 10-Qs; Q3 FY26 earnings call (July 30, 2026); 2026 Environmental Progress Report; Apple Newsroom. Showing ${rangeTxt}. Built by Govind Waghmare · govindwaghmare.me`
@@ -3519,6 +3638,7 @@ document.getElementById("themeBtn").addEventListener("click",()=>{
   syncThemeBtn();
   render();
 });
+document.getElementById("reportsBtn").addEventListener("click",()=>go("reports"));
 let rt; addEventListener("resize",()=>{ clearTimeout(rt); rt=setTimeout(render,140); });
 
 /* ---------- Ask AI ---------- */
@@ -3542,13 +3662,14 @@ function buildSuggestions(){
     glass:[`Write an executive summary for ${name}.`,`What are ${name}'s main financial risks and opportunities?`,`Which ${name} metrics need management attention?`],
     revenue:[`How has ${name}'s revenue changed in the selected period?`,`Compare ${name}'s latest revenue with the prior year.`,`What revenue detail is unavailable for ${name}?`],
     variance:[`Which metrics drove ${name}'s variance?`,`Separate favorable and unfavorable ${name} movements.`,`What should FP&A investigate for ${name}?`],
-    plan:[`Explain the ${planningState.scenario} scenario for ${name}.`,`Which assumption has the biggest operating-income impact?`,`What would improve ${name}'s modeled operating margin?`],
+    plan:[`Explain the ${planningState.scenario} scenario and investment case for ${name}.`,`Which assumption has the biggest operating-income or NPV impact?`,`Does the modeled investment clear its hurdle rate?`],
     profit:[`Explain ${name}'s gross and operating margins.`,`How is ${name}'s R&D spending changing?`,`What profitability movement stands out for ${name}?`],
     balance:[`What changed in ${name}'s liquidity and debt?`,`Summarize ${name}'s receivables and payables.`,`What balance-sheet data is unavailable for ${name}?`],
     fx:[`How much did ${name} return through buybacks and dividends?`,`Summarize ${name}'s cash and debt position.`,`What FX evidence is available for ${name}?`],
     people:[`How is ${name}'s R&D investment changing?`,`What workforce data is available for ${name}?`,`Why is ${name}'s headcount unavailable here?`],
     outlook:[`What can the filings support about ${name}'s outlook?`,`Summarize ${name}'s latest reported momentum.`,`What guidance data is unavailable for ${name}?`],
-    env:[`What environmental data is available for ${name}?`,`Why are ${name}'s Scope 1–3 figures unavailable?`,`What source is needed to populate this tab?`]
+    env:[`What environmental data is available for ${name}?`,`Why are ${name}'s Scope 1–3 figures unavailable?`,`What source is needed to populate this tab?`],
+    reports:[`Draft the ${REPORT_DEFINITIONS[reportState].label} narrative for ${name}.`,`Which report sections are supported by filed evidence?`,`What information is unavailable in this ${REPORT_DEFINITIONS[reportState].label}?`]
   };
   return byTab[current]||byTab.home;
 }
@@ -3580,11 +3701,11 @@ function updateAICtx(){
   const el=document.getElementById("aiFilterCtx");
   if(!el||!D) return;
   el.textContent=aiMode==="dashboard"
-    ? `Source: ${COMPANY_DATA.companies[companySlug].name}. Tab: ${VIEWS.find(view=>view.id===current)?.name||current}. Period: ${periodLabel()}.${current==="plan"?` Scenario: ${planningState.scenario}.`:""} Only matching evidence is sent.`
+    ? `Source: ${COMPANY_DATA.companies[companySlug].name}. Tab: ${VIEWS.find(view=>view.id===current)?.name||current}. Period: ${periodLabel()}.${current==="plan"?` Scenario: ${planningState.scenario}. Decision case: modeled.`:""} Only matching evidence is sent.`
     : "No dashboard figures or filters are sent in General AI mode.";
 }
 function aiFiltersPayload(){
-  return {quarterIndexes:[...state.q].sort((a,b)=>a-b), quarterLabels:selQ().map(qLabel), categories:companySlug==="apple"?[...state.cat]:[], geographies:companySlug==="apple"?[...state.geo]:[], scenario:current==="plan"?{...planningState}:null};
+  return {quarterIndexes:[...state.q].sort((a,b)=>a-b), quarterLabels:selQ().map(qLabel), categories:companySlug==="apple"?[...state.cat]:[], geographies:companySlug==="apple"?[...state.geo]:[], scenario:current==="plan"?{...planningState,decision:{...ensureDecisionState()}}:null};
 }
 document.querySelectorAll("[data-ai-mode]").forEach(button=>button.addEventListener("click",()=>setAIMode(button.dataset.aiMode)));
 document.getElementById("aiBtn").addEventListener("click",()=>openAI());
@@ -3702,18 +3823,22 @@ async function loadData(){
     throw e;
   }
   initFilters();
-  const restoredTab=parseHashState(); // may mutate state.q/cat/geo/pgeo; returns a tab id or null
+  let restoredTab=parseHashState(); // may mutate state.q/cat/geo/pgeo; returns a tab id or null
+  if(restoredTab==="env"&&companySlug!=="apple") restoredTab="home";
   const companySelect=document.getElementById("companySelect");
   companySelect.innerHTML=Object.entries(COMPANY_DATA.companies).map(([slug,company])=>`<option value="${slug}">${escapeHtml(company.name)} · ${escapeHtml(company.ticker)}</option>`).join("");
   companySelect.value=companySlug;
   companySelect.addEventListener("change",()=>{
     companySlug=companySelect.value;
+    if(current==="env"&&companySlug!=="apple") current="home";
     state.q=new Set(currentFiscalYtdIndexes());
     prevQSelection=null;
     planningState={scenario:"base",...PLANNING_PRESETS.base};
+    decisionState=null;
     const oldFilters=document.getElementById("filtersUnit");
     if(oldFilters) oldFilters.remove();
     buildFiltersBar();
+    buildNav();
     go(current);
   });
   buildNav(); syncThemeBtn(); buildFiltersBar(); renderAISugg();

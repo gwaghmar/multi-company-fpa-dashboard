@@ -16,7 +16,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 
 
-USER_AGENT = "Govind Waghmare sec-contact@example.invalid"
+USER_AGENT = os.environ.get("SEC_USER_AGENT", "Govind Waghmare sec-contact@example.invalid")
 OUT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "companies.json")
 COMPANIES = {
     "apple": {"name": "Apple", "ticker": "AAPL", "cik": "0000320193"},
@@ -44,6 +44,15 @@ CONCEPTS = {
     "repurchases": ["PaymentsForRepurchaseOfCommonStock"],
     "dividends": ["PaymentsOfDividendsCommonStock", "PaymentsOfDividends"],
     "shareBasedCompensation": ["ShareBasedCompensation", "AllocatedShareBasedCompensationExpense"],
+    "sellingGeneralAdministrative": ["SellingGeneralAndAdministrativeExpense"],
+    "depreciationAmortization": [
+        "DepreciationDepletionAndAmortization",
+        "DepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+        "Depreciation",
+    ],
+    "interestExpense": ["InterestExpenseNonOperating", "InterestAndDebtExpense"],
+    "incomeTaxExpense": ["IncomeTaxExpenseBenefit"],
+    "acquisitions": ["PaymentsToAcquireBusinessesNetOfCashAcquired", "PaymentsToAcquireBusinessesGross"],
 }
 
 INSTANT_CONCEPTS = {
@@ -58,6 +67,11 @@ INSTANT_CONCEPTS = {
     "debtCurrent": ["LongTermDebtCurrent", "ShortTermBorrowings"],
     "debtNoncurrent": ["LongTermDebtNoncurrent"],
     "totalDebtReported": ["LongTermDebt"],
+    "inventory": ["InventoryNet"],
+    "goodwill": ["Goodwill"],
+    "propertyPlantEquipment": ["PropertyPlantAndEquipmentNet"],
+    "deferredRevenueCurrent": ["ContractWithCustomerLiabilityCurrent"],
+    "marketableSecuritiesNoncurrent": ["MarketableSecuritiesNoncurrent"],
 }
 
 
@@ -209,6 +223,16 @@ def metric_value(items: list[dict], period: dict, all_periods: list[dict], cumul
     return None, False
 
 
+def fiscal_ytd_value(items: list[dict], period: dict) -> float | None:
+    """Return the exact filed fiscal YTD/annual fact for a flow metric.
+
+    The UI uses this value when the selected periods are the current fiscal YTD.
+    This avoids small rounding differences caused by summing separately filed
+    three-month values when the issuer also filed an exact six- or nine-month fact.
+    """
+    return value_millions(span_for(items, period["fiscalStart"], period["end"]))
+
+
 def build_company(slug: str, config: dict) -> dict:
     url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{config['cik']}.json"
     payload = fetch_json(url)
@@ -219,18 +243,25 @@ def build_company(slug: str, config: dict) -> dict:
     rows = []
     for period in periods:
         metrics = {}
+        fiscal_ytd_metrics = {}
         derived_metrics = []
         for key in ["revenue", "costOfRevenue", "grossProfit", "operatingIncome", "netIncome", "rd"]:
             value, derived = metric_value(facts[key], period, all_periods)
             metrics[key] = value
+            fiscal_ytd_metrics[key] = fiscal_ytd_value(facts[key], period)
             if derived:
                 derived_metrics.append(key)
         if metrics["grossProfit"] is None and metrics["revenue"] is not None and metrics["costOfRevenue"] is not None:
             metrics["grossProfit"] = round(metrics["revenue"] - metrics["costOfRevenue"], 3)
             derived_metrics.append("grossProfit")
-        for key in ["operatingCashFlow", "capex", "repurchases", "dividends", "shareBasedCompensation"]:
+        for key in [
+            "operatingCashFlow", "capex", "repurchases", "dividends", "shareBasedCompensation",
+            "sellingGeneralAdministrative", "depreciationAmortization", "interestExpense",
+            "incomeTaxExpense", "acquisitions",
+        ]:
             value, derived = metric_value(facts[key], period, all_periods, cumulative=True)
             metrics[key] = value
+            fiscal_ytd_metrics[key] = fiscal_ytd_value(facts[key], period)
             if derived:
                 derived_metrics.append(key)
         if metrics["operatingCashFlow"] is not None and metrics["capex"] is not None:
@@ -238,6 +269,12 @@ def build_company(slug: str, config: dict) -> dict:
             derived_metrics.append("freeCashFlow")
         else:
             metrics["freeCashFlow"] = None
+        if fiscal_ytd_metrics["operatingCashFlow"] is not None and fiscal_ytd_metrics["capex"] is not None:
+            fiscal_ytd_metrics["freeCashFlow"] = round(
+                fiscal_ytd_metrics["operatingCashFlow"] - fiscal_ytd_metrics["capex"], 3
+            )
+        else:
+            fiscal_ytd_metrics["freeCashFlow"] = None
         for key in INSTANT_CONCEPTS:
             metrics[key] = instant_value(instant[key], period["end"])
         if metrics["totalDebtReported"] is not None:
@@ -253,6 +290,7 @@ def build_company(slug: str, config: dict) -> dict:
             "label": f"Q{period['quarter']} FY{str(period['fy'])[-2:]}",
             "periodEnd": period["end"],
             "metrics": metrics,
+            "fiscalYtdMetrics": fiscal_ytd_metrics,
             "derivedMetrics": sorted(set(derived_metrics)),
             "source": {
                 "form": source_fact.get("form"), "filed": source_fact.get("filed"),

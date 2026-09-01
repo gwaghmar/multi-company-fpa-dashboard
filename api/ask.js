@@ -23,7 +23,7 @@ const SECTION_KEYWORDS = {
 const TAB_SECTIONS = {
   home: ["is", "cf", "env"], revenue: ["cat", "geo", "q"], profit: ["is", "geo"],
   balance: ["bs"], fx: ["fx", "cap"], people: ["hc", "is"], outlook: ["q", "fwd", "is"],
-  env: ["env"], glass: ["is", "q", "cf"],
+  env: ["env"], glass: ["is", "q", "cf"], reports: ["is", "q", "cf", "bs", "cap"],
 };
 
 const BROAD_DASHBOARD_TERMS = [
@@ -309,6 +309,33 @@ function generalSystemPrompt() {
   ].join("\n");
 }
 
+function investmentNpv(initialInvestment, annualNetBenefit, years, discountRatePct) {
+  const rate = discountRatePct / 100;
+  let value = -initialInvestment;
+  for (let year = 1; year <= years; year += 1) value += annualNetBenefit / ((1 + rate) ** year);
+  return value;
+}
+
+function investmentIrr(initialInvestment, annualNetBenefit, years) {
+  if (initialInvestment <= 0 || annualNetBenefit <= 0 || years < 1) return null;
+  const valueAt = rate => {
+    let value = -initialInvestment;
+    for (let year = 1; year <= years; year += 1) value += annualNetBenefit / ((1 + rate) ** year);
+    return value;
+  };
+  let low = -0.99;
+  let high = 10;
+  let lowValue = valueAt(low);
+  if (lowValue * valueAt(high) > 0) return null;
+  for (let step = 0; step < 100; step += 1) {
+    const mid = (low + high) / 2;
+    const value = valueAt(mid);
+    if (lowValue * value <= 0) high = mid;
+    else { low = mid; lowValue = value; }
+  }
+  return ((low + high) / 2) * 100;
+}
+
 function companyEvidence(companySlug, filters = {}, tab = "company") {
   const company = COMPANY_DATA.companies?.[companySlug];
   if (!company) return null;
@@ -318,6 +345,7 @@ function companyEvidence(companySlug, filters = {}, tab = "company") {
     : company.periods;
   const rawScenario = tab === "plan" && filters?.scenario ? filters.scenario : null;
   let planningModel = null;
+  let investmentDecisionModel = null;
   if (rawScenario && selectedPeriods.length) {
     const basePeriod = selectedPeriods[selectedPeriods.length - 1];
     const revenue = basePeriod.metrics?.revenue;
@@ -343,8 +371,31 @@ function companyEvidence(companySlug, filters = {}, tab = "company") {
       };
     }
   }
+  if (rawScenario?.decision) {
+    const rawDecision = rawScenario.decision;
+    const initialInvestment = Math.max(0, Math.min(1e9, Number(rawDecision.initialInvestment) || 0));
+    const annualBenefit = Math.max(0, Math.min(1e9, Number(rawDecision.annualBenefit) || 0));
+    const annualRunCost = Math.max(0, Math.min(1e9, Number(rawDecision.annualRunCost) || 0));
+    const years = Math.max(1, Math.min(10, Math.round(Number(rawDecision.years) || 1)));
+    const discountRatePct = Math.max(0, Math.min(50, Number(rawDecision.discountRate) || 0));
+    const annualNetBenefit = annualBenefit - annualRunCost;
+    const npv = investmentNpv(initialInvestment, annualNetBenefit, years, discountRatePct);
+    const irrPct = investmentIrr(initialInvestment, annualNetBenefit, years);
+    const paybackYears = annualNetBenefit > 0 ? initialInvestment / annualNetBenefit : null;
+    const roiPct = initialInvestment > 0 ? 100 * ((annualNetBenefit * years) - initialInvestment) / initialInvestment : null;
+    investmentDecisionModel = {
+      basis: "MODELED pre-tax unlevered investment case from user-visible assumptions",
+      assumptions: { initialInvestment, annualBenefit, annualRunCost, years, discountRatePct },
+      outputs: { annualNetBenefit, npv, irrPct, paybackYears, roiPct, clearsHurdle: npv > 0 && irrPct != null && irrPct > discountRatePct },
+    };
+  }
+  const availableMetrics = [...new Set(selectedPeriods.flatMap(period =>
+    Object.entries(period.metrics || {}).filter(([, value]) => Number.isFinite(value)).map(([key]) => key)
+  ))].sort();
   return {
     company: { name: company.name, ticker: company.ticker, cik: company.cik },
+    dataFreshness: { generatedAt: COMPANY_DATA.generatedAt, sourceType: company.sourceType, sourceUrl: company.sourceUrl },
+    availableMetrics,
     context: {
       tab,
       selectedPeriodLabels: selectedPeriods.map(period => period.label),
@@ -354,6 +405,7 @@ function companyEvidence(companySlug, filters = {}, tab = "company") {
     methodology: COMPANY_DATA.methodology,
     periods: selectedPeriods,
     planningModel,
+    investmentDecisionModel,
   };
 }
 
@@ -362,15 +414,19 @@ function companySystemPrompt(evidence) {
     `You are Dashboard AI for ${evidence.company.name} (${evidence.company.ticker}).`,
     "Use only the supplied SEC-sourced evidence. Never invent a missing value, business driver, budget, forecast, product split, or geographic split.",
     "A null value means unavailable. Metrics marked in derivedMetrics are arithmetic derivations from filed annual or year-to-date facts, not estimates.",
+    "Use evidence.availableMetrics to understand the connected coverage. Supplemental SEC metrics may include inventory, goodwill, PP&E, deferred revenue, noncurrent marketable securities, SG&A, depreciation and amortization, interest, taxes, acquisitions, and stock compensation when the issuer filed them.",
+    "State the data refresh timestamp from evidence.dataFreshness when the user asks how current the connected data is.",
+    "When fiscalYtdMetrics are present for the latest selected period and the selected periods form that fiscal YTD, prefer those exact filed span values over adding rounded quarter values.",
     "Respect the active tab and selected periods in evidence.context. If a requested product, geography, guidance, headcount, FX, or environmental fact is absent, say it is unavailable in the connected source.",
     "If evidence.context.scenario is present, treat it as a user-visible modeled FP&A scenario. evidence.planningModel contains the same deterministic model displayed in the UI. Use its basePeriod, actual values, assumptions, and modeledNextQuarter outputs. Always label outputs modeled, and never present them as company guidance, consensus, or an internal budget.",
+    "When evidence.investmentDecisionModel is present, use its deterministic NPV, IRR, payback, ROI, and hurdle result. State that it is an illustrative pre-tax unlevered model and identify missing approval inputs such as tax, depreciation, working capital, timing, ownership, and implementation risk.",
     "Separate what the figures show from causal explanations. If the evidence does not establish a cause, say that operational or management commentary is needed.",
     "Lead with the answer, use plain English, and stay concise.",
     `Evidence: ${JSON.stringify(evidence)}`,
   ].join("\n");
 }
 
-export const __test = { buildDashboardEvidence, dashboardSystemPrompt, isDashboardQuestion, normalizeFilters, searchFiling };
+export const __test = { buildDashboardEvidence, companyEvidence, companySystemPrompt, dashboardSystemPrompt, isDashboardQuestion, normalizeFilters, searchFiling };
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -383,7 +439,7 @@ export default async function handler(req, res) {
   const selectedText = cleanText(rawSelectedText, 600);
   const mode = req.body?.mode === "general" ? "general" : "dashboard";
   const selectedCompany = cleanText(req.body?.company, 40) || "apple";
-  const selectedCompanyEvidence = selectedCompany !== "apple" || tab === "company" || tab === "plan"
+  const selectedCompanyEvidence = selectedCompany !== "apple" || tab === "company" || tab === "plan" || tab === "reports"
     ? companyEvidence(selectedCompany, filters, tab)
     : null;
   if (!question) { res.status(400).json({ error: "missing_question" }); return; }

@@ -78,8 +78,25 @@ function companyMetricValues(key,indexes){
   return (indexes||selectedCompanyIndexes()).map(index=>companyMetricAt(index,key));
 }
 
+function selectedIndexesAreFiscalYtd(indexes){
+  const selected=[...(indexes||selectedCompanyIndexes())].sort((a,b)=>a-b);
+  const periods=companyPeriods();
+  if(!selected.length) return false;
+  const last=parseCompanyPeriodLabel(periods[selected[selected.length-1]]?.label);
+  if(!last) return false;
+  const expected=periods.map((period,index)=>({index,parsed:parseCompanyPeriodLabel(period.label)}))
+    .filter(item=>item.parsed?.fy===last.fy && item.parsed.quarter<=last.quarter)
+    .map(item=>item.index);
+  return sameIndexes(new Set(selected),expected);
+}
+
 function companyMetricTotal(key,indexes){
-  const values=companyMetricValues(key,indexes);
+  const selected=[...(indexes||selectedCompanyIndexes())].sort((a,b)=>a-b);
+  if(selectedIndexesAreFiscalYtd(selected)){
+    const exact=companyPeriodAt(selected[selected.length-1])?.fiscalYtdMetrics?.[key];
+    if(Number.isFinite(exact)) return exact;
+  }
+  const values=companyMetricValues(key,selected);
   return values.length && values.every(Number.isFinite) ? values.reduce((total,value)=>total+value,0) : null;
 }
 
@@ -135,7 +152,8 @@ function companyMetricChange(key,indexes){
 function companySourceBadge(){
   const selected=selectedCompanyIndexes();
   const hasDerived=selected.some(index=>(companyPeriodAt(index)?.derivedMetrics||[]).length);
-  return `<span class="badge">SEC sourced${hasDerived?" · derived values marked":""}</span>`;
+  const exactYtd=selectedIndexesAreFiscalYtd(selected)&&Object.values(companyPeriodAt(selected[selected.length-1])?.fiscalYtdMetrics||{}).some(Number.isFinite);
+  return `<span class="badge">SEC sourced${exactYtd?" · exact filed YTD":hasDerived?" · derived values marked":""}</span>`;
 }
 
 function companyDownloadButton(){
@@ -159,62 +177,117 @@ function companyUnavailable(title,detail){
   </div>`;
 }
 
+const COMPANY_PLANNING_SPINES={
+  apple:[["Demand","Product and services mix"],["Revenue","Units, price and geography"],["Margin","Mix, memory and supply"],["Investment","R&D, people and capex"],["Cash","Working capital and returns"],["Review","Forecast, risks and actions"]],
+  alphabet:[["Demand","Search, YouTube and Cloud"],["Revenue","Ads, subscriptions and usage"],["Margin","Traffic costs and infrastructure"],["Investment","AI capex and headcount"],["Cash","Liquidity and buybacks"],["Review","Forecast, risks and actions"]],
+  nvidia:[["Demand","Market-platform signals"],["Revenue","Platform mix and supply"],["Margin","Product mix and capacity"],["Investment","R&D, people and capex"],["Cash","Inventory and capital returns"],["Review","Forecast, risks and actions"]],
+  microsoft:[["Demand","Cloud usage and seats"],["Revenue","Azure, productivity and devices"],["Margin","Cloud mix and datacenters"],["Investment","AI capex and headcount"],["Cash","FCF and capital returns"],["Review","Forecast, risks and actions"]],
+  amazon:[["Demand","Units, sellers and cloud usage"],["Revenue","Stores, ads and AWS"],["Margin","Fulfillment and infrastructure"],["Investment","Labor, logistics and capex"],["Cash","Working capital and FCF"],["Review","Forecast, risks and actions"]],
+  meta:[["Demand","Engagement and ad demand"],["Revenue","Price, impressions and regions"],["Margin","Infrastructure and content"],["Investment","AI capex and Reality Labs"],["Cash","FCF and capital returns"],["Review","Forecast, risks and actions"]],
+  amd:[["Demand","Data center, client and gaming"],["Revenue","Volume, price and mix"],["Margin","Product mix and supply"],["Investment","R&D and capacity"],["Cash","Inventory and FCF"],["Review","Forecast, risks and actions"]],
+  broadcom:[["Demand","Semiconductor and software"],["Revenue","Bookings, renewals and mix"],["Margin","Product and software mix"],["Investment","R&D and integration"],["Cash","Debt and capital returns"],["Review","Forecast, risks and actions"]],
+  oracle:[["Demand","Cloud consumption and backlog"],["Revenue","Cloud, support and license"],["Margin","Datacenter and sales capacity"],["Investment","Capex and headcount"],["Cash","Debt and capital returns"],["Review","Forecast, risks and actions"]],
+  salesforce:[["Demand","Seats, usage and renewals"],["Revenue","Subscriptions and services"],["Margin","Sales capacity and efficiency"],["Investment","R&D and headcount"],["Cash","FCF and capital returns"],["Review","Forecast, risks and actions"]],
+  intel:[["Demand","Client, data center and foundry"],["Revenue","Volume, price and mix"],["Margin","Utilization and product costs"],["Investment","R&D and fab capex"],["Cash","Inventory, debt and FCF"],["Review","Forecast, risks and actions"]]
+};
+
+function companySourceCoverage(){
+  const apple=companySlug==="apple";
+  return [
+    ["Financial actuals","Connected","SEC filings and XBRL","connected"],
+    ["Guidance and management commentary",apple?"Connected":"Not connected",apple?"Earnings call and curated IR sources":"Requires official IR releases and transcripts",apple?"connected":"missing"],
+    ["Workforce narrative",apple?"Annual only":"Not connected",apple?"Annual employee disclosure":"Requires annual-report narrative ingestion",apple?"partial":"missing"],
+    ["Sustainability",apple?"Connected":"Not connected",apple?"Environmental Progress Report":"Requires a governed sustainability report",apple?"connected":"missing"],
+    ["Market performance","Not connected","Requires a licensed price and benchmark feed","missing"]
+  ];
+}
+
+const FPNA_ARCHITECTURE=[
+  {label:"01 · Systems of record",icon:"ph-database",items:["ERP / general ledger","CRM and commercial","HRIS and workforce","Billing and operations"]},
+  {label:"02 · Finance control layer",icon:"ph-shield-check",items:["Period and entity mappings","Chart of accounts","Master data governance","Reconciliation controls"]},
+  {label:"03 · Planning engine",icon:"ph-sliders-horizontal",items:["Driver-based revenue","Workforce and opex","Capex, cash and liquidity","Scenarios and sensitivities"]},
+  {label:"04 · Decision workflow",icon:"ph-git-pull-request",items:["Business-partner review","Challenge and approvals","Version and assumption log","Risks, actions and owners"]},
+  {label:"05 · Finance outputs",icon:"ph-presentation-chart",items:["Management reporting","Board and strategy packs","Investor relations","Plan writeback"]}
+];
+
+const FPNA_CADENCE=[
+  ["Close & certify","Controller + finance","Reconciled actuals"],
+  ["Diagnose","FP&A","Variance drivers"],
+  ["Reforecast","FP&A + functions","Latest estimate"],
+  ["Partner review","Business leaders","Risks and opportunities"],
+  ["CFO challenge","CFO staff","Trade-offs and decisions"],
+  ["Communicate","Finance + IR","Management, board and market narrative"]
+];
+
+function companyFinanceArchitecture(){
+  const company=selectedCompany(), spine=COMPANY_PLANNING_SPINES[companySlug]||COMPANY_PLANNING_SPINES.apple;
+  return `<section class="finance-architecture" aria-labelledby="architectureHeading">
+    <div class="home-section-head"><div><span class="section-kicker">Typical enterprise FP&amp;A system</span><h2 id="architectureHeading">From source record to CFO decision</h2></div><span>Illustrative reference architecture, not ${escapeHtml(company.name)}’s disclosed internal stack.</span></div>
+    <div class="architecture-scroll-hint">Swipe to follow the finance system <i class="ph ph-arrow-right" aria-hidden="true"></i></div>
+    <ol class="architecture-flow" tabindex="0" aria-label="Typical enterprise FP&A system stages">
+      ${FPNA_ARCHITECTURE.map((stage,index)=>`<li><div class="architecture-stage-head"><i class="ph ${stage.icon}" aria-hidden="true"></i><span>${stage.label}</span></div><ul>${stage.items.map(item=>`<li>${escapeHtml(item)}</li>`).join("")}</ul>${index<FPNA_ARCHITECTURE.length-1?'<i class="ph ph-arrow-right architecture-arrow" aria-hidden="true"></i>':""}</li>`).join("")}
+    </ol>
+    <div class="architecture-rails">
+      <div><span>COMPANY DRIVER MODEL</span><strong>${spine.slice(0,4).map(([title])=>escapeHtml(title)).join(" · ")}</strong></div>
+      <div><span>CONTROLLED AI LAYER</span><strong>Explain · detect · draft · challenge</strong><small>AI never replaces reconciliations, approved assumptions, or deterministic calculations.</small></div>
+    </div>
+    <div class="architecture-source-note">Reference pattern informed by <a href="https://docs.oracle.com/en/cloud/saas/enterprise-performance-management-common/diepm/integration_create_overview_104x7403ef13_106x7403fada.html" target="_blank" rel="noopener">Oracle EPM</a>, <a href="https://help.sap.com/docs/SAP_S4HANA_ON-PREMISE/48f4b4785b8e45938ac44a67be8032d9/f900a12c7abf4c91957478cd6f6e48e8.html" target="_blank" rel="noopener">SAP Financial Planning</a>, and <a href="https://learn.microsoft.com/en-us/dynamics365/release-plan/2026wave1/enterprise-resource-planning/dynamics365-finance/explore-forecast-to-plan-planning-scenarios-power-bi" target="_blank" rel="noopener">Microsoft FP&amp;A planning</a>.</div>
+  </section>`;
+}
+
+function companyOperatingCadence(){
+  return `<section class="operating-cadence" aria-labelledby="cadenceHeading">
+    <div class="home-section-head"><div><span class="section-kicker">Illustrative operating cadence</span><h2 id="cadenceHeading">How finance turns actuals into action</h2></div><span>Sequence and timing vary by company.</span></div>
+    <ol class="cadence-flow">${FPNA_CADENCE.map(([phase,owner,output],index)=>`<li><span>${String(index+1).padStart(2,"0")}</span><strong>${phase}</strong><small>${owner}</small><b>${output}</b></li>`).join("")}</ol>
+  </section>`;
+}
+
 function companyHomeSections(){
   const company=selectedCompany();
-  const isApple=companySlug==="apple";
-  const dimensionText=isApple?"Period, product, geography, and profitability filters stay synchronized.":"Period filters stay synchronized. Product and geography controls appear only after a comparable governed source is connected.";
+  const spine=COMPANY_PLANNING_SPINES[companySlug]||COMPANY_PLANNING_SPINES.apple;
+  const coverage=companySourceCoverage();
   return `
-    <section class="home-about" aria-labelledby="howHeading">
-      <div class="home-section-head"><h2 id="howHeading">How it works</h2><span>One selected company, one governed context across every tab and AI answer.</span></div>
-      <div class="home-about-row">
-        <div class="about-stage"><div class="about-label">1 · Select</div><strong>${escapeHtml(company.name)}</strong><span>The company selector updates the full dashboard.</span></div>
-        <div class="about-stage"><div class="about-label">2 · Filter</div><strong>${escapeHtml(periodLabel())}</strong><span>${escapeHtml(dimensionText)}</span></div>
-        <div class="about-stage"><div class="about-label">3 · Analyze</div><strong>Filed facts + deterministic calculations</strong><span>Revenue, variance, margin, cash, and planning views share the same evidence.</span></div>
-        <div class="about-stage"><div class="about-label">4 · Ask</div><strong>Company-aware Dashboard AI</strong><span>Suggestions and answers receive the selected company, tab, period, filters, and modeled scenario.</span></div>
-        <div class="about-stage"><div class="about-label">5 · Decide</div><strong>FP&A and strategic-finance output</strong><span>Export sourced actuals or clearly labeled modeled scenarios.</span></div>
+    <section class="home-operating-grid" aria-label="Planning workflow and source coverage">
+      <div class="home-workflow-card">
+        <div class="home-section-head"><div><span class="section-kicker">Illustrative operating model</span><h2>${escapeHtml(company.name)} planning spine</h2></div><span>Tailored to public business drivers, not presented as the company’s internal process.</span></div>
+        <ol class="planning-spine">
+          ${spine.map(([title,detail],index)=>`<li><span class="spine-index">${String(index+1).padStart(2,"0")}</span><strong>${escapeHtml(title)}</strong><span>${escapeHtml(detail)}</span></li>`).join("")}
+        </ol>
+        <div class="workflow-boundary"><b>Typical enterprise flow:</b> source systems → governed finance model → planning and scenarios → review and approvals → management reporting.</div>
+      </div>
+      <aside class="home-coverage-card" aria-labelledby="coverageHeading">
+        <div class="home-section-head"><div><span class="section-kicker">Evidence boundary</span><h2 id="coverageHeading">Source coverage</h2></div><span>${escapeHtml(periodLabel())}</span></div>
+        <div class="coverage-list">
+          ${coverage.map(([name,status,detail,state])=>`<div class="coverage-row"><span class="coverage-dot" data-state="${state}"></span><span><strong>${escapeHtml(name)}</strong><small>${escapeHtml(detail)}</small></span><b data-state="${state}">${escapeHtml(status)}</b></div>`).join("")}
+        </div>
+      </aside>
+    </section>
+    <section class="home-reports" aria-labelledby="reportsHeading">
+      <div class="home-section-head"><div><span class="section-kicker">Decision-ready output</span><h2 id="reportsHeading">Standardized report center</h2></div><span>Fixed structures, company-aware evidence, and explicit unavailable sections.</span></div>
+      <div class="report-card-grid">
+        <button class="report-card" type="button" data-report="fpa"><span class="report-code">FP&amp;A / 01</span><strong>Performance Pack</strong><span>Actuals, variance, margin, opex, liquidity, risks and actions.</span><em>Open report <i class="ph ph-arrow-right"></i></em></button>
+        <button class="report-card" type="button" data-report="strategy"><span class="report-code">STRATEGY / 02</span><strong>Decision Pack</strong><span>Scenario economics, investment choices, sensitivities and capital implications.</span><em>Open report <i class="ph ph-arrow-right"></i></em></button>
+        <button class="report-card" type="button" data-report="ir"><span class="report-code">IR / 03</span><strong>Earnings Pack</strong><span>Reported performance, guidance, investor questions and source appendix.</span><em>Open report <i class="ph ph-arrow-right"></i></em></button>
       </div>
     </section>
-    <section class="home-explore" aria-labelledby="useCaseHeading">
-      <div class="home-section-head"><h2 id="useCaseHeading">FP&A and strategic-finance use cases</h2><span>Move from reported actuals to an evidence-backed management conversation.</span></div>
-      <div class="home-explore-grid">
-        <button class="explore-card" type="button" data-target="variance"><span class="explore-card-head"><span class="explore-icon"><i class="ph ph-scales"></i></span><span class="explore-copy"><span class="explore-title">Monthly and quarterly variance</span><span class="explore-desc">Separate revenue, margin, opex, cash, and timing movements.</span></span><span class="explore-open"><i class="ph ph-caret-right"></i></span></span></button>
-        <button class="explore-card" type="button" data-target="plan"><span class="explore-card-head"><span class="explore-icon"><i class="ph ph-sliders-horizontal"></i></span><span class="explore-copy"><span class="explore-title">Forecast and scenario planning</span><span class="explore-desc">Stress revenue growth, gross margin, and operating expense assumptions.</span></span><span class="explore-open"><i class="ph ph-caret-right"></i></span></span></button>
-        <button class="explore-card" type="button" data-target="balance"><span class="explore-card-head"><span class="explore-icon"><i class="ph ph-bank"></i></span><span class="explore-copy"><span class="explore-title">Liquidity and capital allocation</span><span class="explore-desc">Review cash, debt, working capital, buybacks, and dividends.</span></span><span class="explore-open"><i class="ph ph-caret-right"></i></span></span></button>
-        <button class="explore-card" type="button" data-target="glass"><span class="explore-card-head"><span class="explore-icon"><i class="ph ph-presentation-chart"></i></span><span class="explore-copy"><span class="explore-title">Management reporting</span><span class="explore-desc">Build a concise executive narrative with risks, drivers, and decision points.</span></span><span class="explore-open"><i class="ph ph-caret-right"></i></span></span></button>
+    ${companyFinanceArchitecture()}
+    ${companyOperatingCadence()}
+    <details class="home-details">
+      <summary>Data, AI and methodology</summary>
+      <div class="srcgrid">
+        <div class="srccard"><div class="t">Governed source layer</div><div class="d"><b>${escapeHtml(company.name)} SEC filings</b> provide ${companyPeriods().length} standardized quarters from ${escapeHtml(companyPeriods()[0]?.label||"n/a")} through ${escapeHtml(companyPeriods().slice(-1)[0]?.label||"n/a")}. Exact filed fiscal YTD facts override rounded quarter sums when available.</div></div>
+        <div class="srccard"><div class="t">Planning and reporting layer</div><div class="d">Actuals, plan versions, scenario assumptions, owners, approvals, and management reports should share one finance semantic model. Public filings do not contain an internal budget or annual operating plan.</div></div>
+        <div class="srccard"><div class="t">AI enrichment layer</div><div class="d">Dashboard AI receives company, period, tab, source evidence, and modeled assumptions. It can explain and draft narrative, but deterministic calculations remain authoritative.</div></div>
+        <div class="srccard"><div class="t">Integrity controls</div><div class="d">Every field remains <b>FILED, DERIVED, MODELED, or UNAVAILABLE</b>. Missing guidance, headcount, FX, environmental, and market data is never silently filled. <a href="./dashboard-builder-skill.zip" download>Download the agent skill</a>.</div></div>
       </div>
-    </section>
-    <section class="home-about" aria-labelledby="aboutHeading">
-      <div class="home-section-head"><h2 id="aboutHeading">About this dashboard</h2><span>Source, agentic workflow, model boundaries, and quality controls.</span></div>
-      <div class="home-about-row">
-        <div class="about-stage"><div class="about-label">Source</div><strong>${escapeHtml(company.name)} public filings</strong><span>SEC EDGAR · 10-Q / 10-K</span></div>
-        <div class="about-stage"><div class="about-label">Governed data</div><strong>SEC Company Facts + curated sources</strong><span>Filed and derived values carry source links and labels.</span></div>
-        <div class="about-stage"><div class="about-label">Finance engine</div><strong>Deterministic calculations</strong><span>YTD, margins, variance, free cash flow, and scenario math run before AI.</span></div>
-        <div class="about-stage"><div class="about-label">Agentic skill</div><strong>Context → tools → checks → answer</strong><span>The skill selects evidence, applies finance rules, checks availability, and explains the result.</span></div>
-        <div class="about-stage"><div class="about-label">Output</div><strong>Dashboard + CSV + Ask AI</strong><span>Every surface follows the same company and filter context.</span></div>
-        <div class="about-stage"><div class="about-label">Integrity</div><strong>REAL, DERIVED, MODELED, or UNAVAILABLE</strong><span>No missing company fact is silently invented.</span></div>
-      </div>
-      <details class="home-details" open>
-        <summary>Agentic finance stack and source notes</summary>
-        <div class="flowwrap">
-          <h3>A governed FP&A workflow, from source system to management decision</h3>
-          <svg id="flowSvg" class="flow-svg"></svg>
-          <div class="fnote">The public-company demo uses ${escapeHtml(company.name)} filings. In an enterprise FP&A deployment, the same governed flow can connect ERP actuals, planning data, HRIS, CRM, and approved management assumptions through scoped tools.</div>
-        </div>
-        <div class="srcgrid">
-          <div class="srccard"><div class="t">Where the data comes from</div><div class="d"><b>${escapeHtml(company.name)} SEC filings</b> provide standardized actuals for ${companyPeriods().length} quarters, from ${escapeHtml(companyPeriods()[0]?.label||"n/a")} through ${escapeHtml(companyPeriods().slice(-1)[0]?.label||"n/a")}. Apple-only product, geography, guidance, and environment sources remain isolated to Apple.</div></div>
-          <div class="srccard"><div class="t">What the agentic skill does</div><div class="d">The improved <b>Agent Skill</b> resolves company and fiscal context, chooses deterministic finance tools, refuses unsupported disclosures, checks source and calculation integrity, then produces a concise answer. <a href="./dashboard-builder-skill.zip" download style="color:var(--accent);font-weight:600">Download the skill</a>.</div></div>
-          <div class="srccard"><div class="t">How filters propagate</div><div class="d">Company, fiscal period, tab, product, geography, and planning-scenario context flow into charts, tables, exports, and Dashboard AI. Unsupported dimensions are visibly disabled rather than ignored.</div></div>
-          <div class="srccard"><div class="t">What is modeled</div><div class="d">Planning & Scenarios is explicitly <b>MODELED</b> from user-visible assumptions. Public filings do not contain an internal budget, annual operating plan, or management forecast.</div></div>
-        </div>
-      </details>
-    </section>`;
+    </details>`;
 }
 
 function wireCompanyHomeSections(){
-  document.querySelectorAll("#home .explore-card[data-target]").forEach(card=>card.addEventListener("click",()=>go(card.dataset.target)));
-  const details=document.querySelector("#home .home-details");
-  if(details) details.addEventListener("toggle",event=>{ if(event.target.open) requestAnimationFrame(drawFlow); });
-  requestAnimationFrame(drawFlow);
+  document.querySelectorAll("#home .report-card[data-report]").forEach(card=>card.addEventListener("click",()=>{
+    reportState=card.dataset.report;
+    go("reports");
+  }));
 }
 
 function companyPeriodTable(metricKeys,indexes){
@@ -231,6 +304,27 @@ function companyPeriodTable(metricKeys,indexes){
   return `<div class="scrollbox"><table><tr><th>Period</th><th>End</th>${keys.map(key=>`<th>${escapeHtml(labels[key]||key)}</th>`).join("")}<th>Source</th></tr>${rows}</table></div>`;
 }
 
+function companyExecutiveOverview(){
+  const indexes=selectedCompanyIndexes(), company=selectedCompany();
+  const revenue=companyMetricChange("revenue",indexes), op=companyMetricChange("operatingIncome",indexes), rd=companyMetricChange("rd",indexes);
+  const gm=companyRatio("grossProfit","revenue",indexes), om=companyRatio("operatingIncome","revenue",indexes);
+  const observed=[
+    ["Revenue",revenue.delta==null?"Comparison unavailable":`${sgn(revenue.delta)}% vs ${revenue.comparison.label}`],
+    ["Gross margin",companyPercent(gm)],
+    ["Operating margin",companyPercent(om)]
+  ];
+  const watch=[
+    companySlug==="apple"?"Guidance is connected to a dated earnings-call source.":"Guidance and management commentary are not connected.",
+    rd.delta==null?"A comparable R&D movement is unavailable.":`R&D moved ${sgn(rd.delta)}% versus the ${rd.comparison.label}.`
+  ];
+  return `<aside class="executive-overview" aria-labelledby="executiveOverviewHeading">
+    <div class="executive-overview-head"><div><span class="section-kicker">Management pulse</span><h2 id="executiveOverviewHeading">Executive overview</h2></div><span>${escapeHtml(company.ticker)}</span></div>
+    <div class="overview-signal-list">${observed.map(([name,value])=>`<div><span>${escapeHtml(name)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}</div>
+    <div class="overview-watch"><span>Watch next</span>${watch.map(item=>`<p>${escapeHtml(item)}</p>`).join("")}</div>
+    <div class="market-context"><span><i class="ph ph-chart-line-up"></i> Market context</span><strong>Not connected</strong><small>Add a licensed stock and benchmark feed before showing return performance.</small></div>
+  </aside>`;
+}
+
 function renderPeerHome(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
   const revenue=companyMetricTotal("revenue",indexes), gross=companyMetricTotal("grossProfit",indexes), op=companyMetricTotal("operatingIncome",indexes), fcf=companyMetricTotal("freeCashFlow",indexes);
@@ -244,14 +338,13 @@ function renderPeerHome(v){
       ${tile("Operating income",companyMoney(op),companyPercent(om)+" margin",op==null?undefined:op>=0)}
       ${tile("Free cash flow",companyMoney(fcf),"operating cash less capex",fcf==null?undefined:fcf>=0)}
     </div>
-    <div class="body g2" style="height:48%">
-      <div class="card"><h3>Revenue trend <span class="h3-note">filed quarter · $M</span></h3><div class="fill"><svg id="peerHomeRevenue"></svg></div></div>
-      <div class="card"><h3>Profit profile <span class="h3-note">operating vs net income · $M</span></h3><div class="fill"><svg id="peerHomeProfit"></svg></div></div>
+    <div class="home-primary-grid">
+      <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $M</span></h3><div class="fill"><svg id="peerHomeRevenue"></svg></div></div>
+      ${companyExecutiveOverview()}
     </div>
     ${companyHomeSections()}`;
   const periods=companyPeriods();
   chartTable(document.getElementById("peerHomeRevenue"),"bar",{labels:periods.map(period=>companyChartLabel(period)),values:periods.map(period=>period.metrics.revenue),active:latest,fmt:B});
-  chartTable(document.getElementById("peerHomeProfit"),"grouped",{cats:periods.map(companyChartLabel),seriesA:periods.map(period=>period.metrics.operatingIncome||0),seriesB:periods.map(period=>period.metrics.netIncome||0),nameA:"Operating income",nameB:"Net income",fmt:B});
   wireCompanyHomeSections();
 }
 
@@ -259,7 +352,7 @@ function renderPeerGlass(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes();
   const revenue=companyMetricChange("revenue",indexes), op=companyMetricChange("operatingIncome",indexes), rd=companyMetricChange("rd",indexes);
   const gm=companyRatio("grossProfit","revenue",indexes), om=companyRatio("operatingIncome","revenue",indexes), fcf=companyMetricTotal("freeCashFlow",indexes);
-  v.innerHTML=`${companyHeader(`${company.name} executive summary`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} executive review`,periodSub("$M"))}
     ${companyContextNote("Decision view built from comparable filed financial facts. Product mix, geography, guidance, and environmental detail appear only when the issuer files a comparable source.")}
     ${sowhat(`${company.name} revenue was ${companyMoney(revenue.currentValue)} and operating income was ${companyMoney(op.currentValue)} in ${periodLabel(indexes)}. Gross margin was ${companyPercent(gm)}.`)}
     <div class="tiles">
@@ -312,14 +405,21 @@ function companyVarianceData(indexes){
 function renderPeerVariance(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), comparison=companyComparison(indexes), rows=companyVarianceData(indexes);
   const chartRows=rows.filter(row=>Number.isFinite(row.delta));
+  const movers=[...chartRows].sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,3);
   v.innerHTML=`${companyHeader(`${company.name} variance analysis`,periodSub("$M"))}
-    ${companyContextNote("Filed financial variance analysis. The comparison uses the same fiscal quarters one year earlier when available, otherwise the immediately preceding period.")}
+    ${companyContextNote("Filed financial variance analysis. Prior-year actuals are connected. Approved plan and latest forecast remain unavailable until a governed planning source is connected.")}
     ${sowhat(comparison?`${periodLabel(indexes)} is compared with the ${comparison.label}. ${chartRows.length} comparable financial lines are available.`:"A comparable prior period is not available for this selection.")}
-    <div class="body g21" style="height:65%">
+    <div class="comparison-state-grid">
+      <div data-state="connected"><span>Actual vs prior year</span><strong>${comparison?"Connected":"Unavailable"}</strong><small>SEC filed actuals</small></div>
+      <div data-state="missing"><span>Actual vs approved plan</span><strong>Not connected</strong><small>Requires a governed planning version</small></div>
+      <div data-state="missing"><span>Actual vs latest forecast</span><strong>Not connected</strong><small>Requires forecast version and timestamp</small></div>
+    </div>
+    <div class="body g21" style="height:52%">
       <div class="card"><h3>Variance by financial line</h3>${chartRows.length?'<div class="fill"><svg id="peerVarianceChart"></svg></div>':emptyState("No comparable filed metrics for this selection.")}</div>
-      <div class="card"><h3>Variance table</h3><div class="scrollbox"><table><tr><th>Line item</th><th>Current</th><th>${comparison?escapeHtml(comparison.label):"Comparison"}</th><th>Δ %</th></tr>
-        ${rows.map(row=>`<tr><td>${escapeHtml(row.label)}</td><td>${row.currentValue==null?"n/a":M(row.currentValue)}</td><td>${row.comparisonValue==null?"n/a":M(row.comparisonValue)}</td><td>${row.delta==null?"n/a":sgn(row.delta)+"%"}</td></tr>`).join("")}</table></div></div>
-    </div>`;
+      <div class="card management-followup"><h3>Management follow-up</h3>${movers.length?`<ol>${movers.map(row=>`<li><span>${escapeHtml(row.label)}</span><strong>${sgn(row.delta)}%</strong><small>${row.expense?"Validate investment level, timing and return.":"Confirm operating driver, sustainability and forecast impact."}</small></li>`).join("")}</ol>`:emptyState("No comparable movement is available.")}<div class="action-boundary">Owners, actions and status remain unavailable until a workflow source is connected.</div></div>
+    </div>
+    <details class="variance-detail"><summary>View detailed variance table</summary><div class="scrollbox"><table><tr><th>Line item</th><th>Current</th><th>${comparison?escapeHtml(comparison.label):"Comparison"}</th><th>Δ %</th></tr>
+      ${rows.map(row=>`<tr><td>${escapeHtml(row.label)}</td><td>${row.currentValue==null?"n/a":M(row.currentValue)}</td><td>${row.comparisonValue==null?"n/a":M(row.comparisonValue)}</td><td>${row.delta==null?"n/a":sgn(row.delta)+"%"}</td></tr>`).join("")}</table></div></details>`;
   if(chartRows.length) chartTable(document.getElementById("peerVarianceChart"),"diverging",{names:chartRows.map(row=>row.label),values:chartRows.map(row=>row.delta),fmt:value=>sgn(value)+"%"});
 }
 
@@ -349,7 +449,7 @@ function renderPeerBalance(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
   const cash=companyMetricAt(latest,"cash"), investments=companyMetricAt(latest,"shortTermInvestments"), debt=companyMetricAt(latest,"totalDebt"), receivables=companyMetricAt(latest,"accountsReceivable"), payables=companyMetricAt(latest,"accountsPayable");
   const currentAssets=companyMetricAt(latest,"currentAssets"), currentLiabilities=companyMetricAt(latest,"currentLiabilities"), currentRatio=currentAssets!=null&&currentLiabilities?currentAssets/currentLiabilities:null;
-  v.innerHTML=`${companyHeader(`${company.name} balance sheet · AR/AP`,`${qLabel(latest)} · point in time · $M`)}
+  v.innerHTML=`${companyHeader(`${company.name} liquidity & working capital`,`${qLabel(latest)} · point in time · $M`)}
     ${companyContextNote("Point-in-time balance-sheet facts from the latest selected filing. Values are never summed across quarters.")}
     ${sowhat(`${qLabel(latest)} cash was ${companyMoney(cash)}, reported debt was ${companyMoney(debt)}, and the current ratio was ${currentRatio==null?"unavailable":currentRatio.toFixed(2)+"x"}.`)}
     <div class="tiles">
@@ -367,7 +467,7 @@ function renderPeerCapital(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), periods=companyPeriods();
   const repurchases=companyMetricTotal("repurchases",indexes), dividends=companyMetricTotal("dividends",indexes), stockComp=companyMetricTotal("shareBasedCompensation",indexes), latest=indexes[indexes.length-1], debt=companyMetricAt(latest,"totalDebt"), cash=companyMetricAt(latest,"cash");
   const capitalPeriods=periods.filter(period=>Number.isFinite(period.metrics.repurchases)||Number.isFinite(period.metrics.dividends));
-  v.innerHTML=`${companyHeader(`${company.name} FX & capital returns`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} treasury & capital allocation`,periodSub("$M"))}
     ${companyContextNote("Capital-return facts are standardized from cash-flow filings. Constant-currency or FX exposure is shown only when a comparable filed metric exists.")}
     ${sowhat(`${periodLabel(indexes)} repurchases were ${companyMoney(repurchases)} and dividends paid were ${companyMoney(dividends)}. Comparable FX disclosure is not available in the standardized source.`)}
     <div class="tiles">
@@ -388,7 +488,7 @@ function renderPeerCapital(v){
 function renderPeerPeople(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), periods=companyPeriods().filter(period=>Number.isFinite(period.metrics.rd));
   const rd=companyMetricTotal("rd",indexes), revenue=companyMetricTotal("revenue",indexes), ratio=rd!=null&&revenue?100*rd/revenue:null, change=companyMetricChange("rd",indexes);
-  v.innerHTML=`${companyHeader(`${company.name} headcount & R&D`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} workforce & investment`,periodSub("$M"))}
     ${companyContextNote("R&D expense is standardized from SEC filings. Headcount is not consistently tagged in SEC Company Facts and is therefore not estimated.")}
     ${sowhat(`${periodLabel(indexes)} R&D was ${companyMoney(rd)}, or ${companyPercent(ratio)} of revenue${change.delta==null?"":`, ${sgn(change.delta)}% versus the ${change.comparison.label}`}.`)}
     <div class="tiles">
@@ -408,7 +508,7 @@ function renderPeerOutlook(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1], periods=companyPeriods();
   const revenue=companyMetricAt(latest,"revenue"), op=companyMetricAt(latest,"operatingIncome"), gm=companyMetricAt(latest,"grossProfit")!=null&&revenue?100*companyMetricAt(latest,"grossProfit")/revenue:null, om=op!=null&&revenue?100*op/revenue:null;
   const revenueChange=companyMetricChange("revenue",[latest]);
-  v.innerHTML=`${companyHeader(`${company.name} outlook`,`${qLabel(latest)} · latest filed quarter`)}
+  v.innerHTML=`${companyHeader(`${company.name} outlook & investor relations`,`${qLabel(latest)} · latest filed quarter`)}
     ${companyContextNote("This view separates reported momentum from management guidance. The standardized SEC source contains filed results, not earnings-call guidance or an internal forecast.")}
     ${sowhat(`${qLabel(latest)} revenue was ${companyMoney(revenue)}${revenueChange.delta==null?"":`, ${sgn(revenueChange.delta)}% year over year`}. Gross margin was ${companyPercent(gm)} and operating margin was ${companyPercent(om)}.`)}
     <div class="tiles">
@@ -443,6 +543,8 @@ function renderPeerEnvironment(v){
 }
 
 var planningState={scenario:"base",revenueGrowth:8,grossMarginDelta:0,opexGrowth:8};
+var decisionState=null;
+var reportState="fpa";
 const PLANNING_PRESETS={
   base:{revenueGrowth:8,grossMarginDelta:0,opexGrowth:8},
   upside:{revenueGrowth:15,grossMarginDelta:1,opexGrowth:10},
@@ -461,6 +563,95 @@ function planningModel(){
   const forecastOpex=opex*(1+planningState.opexGrowth/100);
   const forecastOperatingIncome=forecastGrossProfit-forecastOpex;
   return {baseIndex,period,available:true,revenue,grossProfit,operatingIncome,grossMargin,opex,forecastRevenue,forecastGrossMargin,forecastGrossProfit,forecastOpex,forecastOperatingIncome,forecastOperatingMargin:forecastRevenue?100*forecastOperatingIncome/forecastRevenue:null};
+}
+
+function decisionRound(value){
+  const step=value>=10000?500:value>=2000?100:50;
+  return Math.max(step,Math.round(value/step)*step);
+}
+
+function decisionDefaults(){
+  const indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
+  const revenue=companyMetricAt(latest,"revenue")||10000;
+  return {initialInvestment:decisionRound(revenue*.05),annualBenefit:decisionRound(revenue*.03),annualRunCost:decisionRound(revenue*.008),years:5,discountRate:10};
+}
+
+function ensureDecisionState(){
+  if(!decisionState) decisionState=decisionDefaults();
+  return decisionState;
+}
+
+function decisionNpv(initialInvestment,annualNetBenefit,years,discountRate){
+  const rate=discountRate/100;
+  let value=-initialInvestment;
+  for(let year=1;year<=years;year++) value+=annualNetBenefit/Math.pow(1+rate,year);
+  return value;
+}
+
+function decisionIrr(initialInvestment,annualNetBenefit,years){
+  if(initialInvestment<=0||annualNetBenefit<=0||years<1) return null;
+  const valueAt=rate=>{
+    let value=-initialInvestment;
+    for(let year=1;year<=years;year++) value+=annualNetBenefit/Math.pow(1+rate,year);
+    return value;
+  };
+  let low=-.99, high=10, lowValue=valueAt(low), highValue=valueAt(high);
+  if(lowValue*highValue>0) return null;
+  for(let step=0;step<100;step++){
+    const mid=(low+high)/2, value=valueAt(mid);
+    if(value===0) return mid*100;
+    if(lowValue*value<=0){ high=mid; highValue=value; }
+    else { low=mid; lowValue=value; }
+  }
+  return ((low+high)/2)*100;
+}
+
+function decisionModel(){
+  const assumptions=ensureDecisionState();
+  const initialInvestment=Math.max(0,Number(assumptions.initialInvestment)||0);
+  const annualBenefit=Math.max(0,Number(assumptions.annualBenefit)||0);
+  const annualRunCost=Math.max(0,Number(assumptions.annualRunCost)||0);
+  const years=Math.max(1,Math.min(10,Math.round(Number(assumptions.years)||1)));
+  const discountRate=Math.max(0,Math.min(50,Number(assumptions.discountRate)||0));
+  const annualNetBenefit=annualBenefit-annualRunCost;
+  const npv=decisionNpv(initialInvestment,annualNetBenefit,years,discountRate);
+  const irr=decisionIrr(initialInvestment,annualNetBenefit,years);
+  const payback=annualNetBenefit>0?initialInvestment/annualNetBenefit:null;
+  const roi=initialInvestment>0?100*((annualNetBenefit*years)-initialInvestment)/initialInvestment:null;
+  return {initialInvestment,annualBenefit,annualRunCost,annualNetBenefit,years,discountRate,npv,irr,payback,roi,attractive:npv>0&&irr!=null&&irr>discountRate};
+}
+
+function decisionSensitivity(model){
+  const rates=[Math.max(0,model.discountRate-2),model.discountRate,Math.min(50,model.discountRate+2)];
+  const benefits=[.8,1,1.2];
+  return {rates,benefits,values:benefits.map(multiplier=>rates.map(rate=>decisionNpv(model.initialInvestment,model.annualNetBenefit*multiplier,model.years,rate)))};
+}
+
+function decisionLabHTML(){
+  const company=selectedCompany(), model=decisionModel(), sensitivity=decisionSensitivity(model);
+  const payback=model.payback==null?"n/a":model.payback>model.years?`>${model.years} yrs`:`${model.payback.toFixed(1)} yrs`;
+  const recommendation=model.attractive?"Clears the modeled hurdle":"Does not clear the modeled hurdle";
+  return `<section class="decision-lab" aria-labelledby="decisionLabHeading">
+    <div class="decision-lab-head"><div><span class="section-kicker">Strategic finance decision lab</span><h2 id="decisionLabHeading">Investment case and sensitivity</h2><p>Illustrative, pre-tax and unlevered. Inputs are scaled from ${escapeHtml(company.name)}’s latest filed quarterly revenue and remain fully editable.</p></div><span class="badge">MODELED</span></div>
+    <div class="decision-layout">
+      <div class="decision-inputs" role="group" aria-label="Investment case assumptions">
+        <label><span>Initial investment <small>$M</small></span><input id="decisionInvestment" type="number" min="0" step="50" value="${model.initialInvestment}"></label>
+        <label><span>Annual gross benefit <small>$M</small></span><input id="decisionBenefit" type="number" min="0" step="50" value="${model.annualBenefit}"></label>
+        <label><span>Annual run cost <small>$M</small></span><input id="decisionRunCost" type="number" min="0" step="25" value="${model.annualRunCost}"></label>
+        <label><span>Useful life <small>years</small></span><input id="decisionYears" type="number" min="1" max="10" step="1" value="${model.years}"></label>
+        <label><span>Discount rate <small>%</small></span><input id="decisionDiscountRate" type="number" min="0" max="50" step="0.5" value="${model.discountRate}"></label>
+      </div>
+      <div class="decision-result" data-attractive="${model.attractive}"><span>DECISION SIGNAL</span><strong>${recommendation}</strong><p>${model.attractive?"Modeled value creation remains positive at the selected hurdle rate.":"Revisit benefit realization, timing, cost or investment scope before approval."}</p><button type="button" id="decisionReport">Open Strategic Finance Pack <i class="ph ph-arrow-right"></i></button></div>
+      <div class="decision-kpis" role="list" aria-label="Investment case results">
+        <div role="listitem"><span>NPV</span><strong>${companyMoney(model.npv)}</strong><small>${model.discountRate.toFixed(1)}% hurdle</small></div>
+        <div role="listitem"><span>IRR</span><strong>${model.irr==null?"n/a":companyPercent(model.irr)}</strong><small>Modeled project return</small></div>
+        <div role="listitem"><span>Payback</span><strong>${payback}</strong><small>Undiscounted</small></div>
+        <div role="listitem"><span>Five-year ROI</span><strong>${model.roi==null?"n/a":companyPercent(model.roi)}</strong><small>Net benefit less investment</small></div>
+      </div>
+    </div>
+    <div class="decision-sensitivity"><div><h3>NPV sensitivity <span>$M</span></h3><p>Annual net benefit versus discount rate</p></div><div class="scrollbox"><table><thead><tr><th>Net benefit</th>${sensitivity.rates.map(rate=>`<th>${rate.toFixed(1)}%</th>`).join("")}</tr></thead><tbody>${sensitivity.values.map((row,rowIndex)=>`<tr><th>${Math.round(sensitivity.benefits[rowIndex]*100)}%</th>${row.map(value=>`<td data-value="${value>=0?"positive":"negative"}">${companyMoney(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>
+    <div class="decision-boundary"><b>Decision discipline:</b> validate benefit ownership, timing, tax, depreciation, working capital, implementation risk and terminal value before using this as an approval model.</div>
+  </section>`;
 }
 
 function renderPlan(v){
@@ -495,36 +686,148 @@ function renderPlan(v){
         <tr><td>Operating income</td><td>${M(model.operatingIncome)}</td><td>${M(model.forecastOperatingIncome)}</td></tr>
         <tr><td>Operating margin</td><td>${companyPercent(100*model.operatingIncome/model.revenue)}</td><td>${companyPercent(model.forecastOperatingMargin)}</td></tr>
       </table></div><div class="subnote">All modeled outputs are arithmetic. Change any assumption above to recalculate.</div></div>
-    </div>`:companyUnavailable("Scenario unavailable","Revenue, gross profit, and operating income are required to calculate this scenario. Missing values remain unavailable.")}`;
+    </div>`:companyUnavailable("Scenario unavailable","Revenue, gross profit, and operating income are required to calculate this scenario. Missing values remain unavailable.")}
+    ${decisionLabHTML()}`;
   document.querySelectorAll("[data-plan-scenario]").forEach(button=>button.addEventListener("click",()=>{
     planningState={scenario:button.dataset.planScenario,...PLANNING_PRESETS[button.dataset.planScenario]}; render();
   }));
   [["planRevenueGrowth","revenueGrowth"],["planGrossMarginDelta","grossMarginDelta"],["planOpexGrowth","opexGrowth"]].forEach(([id,key])=>{
     const input=document.getElementById(id); if(input) input.addEventListener("change",()=>{ planningState={...planningState,scenario:"custom",[key]:Number(input.value)||0}; render(); });
   });
+  [["decisionInvestment","initialInvestment"],["decisionBenefit","annualBenefit"],["decisionRunCost","annualRunCost"],["decisionYears","years"],["decisionDiscountRate","discountRate"]].forEach(([id,key])=>{
+    const input=document.getElementById(id); if(input) input.addEventListener("change",()=>{ decisionState={...ensureDecisionState(),[key]:Number(input.value)||0}; render(); });
+  });
+  const decisionReport=document.getElementById("decisionReport");
+  if(decisionReport) decisionReport.addEventListener("click",()=>{ reportState="strategy"; go("reports"); });
   if(model.available) chartTable(document.getElementById("planComparison"),"grouped",{cats:["Revenue","Gross profit","Operating income"],seriesA:[model.forecastRevenue,model.forecastGrossProfit,model.forecastOperatingIncome],seriesB:[model.revenue,model.grossProfit,model.operatingIncome],nameA:"Modeled",nameB:"Actual",fmt:B});
 }
 
 function csvPlan(){
-  const company=selectedCompany(), model=planningModel();
+  const company=selectedCompany(), model=planningModel(), decision=decisionModel();
   const rows=model.available?[
     [company.name,model.period.label,planningState.scenario,"revenue_growth_pct",planningState.revenueGrowth,model.revenue,model.forecastRevenue,"MODELED"],
     [company.name,model.period.label,planningState.scenario,"gross_margin_change_pts",planningState.grossMarginDelta,model.grossMargin,model.forecastGrossMargin,"MODELED"],
     [company.name,model.period.label,planningState.scenario,"opex_growth_pct",planningState.opexGrowth,model.opex,model.forecastOpex,"MODELED"],
     [company.name,model.period.label,planningState.scenario,"operating_income",null,model.operatingIncome,model.forecastOperatingIncome,"MODELED"]
   ]:[];
+  rows.push(
+    [company.name,model.period?.label||periodLabel(),"decision_lab","initial_investment",decision.initialInvestment,null,decision.npv,"MODELED"],
+    [company.name,model.period?.label||periodLabel(),"decision_lab","annual_gross_benefit",decision.annualBenefit,null,decision.irr,"MODELED"],
+    [company.name,model.period?.label||periodLabel(),"decision_lab","annual_run_cost",decision.annualRunCost,null,decision.payback,"MODELED"],
+    [company.name,model.period?.label||periodLabel(),"decision_lab","discount_rate_pct",decision.discountRate,null,decision.roi,"MODELED"]
+  );
   downloadCSV(`${companySlug}_planning_scenario_${planningState.scenario}.csv`,`MODELED FP&A scenario based on ${company.name} filed actuals. This is not company guidance or an internal budget.`,["company","base_period","scenario","driver","assumption","actual","modeled","field_basis"],rows);
 }
 
+const REPORT_DEFINITIONS={
+  fpa:{label:"FP&A Performance Pack",code:"FP&A / 01",purpose:"Performance, variance, liquidity, risks and actions"},
+  strategy:{label:"Strategic Finance Decision Pack",code:"STRATEGY / 02",purpose:"Scenario economics, sensitivities and capital implications"},
+  ir:{label:"Investor Relations Earnings Pack",code:"IR / 03",purpose:"Reported performance, guidance and investor questions"}
+};
+
+function reportMetricRows(indexes){
+  const comparison=companyComparison(indexes);
+  return [
+    ["Revenue","revenue"],["Gross profit","grossProfit"],["Operating income","operatingIncome"],
+    ["Net income","netIncome"],["R&D","rd"],["Free cash flow","freeCashFlow"]
+  ].map(([label,key])=>{
+    const actual=companyMetricTotal(key,indexes), prior=comparison?companyMetricTotal(key,comparison.indexes):null;
+    const delta=actual==null||prior==null||prior===0?null:100*(actual-prior)/Math.abs(prior);
+    return {label,key,actual,prior,delta,comparison};
+  });
+}
+
+function reportSourceAppendix(indexes){
+  return `<table class="report-table"><thead><tr><th>Period</th><th>Filed</th><th>Form</th><th>Evidence</th></tr></thead><tbody>${indexes.map(index=>{
+    const period=companyPeriodAt(index);
+    return `<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.source.filed||"n/a")}</td><td>${escapeHtml(period.source.form||"n/a")}</td><td><a href="${period.source.url}" target="_blank" rel="noopener">SEC filing</a></td></tr>`;
+  }).join("")}</tbody></table>`;
+}
+
+function reportUnavailable(label,detail){
+  return `<div class="report-callout unavailable"><span>UNAVAILABLE</span><strong>${escapeHtml(label)}</strong><p>${escapeHtml(detail)}</p></div>`;
+}
+
+function fpaReportBody(indexes,rows){
+  const company=selectedCompany(), revenue=rows[0], op=rows[2], fcf=rows[5];
+  return `<div class="report-columns">
+    <section><h3>Executive assessment</h3><p>${escapeHtml(company.name)} reported ${companyMoney(revenue.actual)} of revenue in ${periodLabel(indexes)}${revenue.delta==null?"":`, ${sgn(revenue.delta)}% versus the ${revenue.comparison.label}`}. Operating income was ${companyMoney(op.actual)} and free cash flow was ${companyMoney(fcf.actual)}.</p></section>
+    <section><h3>Management focus</h3><ul><li>Confirm the operating drivers behind the largest filed movements.</li><li>Review margin, investment and cash implications together.</li><li>Assign owners and actions after plan and forecast data is connected.</li></ul></section>
+  </div>
+  <section tabindex="0"><h3>Actual performance</h3><table class="report-table"><thead><tr><th>Metric</th><th>Actual</th><th>${escapeHtml(rows[0].comparison?.label||"Comparison")}</th><th>Change</th><th>Basis</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${escapeHtml(row.label)}</td><td>${companyMoney(row.actual)}</td><td>${companyMoney(row.prior)}</td><td>${row.delta==null?"n/a":sgn(row.delta)+"%"}</td><td>${selectedIndexesAreFiscalYtd(indexes)?"Exact filed YTD where available":"Filed quarter totals"}</td></tr>`).join("")}</tbody></table></section>
+  <div class="report-columns">${reportUnavailable("Plan and latest forecast","Public filings do not contain the approved operating plan or latest internal forecast.")}${reportUnavailable("Owners and actions","A governed workflow source is required before names, due dates, or approval status can be shown.")}</div>`;
+}
+
+function strategyReportBody(indexes,rows){
+  const company=selectedCompany(), model=planningModel(), decision=decisionModel(), latest=indexes[indexes.length-1];
+  const cash=companyMetricAt(latest,"cash"), debt=companyMetricAt(latest,"totalDebt"), repurchases=companyMetricTotal("repurchases",indexes);
+  return `<div class="report-columns">
+    <section><h3>Decision frame</h3><p>Evaluate how changes in growth, gross margin and operating investment affect ${escapeHtml(company.name)} operating income and liquidity. This is a public-data decision scaffold, not the company’s internal strategic plan.</p></section>
+    <section><h3>Capital position</h3><dl class="report-facts"><div><dt>Cash</dt><dd>${companyMoney(cash)}</dd></div><div><dt>Debt</dt><dd>${companyMoney(debt)}</dd></div><div><dt>Repurchases</dt><dd>${companyMoney(repurchases)}</dd></div></dl></section>
+  </div>
+  ${model.available?`<section tabindex="0"><h3>${escapeHtml(planningState.scenario)} scenario sensitivity <span>MODELED</span></h3><table class="report-table"><thead><tr><th>Driver</th><th>Actual baseline</th><th>Assumption</th><th>Modeled next quarter</th></tr></thead><tbody>
+    <tr><td>Revenue</td><td>${companyMoney(model.revenue)}</td><td>${sgn(planningState.revenueGrowth)}%</td><td>${companyMoney(model.forecastRevenue)}</td></tr>
+    <tr><td>Gross margin</td><td>${companyPercent(model.grossMargin)}</td><td>${sgn(planningState.grossMarginDelta)} pts</td><td>${companyPercent(model.forecastGrossMargin)}</td></tr>
+    <tr><td>Operating expense</td><td>${companyMoney(model.opex)}</td><td>${sgn(planningState.opexGrowth)}%</td><td>${companyMoney(model.forecastOpex)}</td></tr>
+    <tr><td>Operating income</td><td>${companyMoney(model.operatingIncome)}</td><td>Calculated</td><td>${companyMoney(model.forecastOperatingIncome)}</td></tr>
+  </tbody></table><p class="report-note">All scenario values are deterministic arithmetic from the latest selected filed quarter.</p></section>`:reportUnavailable("Scenario economics","Comparable revenue, gross-profit and operating-income facts are required.")}
+  <section tabindex="0"><h3>Investment decision case <span>MODELED</span></h3><table class="report-table"><thead><tr><th>Investment</th><th>Annual net benefit</th><th>NPV</th><th>IRR</th><th>Payback</th><th>Hurdle result</th></tr></thead><tbody><tr><td>${companyMoney(decision.initialInvestment)}</td><td>${companyMoney(decision.annualNetBenefit)}</td><td>${companyMoney(decision.npv)}</td><td>${decision.irr==null?"n/a":companyPercent(decision.irr)}</td><td>${decision.payback==null?"n/a":decision.payback.toFixed(1)+" yrs"}</td><td>${decision.attractive?"Clears":"Does not clear"}</td></tr></tbody></table><p class="report-note">Illustrative pre-tax, unlevered model. Tax, depreciation, working capital, implementation timing and terminal value are not included.</p></section>
+  <div class="report-columns">${reportUnavailable("Long-range plan","A 12 to 18-month approved forecast source is not connected.")}${reportUnavailable("Investment approval workflow","Business-case owners, thresholds and approval status are not public filing data.")}</div>`;
+}
+
+function irReportBody(indexes,rows){
+  const company=selectedCompany(), latest=indexes[indexes.length-1];
+  const latestRevenue=companyMetricAt(latest,"revenue"), latestGross=companyMetricAt(latest,"grossProfit"), latestOp=companyMetricAt(latest,"operatingIncome"), latestNet=companyMetricAt(latest,"netIncome");
+  const latestChange=companyMetricChange("revenue",[latest]);
+  const hasIr=companySlug==="apple";
+  return `<div class="report-columns">
+    <section><h3>Quarterly message</h3><p>${escapeHtml(company.name)} reported ${companyMoney(latestRevenue)} of revenue in ${qLabel(latest)}${latestChange.delta==null?"":`, ${sgn(latestChange.delta)}% year over year`}. Gross margin was ${latestRevenue&&latestGross!=null?companyPercent(100*latestGross/latestRevenue):"n/a"}.</p></section>
+    <section><h3>Reported earnings</h3><dl class="report-facts"><div><dt>Revenue</dt><dd>${companyMoney(latestRevenue)}</dd></div><div><dt>Operating income</dt><dd>${companyMoney(latestOp)}</dd></div><div><dt>Net income</dt><dd>${companyMoney(latestNet)}</dd></div></dl></section>
+  </div>
+  <section><h3>Investor question set</h3><ol><li>What changed in revenue growth and business mix?</li><li>Which factors affected gross margin and operating leverage?</li><li>How is investment translating into future growth and cash generation?</li><li>What guidance, supply, demand, regulatory or capital risks matter next?</li></ol></section>
+  <div class="report-columns">
+    ${hasIr?`<div class="report-callout connected"><span>CONNECTED</span><strong>Guidance and commentary</strong><p>Apple’s curated earnings-call evidence is available in Outlook.</p></div>`:reportUnavailable("Guidance and management commentary","Connect the company’s official earnings release, CFO commentary, presentation and transcript.")}
+    ${reportUnavailable("Stock and benchmark performance","A licensed market-data feed is required before showing price performance or earnings-day reaction.")}
+  </div>`;
+}
+
+function renderReports(v){
+  const company=selectedCompany(), indexes=selectedCompanyIndexes(), rows=reportMetricRows(indexes), definition=REPORT_DEFINITIONS[reportState]||REPORT_DEFINITIONS.fpa;
+  const body=reportState==="strategy"?strategyReportBody(indexes,rows):reportState==="ir"?irReportBody(indexes,rows):fpaReportBody(indexes,rows);
+  v.innerHTML=`${companyHeader(`${company.name} standardized reports`,`${periodLabel(indexes)} · ${definition.purpose}`)}
+    <div class="report-toolbar" role="group" aria-label="Report type">
+      ${Object.entries(REPORT_DEFINITIONS).map(([key,item])=>`<button type="button" data-report-switch="${key}" aria-pressed="${reportState===key}"><span>${item.code}</span>${item.label}</button>`).join("")}
+      <button type="button" class="report-print" id="reportPrint"><i class="ph ph-printer"></i> Print / Save PDF</button>
+      <button type="button" class="report-ai" id="reportAi"><i class="ph ph-sparkle"></i> Draft narrative with AI</button>
+    </div>
+    <article class="report-sheet" aria-labelledby="reportTitle">
+      <header><div><span>${definition.code}</span><h1 id="reportTitle">${escapeHtml(definition.label)}</h1><p>${escapeHtml(company.name)} · ${escapeHtml(periodLabel(indexes))}</p></div><div class="report-status"><span>Evidence status</span><strong>FILED + DERIVED</strong><small>Modeled and unavailable sections are marked.</small></div></header>
+      ${body}
+      <section class="report-sources"><h3>Source appendix</h3>${reportSourceAppendix(indexes)}</section>
+      <footer>Prepared from governed public-company evidence. This report does not represent ${escapeHtml(company.name)} internal planning, guidance, or management approval.</footer>
+    </article>`;
+  document.querySelectorAll("[data-report-switch]").forEach(button=>button.addEventListener("click",()=>{reportState=button.dataset.reportSwitch;render();}));
+  document.getElementById("reportPrint").addEventListener("click",()=>window.print());
+  document.getElementById("reportAi").addEventListener("click",()=>{
+    aiInput.value=`Draft the ${definition.label} narrative for ${company.name} using only the selected dashboard evidence. Separate filed results, modeled outputs, and unavailable information.`;
+    openAI("dashboard");
+  });
+}
+
+function csvReports(){
+  const company=selectedCompany(), indexes=selectedCompanyIndexes(), rows=reportMetricRows(indexes);
+  downloadCSV(`${companySlug}_${reportState}_report_${periodFileTag(indexes)}.csv`,`Governed source data for the ${REPORT_DEFINITIONS[reportState].label}.`,["company","report","period","metric","actual","comparison","change_pct","field_basis"],rows.map(row=>[company.name,reportState,periodLabel(indexes),row.label,row.actual,row.prior,row.delta,"FILED_OR_DERIVED"]));
+}
+
 function renderPeerTab(tab,v){
-  ({home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment}[tab]||renderPeerHome)(v);
+  ({home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment,reports:renderReports}[tab]||renderPeerHome)(v);
 }
 
 function peerMetricKeysForTab(tab){
   return {
     revenue:["revenue"], variance:["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"],
     profit:["revenue","grossProfit","operatingIncome","netIncome","rd"], balance:["cash","shortTermInvestments","accountsReceivable","accountsPayable","currentAssets","currentLiabilities","totalAssets","totalLiabilities","totalDebt"],
-    fx:["repurchases","dividends","shareBasedCompensation","cash","totalDebt"], people:["revenue","rd"], outlook:["revenue","grossProfit","operatingIncome"], env:[]
+    fx:["repurchases","dividends","shareBasedCompensation","cash","totalDebt"], people:["revenue","rd"], outlook:["revenue","grossProfit","operatingIncome"], env:[], reports:["revenue","grossProfit","operatingIncome","netIncome","rd","freeCashFlow"]
   }[tab] || ["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"];
 }
 

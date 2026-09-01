@@ -126,6 +126,17 @@ test("selected peer company follows every dashboard tab into AI evidence", async
   assert.doesNotMatch(requestBody.system, /iPhone/);
 });
 
+test("company AI evidence exposes refresh metadata and expanded SEC metric coverage", () => {
+  const evidence = __test.companyEvidence("nvidia", { quarterIndexes: [5, 6] }, "balance");
+  assert.equal(evidence.company.ticker, "NVDA");
+  assert.match(evidence.dataFreshness.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
+  assert.ok(evidence.availableMetrics.includes("inventory"));
+  assert.ok(evidence.availableMetrics.includes("incomeTaxExpense"));
+  const prompt = __test.companySystemPrompt(evidence);
+  assert.match(prompt, /Supplemental SEC metrics/);
+  assert.match(prompt, /data refresh timestamp/);
+});
+
 test("planning AI receives the visible modeled scenario and labels it modeled", async () => {
   const priorKey = process.env.ANTHROPIC_API_KEY;
   const priorFetch = globalThis.fetch;
@@ -136,7 +147,7 @@ test("planning AI receives the visible modeled scenario and labels it modeled", 
     return { ok: true, json: async () => ({ content: [{ type: "text", text: "Answer" }], usage: {} }) };
   };
   const res = responseRecorder();
-  await handler({ method: "POST", body: { mode: "dashboard", tab: "plan", company: "apple", filters: { quarterIndexes: [4, 5, 6], scenario: { scenario: "downside", revenueGrowth: 0, grossMarginDelta: -2, opexGrowth: 5 } }, question: "Explain this scenario." } }, res);
+  await handler({ method: "POST", body: { mode: "dashboard", tab: "plan", company: "apple", filters: { quarterIndexes: [4, 5, 6], scenario: { scenario: "downside", revenueGrowth: 0, grossMarginDelta: -2, opexGrowth: 5, decision: { initialInvestment: 1000, annualBenefit: 400, annualRunCost: 100, years: 5, discountRate: 10 } } }, question: "Explain this scenario and investment case." } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   assert.equal(res.body.meta.route, "company_source");
@@ -145,12 +156,51 @@ test("planning AI receives the visible modeled scenario and labels it modeled", 
   assert.match(requestBody.system, /"basePeriod":"Q3 FY26"/);
   assert.match(requestBody.system, /"modeledNextQuarter"/);
   assert.match(requestBody.system, /"operatingMarginPct"/);
+  assert.match(requestBody.system, /"investmentDecisionModel"/);
+  assert.match(requestBody.system, /"npv":137\.23/);
+  assert.match(requestBody.system, /"clearsHurdle":true/);
+  assert.match(requestBody.system, /illustrative pre-tax unlevered model/);
+});
+
+test("standardized reports use selected company evidence, including Apple", async () => {
+  const priorKey = process.env.ANTHROPIC_API_KEY;
+  const priorFetch = globalThis.fetch;
+  process.env.ANTHROPIC_API_KEY = "test";
+  let requestBody;
+  globalThis.fetch = async (_url, options) => {
+    requestBody = JSON.parse(options.body);
+    return { ok: true, json: async () => ({ content: [{ type: "text", text: "Answer" }], usage: {} }) };
+  };
+  const res = responseRecorder();
+  await handler({ method: "POST", body: { mode: "dashboard", tab: "reports", company: "apple", filters: { quarterIndexes: [4, 5, 6] }, question: "Draft the FP&A performance report." } }, res);
+  globalThis.fetch = priorFetch;
+  if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
+  assert.equal(res.body.meta.route, "company_source");
+  assert.match(requestBody.system, /Dashboard AI for Apple \(AAPL\)/);
+  assert.match(requestBody.system, /"tab":"reports"/);
+  assert.match(requestBody.system, /fiscalYtdMetrics/);
+});
+
+test("NVIDIA exact filed fiscal YTD values reconcile to the six-month filing", () => {
+  const companies = JSON.parse(readFileSync(new URL("../companies.json", import.meta.url), "utf8"));
+  const latest = companies.companies.nvidia.periods.at(-1);
+  assert.equal(latest.label, "Q2 FY27");
+  assert.equal(latest.fiscalYtdMetrics.revenue, 177837);
+  assert.equal(latest.fiscalYtdMetrics.netIncome, 118010);
+  assert.equal(latest.fiscalYtdMetrics.grossProfit, 133299);
+  assert.equal(latest.fiscalYtdMetrics.operatingIncome, 117270);
 });
 
 test("browser UI exposes both modes and sends structured filters", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const companyUi = readFileSync(new URL("../company-dashboard.js", import.meta.url), "utf8");
   assert.match(html, /data-ai-mode="dashboard"/);
   assert.match(html, /data-ai-mode="general"/);
   assert.match(html, /quarterIndexes:\[\.\.\.state\.q\]/);
+  assert.match(html, /name:"Reports"/);
+  assert.match(companyUi, /Print \/ Save PDF/);
+  assert.match(companyUi, /From source record to CFO decision/);
+  assert.match(companyUi, /Strategic finance decision lab/i);
+  assert.match(companyUi, /decisionNpv/);
   assert.doesNotMatch(html, /selectionPayload/);
 });
