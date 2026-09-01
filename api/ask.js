@@ -434,6 +434,23 @@ function publicContextForCompany(companySlug, tab = "home") {
     ? (context.managementSignals || []).filter(signal => allowed.has(signal.category))
     : (context.managementSignals || []);
   const includeMacro = ["home", "glass", "variance", "plan", "fx", "outlook", "reports"].includes(tab);
+  const annualAreasByTab = {
+    home: ["Business and segments", "Strategy and investment", "Risk and supply"],
+    glass: ["Revenue and demand", "Strategy and investment", "Liquidity and capital", "Risk and supply"],
+    revenue: ["Business and segments", "Revenue and demand"],
+    variance: ["Revenue and demand", "Strategy and investment", "Liquidity and capital", "Risk and supply"],
+    plan: ["Revenue and demand", "Strategy and investment", "Liquidity and capital", "Risk and supply"],
+    profit: ["Strategy and investment", "Workforce"],
+    balance: ["Liquidity and capital", "Risk and supply"],
+    fx: ["Market and FX", "Liquidity and capital"],
+    people: ["Workforce", "Strategy and investment"],
+    outlook: ["Strategy and investment", "Risk and supply", "Legal and regulatory"],
+  };
+  const annualReport = context.annualReport;
+  const annualAreas = new Set(annualAreasByTab[tab] || []);
+  const annualEvidence = annualReport
+    ? (annualReport.evidence || []).filter(item => !annualAreas.size || annualAreas.has(item.area)).slice(0, tab === "reports" ? 8 : 5)
+    : [];
   return {
     refreshedAt: PUBLIC_CONTEXT.generatedAt,
     methodology: PUBLIC_CONTEXT.methodology,
@@ -442,6 +459,14 @@ function publicContextForCompany(companySlug, tab = "home") {
     managementSignals: signals.slice(0, 6),
     recentFilings: (context.recentFilings || []).slice(0, 6),
     sourceDocuments: (context.documents || []).slice(0, 3),
+    annualReport: annualReport ? {
+      title: annualReport.title,
+      sourceType: annualReport.sourceType,
+      fiscalYear: annualReport.fiscalYear,
+      filed: annualReport.filed,
+      url: annualReport.url,
+      evidence: annualEvidence,
+    } : null,
     macro: includeMacro ? PUBLIC_CONTEXT.macro : undefined,
   };
 }
@@ -454,6 +479,7 @@ function companySystemPrompt(evidence) {
     "Use evidence.availableMetrics to understand the connected coverage. Supplemental SEC metrics may include inventory, goodwill, PP&E, deferred revenue, noncurrent marketable securities, SG&A, depreciation and amortization, interest, taxes, acquisitions, and stock compensation when the issuer filed them.",
     "State the data refresh timestamp from evidence.dataFreshness when the user asks how current the connected data is.",
     "evidence.publicContext contains dated official-source excerpts and macro observations. Treat managementSignals as source excerpts, not verified causal explanations. Paraphrase carefully and name the source document and filing date.",
+    "evidence.publicContext.annualReport contains tab-scoped excerpts from the latest 10-K. Use them for annual business, strategy, risk, liquidity, workforce, and market-risk context. Name the fiscal year and filing date, and do not treat annual-report context as current-quarter guidance.",
     "Macro observations provide external planning context only. Never present Treasury, BLS, or ECB values as company guidance or as proof of a company-specific cause.",
     "When fiscalYtdMetrics are present for the latest selected period and the selected periods form that fiscal YTD, prefer those exact filed span values over adding rounded quarter values.",
     "Respect the active tab and selected periods in evidence.context. If a requested product, geography, guidance, headcount, FX, or environmental fact is absent, say it is unavailable in the connected source.",

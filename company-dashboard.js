@@ -176,6 +176,32 @@ function managementSignalsHTML(options={}){
   </section>`;
 }
 
+const ANNUAL_AREAS_BY_TAB={
+  home:["Business and segments","Strategy and investment","Risk and supply"],
+  glass:["Revenue and demand","Strategy and investment","Liquidity and capital","Risk and supply"],
+  revenue:["Business and segments","Revenue and demand"],
+  variance:["Revenue and demand","Strategy and investment","Liquidity and capital","Risk and supply"],
+  plan:["Revenue and demand","Strategy and investment","Liquidity and capital","Risk and supply"],
+  profit:["Strategy and investment","Workforce"],
+  balance:["Liquidity and capital","Risk and supply"],
+  fx:["Market and FX","Liquidity and capital"],
+  people:["Workforce","Strategy and investment"],
+  outlook:["Strategy and investment","Risk and supply","Legal and regulatory"]
+};
+
+function annualReportHTML(options={}){
+  const annual=selectedPublicContext()?.annualReport;
+  if(!annual?.evidence?.length) return "";
+  const areas=new Set(options.areas||ANNUAL_AREAS_BY_TAB[options.tab||current]||[]);
+  const evidence=annual.evidence.filter(item=>!areas.size||areas.has(item.area)).slice(0,options.limit||4);
+  if(!evidence.length) return "";
+  return `<details class="annual-context"${options.open?" open":""}>
+    <summary><span><b>Annual report context</b><small>FY${escapeHtml(annual.fiscalYear)} 10-K · filed ${publicContextDate(annual.filed)} · ${annual.evidence.length} evidence areas</small></span><i class="ph ph-caret-down" aria-hidden="true"></i></summary>
+    <div class="annual-evidence-grid">${evidence.map(item=>`<article><span>${escapeHtml(item.area)}</span><p>${escapeHtml(item.text)}</p></article>`).join("")}</div>
+    <div class="annual-context-foot"><span>Annual context, not current-quarter guidance or proof of causality.</span>${publicContextLink(annual.url,`Open FY${annual.fiscalYear} 10-K`)}</div>
+  </details>`;
+}
+
 function macroContextHTML(title="External planning context"){
   const macro=PUBLIC_CONTEXT?.macro||{};
   const treasury=macro.treasury||{}, labor=macro.labor||{}, fx=macro.fx||{};
@@ -191,7 +217,8 @@ function macroContextHTML(title="External planning context"){
 function reportPublicSourceAppendix(){
   const context=selectedPublicContext();
   if(!context) return "";
-  const rows=[...(context.documents||[]).slice(0,3),...(context.recentFilings||[]).slice(0,3).map(item=>({title:item.description||item.form,sourceType:`SEC ${item.form}`,filed:item.filed,url:item.url}))];
+  const annual=context.annualReport?[{title:context.annualReport.title,sourceType:"SEC 10-K annual report",filed:context.annualReport.filed,url:context.annualReport.url}]:[];
+  const rows=[...annual,...(context.documents||[]).slice(0,3),...(context.recentFilings||[]).slice(0,3).map(item=>({title:item.description||item.form,sourceType:`SEC ${item.form}`,filed:item.filed,url:item.url}))];
   return `<section class="report-public-sources"><h3>Management and public context</h3><table class="report-table"><thead><tr><th>Source</th><th>Date</th><th>Type</th><th>Evidence</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${escapeHtml(row.title||"Official source")}</td><td>${escapeHtml(row.filed||"n/a")}</td><td>${escapeHtml(row.sourceType||"SEC filing")}</td><td>${publicContextLink(row.url,"Open")}</td></tr>`).join("")}</tbody></table><p class="report-note">Official-source excerpts provide context. They do not establish the cause of a financial variance. Internal plan, consensus and market prices remain unavailable.</p></section>`;
 }
 
@@ -200,8 +227,9 @@ function companySourceBadge(){
   const hasDerived=selected.some(index=>(companyPeriodAt(index)?.derivedMetrics||[]).length);
   const exactYtd=selectedIndexesAreFiscalYtd(selected)&&Object.values(companyPeriodAt(selected[selected.length-1])?.fiscalYtdMetrics||{}).some(Number.isFinite);
   const context=selectedPublicContext();
-  const commentary=context?.coverage?.managementCommentary?" · commentary connected":"";
-  return `<span class="badge">SEC sourced${exactYtd?" · exact filed YTD":hasDerived?" · derived values marked":""}${commentary}</span>`;
+  const commentary=context?.coverage?.managementCommentary?" · commentary":"";
+  const annual=context?.coverage?.annualReport?" · 10-K":"";
+  return `<span class="badge">SEC sourced${exactYtd?" · exact filed YTD":hasDerived?" · derived values marked":""}${commentary}${annual}</span>`;
 }
 
 function companyDownloadButton(){
@@ -243,6 +271,7 @@ function companySourceCoverage(){
   const context=selectedPublicContext(), commentary=Boolean(context?.coverage?.managementCommentary), workforce=(context?.managementSignals||[]).some(signal=>signal.category==="Workforce");
   return [
     ["Financial actuals","Connected","SEC filings and XBRL","connected"],
+    ["Annual report context",context?.coverage?.annualReport?"Connected":"Not available",context?.annualReport?`FY${context.annualReport.fiscalYear} 10-K · 8 evidence areas`:"No latest 10-K evidence extracted",context?.coverage?.annualReport?"connected":"missing"],
     ["Guidance and management commentary",commentary?"Connected":"Not available",commentary?"Official SEC-filed earnings materials":"No relevant excerpt found in connected SEC documents",commentary?"connected":"missing"],
     ["Workforce narrative",workforce?"Partial":"Not available",workforce?"Short official-source excerpt; no internal workforce plan":"No comparable workforce excerpt found",workforce?"partial":"missing"],
     ["Sustainability",companySlug==="apple"?"Connected":"Not connected",companySlug==="apple"?"Environmental Progress Report":"Requires a governed sustainability report",companySlug==="apple"?"connected":"missing"],
@@ -859,6 +888,7 @@ function renderReports(v){
       <header><div><span>${definition.code}</span><h1 id="reportTitle">${escapeHtml(definition.label)}</h1><p>${escapeHtml(company.name)} · ${escapeHtml(periodLabel(indexes))}</p></div><div class="report-status"><span>Evidence status</span><strong>FILED + DERIVED</strong><small>Modeled and unavailable sections are marked.</small></div></header>
       ${body}
       ${managementSignalsHTML({title:"Official management context",limit:3})}
+      ${annualReportHTML({tab:"reports",limit:8})}
       <section class="report-sources"><h3>Source appendix</h3>${reportSourceAppendix(indexes)}</section>
       ${reportPublicSourceAppendix()}
       <footer>Prepared from governed public-company evidence. This report does not represent ${escapeHtml(company.name)} internal planning, guidance, or management approval.</footer>

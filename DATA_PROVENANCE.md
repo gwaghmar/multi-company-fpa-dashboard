@@ -210,6 +210,13 @@ items are short source excerpts with dates and links. They are context, not proo
 of causality. Internal plans, analyst consensus, and stock prices remain explicitly
 unavailable.
 
+The latest 10-K is ingested separately for every company even when a newer 10-Q
+exists. `annualReport.evidence` stores compact excerpts across business and segments,
+revenue and demand, strategy and investment, liquidity and capital, workforce, risk
+and supply, market and FX, and legal and regulatory areas. Ask AI receives only the
+areas relevant to the active tab. These excerpts are annual context, not current
+guidance, internal planning data, or deterministic causal explanations.
+
 `companies.json` is rebuilt from the SEC Company Facts API by
 `tools/fetch_company_sources.py`. It currently contains seven standardized fiscal
 quarters for Apple, Alphabet, NVIDIA, Microsoft, Amazon, Meta, AMD, Broadcom,

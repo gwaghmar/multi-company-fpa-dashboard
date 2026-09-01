@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-01T14:56:48.853076+00:00",
+  "generatedAt": "2026-09-01T23:08:58.492405+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-08-31",
-      "threeMonth": "3.91",
-      "twoYear": "4.34",
-      "tenYear": "4.75",
-      "thirtyYear": "5.25",
+      "date": "2026-09-01",
+      "threeMonth": "3.92",
+      "twoYear": "4.39",
+      "tenYear": "4.79",
+      "thirtyYear": "5.27",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -152,9 +152,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2025 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2025",
+        "filed": "2025-10-31",
+        "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "Although the reportable segments provide similar hardware and software products and similar services, each one is managed separately to better align with the location of the Company\u2019s customers and distribution partners and\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "The Company\u2019s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 13, \u201cSegment Information and Geographic Data\u201d for 2025, 2024 and 2023, except in\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "The Company continues to develop new technologies to enhance existing products and services, and to expand the range of its offerings through research and development (\u201cR&D\u201d), licensing of intellectual property and acquisition\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "The Company uses net proceeds from the commercial paper program for general corporate purposes, including dividends and share repurchases.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "Periods of intense competition for talent in particular fields can lead to increased costs as the Company seeks to offer competitive compensation to recruit and retain highly skilled employees.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "Global supply chains can be highly concentrated, and an escalation of geopolitical tensions or conflict could result in significant disruptions.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "Additionally, to manage foreign exchange rate risk on certain of its foreign currency\u2013denominated notes, the Company uses cross-currency swaps to effectively convert these notes to U.S.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "The Company is also currently subject to antitrust investigations and litigation in various jurisdictions around the world, which can result in legal proceedings and claims against the Company that could, individually or\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-10-31",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -280,9 +362,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2025 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2025",
+        "filed": "2026-02-05",
+        "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "Expanded AI Offerings in our Products and Services: The continuing evolution of the online world has contributed to the growth of our business.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "We expect to recognize just over 50% of the revenue backlog as revenues over the next 24 months with the remainder to be recognized thereafter.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "Continued Investment in Intellectual Property through R&D and Acquisitions: We continue to make significant research and development investments in areas of strategic focus as we seek to develop new, innovative offerings, and\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "In April 2024, the company's Board of Directors authorized a $70.0 billion share repurchase program for its Class A and Class C shares.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "Competition in our industry for qualified employees, particularly AI talent, is intense, and certain of our competitors have directly targeted, and may continue to target, our employees.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "We are subject to formal and informal inquiries and investigations as well as litigation on various competition matters by regulatory authorities and private parties in the US, Europe, and other jurisdictions globally,\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "We are exposed to financial market risks, including changes in foreign currency exchange rates, interest rates, and equity investment risks.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "It may also subject us to litigation and regulatory actions, which could result in monetary penalties and damages and divert management's time and attention.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-05",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -398,9 +562,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2026 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2026",
+        "filed": "2026-02-25",
+        "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "Gross margin decreased in fiscal year 2026 as our business model transitioned from offering Hopper HGX systems to Blackwell full-scale datacenter solutions.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "We generate a significant amount of our revenue from a limited number of indirect customers, some individually representing 10% or more of our revenue.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "We expect to increase capital expenditures in fiscal year 2027 relative to fiscal year 2026 to support the future growth of our business.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "We continuously evaluate our liquidity and capital resources, including our access to external capital, to ensure we can finance future capital requirements.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "Our employees also help to surface top talent, with over 40 percent of our new hires in fiscal year 2026 coming from employee referrals.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "Macroeconomic factors, including tariffs, inflation, interest rate changes, capital market volatility, global supply chain constraints, and global economic and geopolitical developments, have direct and indirect impacts on our results of operations, particularly\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "Change in value of our foreign exchange contracts recorded in Accumulated other comprehensive income (loss) would be expected to offset a corresponding change in hedged forecasted foreign currency expenses when recognized.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "We currently are, and will likely continue to be subject to claims, litigation, and other actions, including potential regulatory proceedings, involving patent and other intellectual property matters, taxes, labor and employment, competition\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-02-25",
+            "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -526,9 +772,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2026 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2026",
+        "filed": "2026-07-29",
+        "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "We develop most of our products and services internally which allows us to maintain competitive advantages that come from product differentiation and closer technical control over our products and services.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "\u2022 Cost of revenue increased $17.7 billion or 44% driven by investments in AI infrastructure to support growing customer demand.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "\u2022 Operating expenses increased $1.4 billion or 7% driven by continued investments in research and development compute capacity, AI talent, and data to support product development that benefits the entire portfolio.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "We have not engaged in any related party transactions or arrangements with unconsolidated entities or other persons that are reasonably likely to materially affect liquidity or the availability of capital resources.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "Our business is based on successfully attracting, training, and retaining talented employees representing diverse backgrounds, experiences, and skill sets.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "The cost or availability of critical resources necessary to support our infrastructure, including power, networking supplies, servers, graphics processing units, and other components, could be adversely affected by a variety of factors,\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "Foreign currency risks related to certain Euro-denominated debt are hedged using foreign exchange forward contracts that are designated as cash flow hedging instruments.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "Our implementation of AI systems could result in legal liability, regulatory action, litigation, brand, reputational, or competitive harm, or other adverse impacts.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-07-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -660,9 +988,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2025 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2025",
+        "filed": "2026-02-06",
+        "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "Each of our businesses is also subject to rapid change and the development of new business models and the entry of new and well-funded competitors.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "Our failure to stock or restock popular products in sufficient amounts such that we fail to meet customer demand could significantly affect our revenue and our future growth.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "Increases in operating income primarily result from increases in sales of products and services and efficiently managing our operating costs, partially offset by investments we make in longer-term strategic initiatives, including capital\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "Our principal sources of liquidity are cash flows generated from operations and our cash, cash equivalents, and marketable securities balances, which, at fair value, were $101.2 billion and $123.0 billion as of\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "We rely on numerous and evolving initiatives to implement this objective and invent mechanisms for talent development, including competitive pay and benefits, flexible work arrangements, and skills training and educational programs such\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "In addition, because China-based sellers account for significant portions of our third-party seller services and advertising revenues, and China-based suppliers provide significant portions of our components and finished goods, regulatory and trade\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "We are exposed to market risk for the effect of interest rate changes, foreign currency fluctuations, and changes in the market values of our investments.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "In addition, we are regularly subject to claims, litigation, and other proceedings, including potential regulatory proceedings, involving patent and other intellectual property matters, taxes, labor and employment, competition and antitrust, privacy and\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-06",
+            "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -788,9 +1198,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2025 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2025",
+        "filed": "2026-01-29",
+        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "In 2026, we intend to focus on several key investment areas: AI, Reels and our discovery engine, wearables, monetization of our products and services, youth, platform integrity and community support, and infrastructure\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "In 2025, revenue increased by 21% in United States & Canada, 24% in Europe, 20% in Asia-Pacific, and 27% in Rest of World, in each case relative to 2024.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "\u2022Capital expenditures, including principal payments on finance leases, were $72.22 billion for the year ended December 31, 2025.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "We continuously evaluate our liquidity and capital resources, including our access to external capital, to ensure we can finance our future capital requirements.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "We had a global workforce of 78,865 employees as of December 31, 2025, and we have offices in more than 90 cities around the world.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "The manufacturing, distribution, and sale of our consumer hardware products also may be negatively impacted by macroeconomic conditions, geopolitical challenges, trade disputes, or other actions by governments or non-state actors (including international\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "We are exposed to market risks, including changes to foreign currency exchange rates, interest rates, and equity price risk.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "As a multinational company with a complex and evolving business, we are, and expect to continue to be, subject to numerous claims, litigation, regulatory, tax, and government inquiries and investigations, and other\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-29",
+            "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -922,9 +1414,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2025 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2025",
+        "filed": "2026-02-04",
+        "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "Beginning in the first quarter of fiscal year 2025, we combined the Client and Gaming segments into one reportable segment to align with how we manage our business.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "The increase in annual net revenue was partially offset by a decrease in net revenue in our Embedded segment.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "We believe our cash, cash equivalents, short-term investments and cash flows from operations along with our revolving credit facility and commercial paper program will be sufficient to fund operations, including capital expenditures,\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "The authorization is in addition to the Company\u2019s existing share repurchase program (collectively, the Repurchase Program), increasing the total repurchase authority to $14 billion.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "In the fourth quarter of 2024, the Company implemented a restructuring plan (the 2024 Restructuring Plan) which reduced the global workforce by approximately 4% of headcount.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "Emerging legal and regulatory requirements in the various jurisdictions in which we operate, can be unpredictable, are subject to change, and may be difficult for us to comply with given the complexity\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "We are averse to principal loss and strive to preserve our invested funds by limiting default risk and market risk.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "For a discussion of our legal proceedings, refer to Note 12 \u2013 Commitments and Contingencies of the Notes to Consolidated Financial Statements (Part II, Item 8 of this Form 10-K).",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-02-04",
+            "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000018/amd-20251227.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -1050,9 +1624,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2025 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2025",
+        "filed": "2025-12-18",
+        "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "In order to remain competitive, we have made, and expect to continue to make, significant investments in research and development, expand our business strategy or adopt new business models.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "The principal category we use to disaggregate revenues is the nature of our products and subscriptions and services, as presented in our consolidated statements of operations.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "We seek to achieve this through extensive internal research and development, as well as strategic acquisitions of businesses and technologies, to ensure our products retain their technology market leadership.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "Our short-term and long-term liquidity requirements primarily arise from: (i) working capital requirements, (ii) research and development and capital expenditure needs, (iii) cash dividend payments (if and when declared by our Board\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "As of November 2, 2025, we had approximately 33,000 employees worldwide, with approximately 57% in research and development roles.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "We continuously manage product availability and costs in our supply chain to mitigate the direct and indirect impact of tariffs and other macroeconomic impacts.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "We use derivative financial instruments to manage exposure to foreign exchange risk and interest rate risk.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "The results of litigation, regulatory investigations or tax disputes are inherently uncertain, and material adverse outcomes are possible.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2025-12-18",
+            "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -1178,9 +1834,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2026 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2026",
+        "filed": "2026-06-22",
+        "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "We develop the substantial majority of our products and services offerings internally utilizing the skills and diversity of a global workforce.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "If we do not adapt our pricing models to reflect changes in customer use of our products, changes in customer demand or increased competition, our revenues could decrease.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "Total research and development expenses increased by $412 million in reported currency in fiscal 2026 relative to fiscal 2025.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "Restricted cash that was included within cash and cash equivalents as presented within our consolidated balance sheets as of May 31, 2026 and 2025 and our consolidated statements of cash flows for\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "Compensation Committee of our Board of Directors (the Compensation Committee) is responsible for reviewing and monitoring matters related to human capital management, including talent acquisition and retention.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "\u2022 inflation, trade policy, geopolitical conditions and other macroeconomic factors reduce customer demand or their ability to pay for our products and services or cause us to be unable to meet current\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "During fiscal 2026, 2025 and 2024, we used derivative financial instruments to manage foreign currency and interest rate risks.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "\u2022 regulatory and judicial challenges, including delays or restrictions from governmental authorities under foreign direct investment, foreign subsidy, competition and antitrust laws, potentially requiring asset divestitures, other concessions or a termination of\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-06-22",
+            "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -1306,9 +2044,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2026 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2026",
+        "filed": "2026-03-02",
+        "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "As we develop and deploy AI applications in our products and services, including in customer-facing contexts, the speed, scale and complexity of related data processing may increase.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "The increase in subscription and support revenues for fiscal 2026 was primarily caused by volume-driven increases from new business, which includes new customers, upgrades and additional subscriptions from existing customers.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "The net cash used in investing activities during fiscal 2025 was primarily related to net outflows for acquisitions of $2.7 billion, net outflows from strategic investment activity of $413 million and capital\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "As of January 31, 2026, the Company was authorized to purchase a remaining $17.9 billion of its common stock under the Share Repurchase Program.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "Additionally, changes in our work environment and workforce may not meet the needs and expectations of our workforce or may create operational and workplace culture challenges, which could negatively impact our ability\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "The volume, complexity and scope of these regulatory requirements may continue to increase, including in response to heightened geopolitical tensions.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "We are exposed to financial market risks, including changes in foreign currency exchange rates, interest rates and equity investment risks.",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "If our customers or others rely on such content to their detriment, or if regulators or rights holders assert claims relating to AI-generated content, we may be exposed to litigation, regulatory investigations,\u2026",
+            "sourceTitle": "FY2026 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2026",
+            "filed": "2026-03-02",
+            "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000060/crm-20260131.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,
@@ -1434,9 +2254,91 @@
           "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
         }
       ],
+      "annualReport": {
+        "title": "FY2025 annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": "2025",
+        "filed": "2026-01-23",
+        "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm",
+        "evidence": [
+          {
+            "area": "Business and segments",
+            "text": "As a result of these organizational changes, in 2025 we managed our business through the operating segments presented below and have included the 2025, 2024 and 2023 segment financial results and related\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          },
+          {
+            "area": "Revenue and demand",
+            "text": "Our 2025 DCAI revenue was limited in Q4 2025 by our available supply of products due to wafer fabrication supply constraints at our manufacturing facilities, primarily with respect to our Intel 7\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          },
+          {
+            "area": "Strategy and investment",
+            "text": "Our short-term funding requirements include capital expenditures for worldwide manufacturing and assembly and test, including investments in our process technology roadmap; investments in our product roadmap; working capital requirements, including cash outlays\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          },
+          {
+            "area": "Liquidity and capital",
+            "text": "Our total cash and investments and related cash flows may be affected by certain discretionary actions we may take with customers and suppliers to accelerate or delay certain cash receipts or payments\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          },
+          {
+            "area": "Workforce",
+            "text": "We invest in our highly skilled workforce, which was comprised of 85,1001 people as of December 27, 2025, by creating practices, programs and benefits that support the rapidly changing world of work\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          },
+          {
+            "area": "Risk and supply",
+            "text": "During the past several years, macroeconomic and geopolitical conditions, as well as outbreaks of COVID-19, caused supply chain disruptions and delays in obtaining tools and other components, and the semiconductor industry experienced\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          },
+          {
+            "area": "Market and FX",
+            "text": "Our primary objective for holding derivative financial instruments is to manage currency exchange rate risk and interest rate risk, and, to a lesser extent, equity market risk, commodity price risk and credit\u2026",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          },
+          {
+            "area": "Legal and regulatory",
+            "text": "As described in \"Note 19: Commitments and Contingencies\" within Notes to Consolidated Financial Statements, we are engaged in a number of litigation and regulatory matters.",
+            "sourceTitle": "FY2025 annual report",
+            "sourceType": "SEC 10-K annual report",
+            "fiscalYear": "2025",
+            "filed": "2026-01-23",
+            "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm"
+          }
+        ]
+      },
       "coverage": {
         "secFilings": true,
         "managementCommentary": true,
+        "annualReport": true,
         "investorRelationsLink": true,
         "internalPlan": false,
         "analystConsensus": false,

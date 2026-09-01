@@ -146,8 +146,12 @@ test("public context is tab-scoped and preserves unavailable boundaries", () => 
   assert.equal(planning.coverage.internalPlan, false);
   assert.equal(planning.coverage.analystConsensus, false);
   assert.equal(planning.macro.fx.status, "connected");
+  assert.ok(planning.annualReport.evidence.every(item => ["Revenue and demand", "Strategy and investment", "Liquidity and capital", "Risk and supply"].includes(item.area)));
+  assert.equal(planning.annualReport.sourceType, "SEC 10-K annual report");
+  assert.match(__test.companySystemPrompt(__test.companyEvidence("alphabet", { quarterIndexes: [5, 6] }, "plan")), /latest 10-K/);
   const people = __test.publicContextForCompany("nvidia", "people");
   assert.ok(people.managementSignals.every(signal => ["Workforce", "Investment"].includes(signal.category)));
+  assert.ok(people.annualReport.evidence.every(item => ["Workforce", "Strategy and investment"].includes(item.area)));
   assert.equal(people.macro, undefined);
 });
 
@@ -214,6 +218,11 @@ test("official public context is auditable and bounded", () => {
     assert.equal(company.coverage.internalPlan, false);
     assert.equal(company.coverage.analystConsensus, false);
     assert.equal(company.coverage.stockPrices, false);
+    assert.equal(company.coverage.annualReport, true);
+    assert.equal(company.annualReport.sourceType, "SEC 10-K annual report");
+    assert.equal(company.annualReport.evidence.length, 8);
+    assert.ok(company.annualReport.url.startsWith("https://www.sec.gov/Archives/edgar/data/"));
+    assert.ok(company.annualReport.evidence.every(item => item.fiscalYear && item.filed && item.url));
     for (const signal of company.managementSignals) {
       assert.ok(signal.url.startsWith("https://"));
       assert.ok(signal.filed);
@@ -236,5 +245,7 @@ test("browser UI exposes both modes and sends structured filters", () => {
   assert.match(companyUi, /Latest management signals/);
   assert.match(companyUi, /External planning context/);
   assert.match(companyUi, /View evidence/);
+  assert.match(companyUi, /Annual report context/);
+  assert.match(companyUi, /Open FY/);
   assert.doesNotMatch(html, /selectionPayload/);
 });

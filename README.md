@@ -45,7 +45,9 @@ General AI receives no dashboard evidence. Missing company data remains unavaila
 For every company, Dashboard AI also receives the connected refresh timestamp,
 all standardized SEC metrics available for the selected periods, and tab-scoped
 official management excerpts from recent SEC-filed earnings materials. Planning
-and Treasury also receive U.S. Treasury, BLS, and ECB macro context. Coverage includes
+and Treasury also receive U.S. Treasury, BLS, and ECB macro context. Every company
+also receives a separately ingested latest 10-K with tab-scoped annual business,
+strategy, risk, liquidity, workforce, market-risk, and legal context. Coverage includes
 core statements plus inventory, goodwill, PP&E, deferred revenue, noncurrent
 marketable securities, SG&A, depreciation and amortization, interest, taxes,
 acquisitions, and stock compensation when filed by the issuer.

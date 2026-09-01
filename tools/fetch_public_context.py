@@ -54,6 +54,37 @@ SIGNAL_KEYWORDS = {
     "Risk and supply": ["risk", "uncertainty", "supply", "constraint", "regulatory"],
 }
 
+ANNUAL_REPORT_KEYWORDS = {
+    "Business and segments": ["our business", "reportable segment", "operating segment", "products and services", "business model"],
+    "Revenue and demand": ["net sales", "revenue", "customer demand", "bookings", "backlog", "subscriptions"],
+    "Strategy and investment": ["our strategy", "strategic", "capital expenditures", "research and development", "infrastructure investment"],
+    "Liquidity and capital": ["liquidity", "capital resources", "cash flows", "share repurchase", "commercial paper", "long-term debt"],
+    "Workforce": ["human capital", "workforce", "employees", "headcount", "talent"],
+    "Risk and supply": ["competition", "supply chain", "regulatory", "cybersecurity", "macroeconomic", "geopolitical"],
+    "Market and FX": ["foreign currency", "foreign exchange", "interest rate risk", "market risk", "currency risk"],
+    "Legal and regulatory": ["legal proceedings", "litigation", "antitrust", "regulatory investigation", "government inquiry"],
+}
+
+ANNUAL_AREA_POSITIVE = {
+    "Business and segments": ["we offer", "we develop", "our products", "our services", "operating segment", "reportable segment"],
+    "Revenue and demand": ["revenue increased", "revenue decreased", "net sales increased", "net sales decreased", "revenue was", "backlog"],
+    "Strategy and investment": ["our strategy", "capital expenditures", "research and development", "strategic focus"],
+    "Liquidity and capital": ["our liquidity", "capital requirements", "cash and cash equivalents", "share repurchase", "capital resources"],
+    "Workforce": ["human capital", "our employees", "we had", "headcount"],
+    "Risk and supply": ["supply chain", "competition", "cybersecurity", "macroeconomic", "geopolitical"],
+    "Market and FX": ["foreign currency", "foreign exchange", "interest rate risk", "market risk"],
+    "Legal and regulatory": ["legal proceedings", "litigation", "antitrust", "regulatory"],
+}
+
+ANNUAL_AREA_NEGATIVE = {
+    "Business and segments": ["litigation", "regulatory", "penalties", "investigation", "risk factor", "adversely", "interruptions", "shortage", "laws and regulations", "accounting standard", "does not meet expectations", "lack the capacity", "decline in use", "exercise of these rights", "item 7", "included elsewhere"],
+    "Revenue and demand": ["adversely affect", "adversely impact", "we face risks", "revenue recognition", "reclassified", "portion of total net sales", "cash provided by operating activities", "note:", "legal and regulatory requirements", "enforcement actions", "required to pay fines"],
+    "Strategy and investment": ["tax act", "tax provision", "immediate expensing", "financing cash flows consist"],
+    "Liquidity and capital": ["impairment", "non-marketable", "valuation method", "not meant to be considered", "off-balance sheet arrangements"],
+    "Workforce": ["suppliers and staffing", "independent contractors", "vendors and temporary", "cloud human capital management", "employee headcount includes"],
+    "Legal and regulatory": ["information security controls"],
+}
+
 BOILERPLATE = [
     "forward-looking statements",
     "risks and uncertainties",
@@ -74,6 +105,9 @@ BOILERPLATE = [
     "this presentation also contains",
     "important risk factors",
     "detailed discussion of these factors",
+    "segment reporting (topic 280)",
+    "improvements to reportable segment disclosures",
+    "included elsewhere in this annual report",
 ]
 
 
@@ -172,9 +206,52 @@ def extract_signals(text: str, source: dict) -> list[dict]:
     return output
 
 
+def extract_annual_report_context(text: str, source: dict) -> list[dict]:
+    """Select compact, auditable annual-report excerpts across finance-relevant areas."""
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    output = []
+    used = set()
+    for area, keywords in ANNUAL_REPORT_KEYWORDS.items():
+        candidates = []
+        for sentence in sentences:
+            clean = re.sub(r"\s+", " ", sentence).strip()
+            lower = clean.lower()
+            words = clean.split()
+            matches = sum(term in lower for term in keywords)
+            if not matches or not 12 <= len(words) <= 80 or len(clean) > 680 or "http://fasb.org" in lower:
+                continue
+            if any(phrase in lower for phrase in BOILERPLATE):
+                continue
+            if sum(character.isalpha() for character in clean) / max(1, len(clean)) < 0.62:
+                continue
+            score = matches * 5
+            score += 3 * sum(term in lower for term in ANNUAL_AREA_POSITIVE.get(area, []))
+            score -= 12 * sum(term in lower for term in ANNUAL_AREA_NEGATIVE.get(area, []))
+            score += 2 if 18 <= len(words) <= 52 else 0
+            score += 1 if re.search(r"\b(increased|decreased|grew|invest|operate|serve|provide|generate|manage|expect)\w*\b", lower) else 0
+            score += 1 if re.search(r"\b\d[\d,.%$]*\b", clean) else 0
+            score -= 3 if lower.startswith(("item ", "table ", "the following table", "see note")) else 0
+            candidates.append((score, clean))
+        candidates.sort(key=lambda item: (-item[0], len(item[1])))
+        selected = next((clean for score, clean in candidates if score >= 4 and clean not in used), None)
+        if not selected:
+            continue
+        used.add(selected)
+        output.append({
+            "area": area,
+            "text": short_excerpt(selected, 32),
+            "sourceTitle": source["title"],
+            "sourceType": source["sourceType"],
+            "fiscalYear": source["fiscalYear"],
+            "filed": source["filed"],
+            "url": source["url"],
+        })
+    return output
+
+
 def recent_rows(payload: dict) -> list[dict]:
     recent = payload.get("filings", {}).get("recent", {})
-    keys = ["form", "filingDate", "accessionNumber", "primaryDocument", "primaryDocDescription", "items"]
+    keys = ["form", "filingDate", "reportDate", "accessionNumber", "primaryDocument", "primaryDocDescription", "items"]
     count = len(recent.get("form", []))
     return [{key: (recent.get(key, [""] * count)[index] or "") for key in keys} for index in range(count)]
 
@@ -187,6 +264,19 @@ def build_document(row: dict, url: str, title: str, source_type: str) -> dict:
     source = {"title": title, "sourceType": source_type, "filed": row["filingDate"], "url": url}
     text = html_text(fetch(url))
     return {**source, "signals": extract_signals(text, source)}
+
+
+def build_annual_report(row: dict, url: str) -> dict:
+    fiscal_year = (row.get("reportDate") or row["filingDate"])[:4]
+    source = {
+        "title": f"FY{fiscal_year} annual report",
+        "sourceType": "SEC 10-K annual report",
+        "fiscalYear": fiscal_year,
+        "filed": row["filingDate"],
+        "url": url,
+    }
+    text = html_text(fetch(url))
+    return {**source, "evidence": extract_annual_report_context(text, source)}
 
 
 def company_context(slug: str, company: dict) -> dict:
@@ -231,6 +321,19 @@ def company_context(slug: str, company: dict) -> dict:
         except Exception as error:
             documents.append({"title": f"Latest {latest_periodic['form']} narrative", "sourceType": "SEC filing narrative", "filed": latest_periodic["filingDate"], "url": url, "signals": [], "error": str(error)[:120]})
 
+    latest_annual = next((row for row in relevant if row["form"] == "10-K"), None)
+    annual_report = None
+    if latest_annual:
+        annual_url = filing_base(cik, latest_annual["accessionNumber"]) + latest_annual["primaryDocument"]
+        try:
+            annual_report = build_annual_report(latest_annual, annual_url)
+        except Exception as error:
+            annual_report = {
+                "title": "Latest annual report", "sourceType": "SEC 10-K annual report",
+                "fiscalYear": (latest_annual.get("reportDate") or latest_annual["filingDate"])[:4],
+                "filed": latest_annual["filingDate"], "url": annual_url, "evidence": [], "error": str(error)[:120],
+            }
+
     signals = []
     seen_categories = set()
     for document in documents:
@@ -247,9 +350,11 @@ def company_context(slug: str, company: dict) -> dict:
         "recentFilings": filings,
         "documents": [{key: value for key, value in document.items() if key != "signals"} for document in documents],
         "managementSignals": signals[:6],
+        "annualReport": annual_report,
         "coverage": {
             "secFilings": bool(filings),
             "managementCommentary": bool(signals),
+            "annualReport": bool(annual_report and annual_report.get("evidence")),
             "investorRelationsLink": bool(IR_URLS.get(slug)),
             "internalPlan": False,
             "analystConsensus": False,
@@ -332,8 +437,8 @@ def main() -> None:
         except Exception as error:
             output["companies"][slug] = {
                 "name": company["name"], "ticker": company["ticker"], "irUrl": IR_URLS.get(slug),
-                "managementSignals": [], "recentFilings": [], "documents": [],
-                "coverage": {"secFilings": False, "managementCommentary": False, "investorRelationsLink": bool(IR_URLS.get(slug)), "internalPlan": False, "analystConsensus": False, "stockPrices": False},
+                "managementSignals": [], "recentFilings": [], "documents": [], "annualReport": None,
+                "coverage": {"secFilings": False, "managementCommentary": False, "annualReport": False, "investorRelationsLink": bool(IR_URLS.get(slug)), "internalPlan": False, "analystConsensus": False, "stockPrices": False},
                 "error": str(error)[:160],
             }
         time.sleep(0.12)
