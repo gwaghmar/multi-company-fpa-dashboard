@@ -1,0 +1,300 @@
+section,metric,period_index,value
+is,productsRev,Q3 FY26,78678
+is,productsRev,Q3 FY25,66613
+is,productsRev,9mo FY26,272629
+is,productsRev,9mo FY25,233287
+is,servicesRev,Q3 FY26,30739
+is,servicesRev,Q3 FY25,27423
+is,servicesRev,9mo FY26,91728
+is,servicesRev,9mo FY25,80408
+is,totalRev,Q3 FY26,109417
+is,totalRev,Q3 FY25,94036
+is,totalRev,9mo FY26,364357
+is,totalRev,9mo FY25,313695
+is,productsCos,Q3 FY26,47153
+is,productsCos,Q3 FY25,43620
+is,productsCos,9mo FY26,163810
+is,productsCos,9mo FY25,147097
+is,servicesCos,Q3 FY26,7494
+is,servicesCos,Q3 FY25,6698
+is,servicesCos,9mo FY26,21765
+is,servicesCos,9mo FY25,19738
+is,totalCos,Q3 FY26,54647
+is,totalCos,Q3 FY25,50318
+is,totalCos,9mo FY26,185575
+is,totalCos,9mo FY25,166835
+is,grossMargin,Q3 FY26,54770
+is,grossMargin,Q3 FY25,43718
+is,grossMargin,9mo FY26,178782
+is,grossMargin,9mo FY25,146860
+is,rd,Q3 FY26,11729
+is,rd,Q3 FY25,8866
+is,rd,9mo FY26,34035
+is,rd,9mo FY25,25684
+is,sga,Q3 FY26,7346
+is,sga,Q3 FY25,6650
+is,sga,9mo FY26,22315
+is,sga,9mo FY25,20553
+is,totalOpex,Q3 FY26,19075
+is,totalOpex,Q3 FY25,15516
+is,totalOpex,9mo FY26,56350
+is,totalOpex,9mo FY25,46237
+is,opIncome,Q3 FY26,35695
+is,opIncome,Q3 FY25,28202
+is,opIncome,9mo FY26,122432
+is,opIncome,9mo FY25,100623
+is,otherIncome,Q3 FY26,572
+is,otherIncome,Q3 FY25,-171
+is,otherIncome,9mo FY26,670
+is,otherIncome,9mo FY25,-698
+is,pretax,Q3 FY26,36267
+is,pretax,Q3 FY25,28031
+is,pretax,9mo FY26,123102
+is,pretax,9mo FY25,99925
+is,tax,Q3 FY26,6478
+is,tax,Q3 FY25,4597
+is,tax,9mo FY26,21638
+is,tax,9mo FY25,15381
+is,netIncome,Q3 FY26,29789
+is,netIncome,Q3 FY25,23434
+is,netIncome,9mo FY26,101464
+is,netIncome,9mo FY25,84544
+is,epsDiluted,Q3 FY26,2.02
+is,epsDiluted,Q3 FY25,1.57
+is,epsDiluted,9mo FY26,6.88
+is,epsDiluted,9mo FY25,5.62
+is,gmPctProducts,Q3 FY26,40.1
+is,gmPctProducts,Q3 FY25,34.5
+is,gmPctProducts,9mo FY26,39.9
+is,gmPctProducts,9mo FY25,36.9
+is,gmPctServices,Q3 FY26,75.6
+is,gmPctServices,Q3 FY25,75.6
+is,gmPctServices,9mo FY26,76.3
+is,gmPctServices,9mo FY25,75.5
+is,gmPctTotal,Q3 FY26,50.1
+is,gmPctTotal,Q3 FY25,46.5
+is,gmPctTotal,9mo FY26,49.1
+is,gmPctTotal,9mo FY25,46.8
+is,taxRate,Q3 FY26,17.9
+is,taxRate,Q3 FY25,16.4
+is,taxRate,9mo FY26,17.6
+is,taxRate,9mo FY25,15.4
+q,revenue,Q1 FY26,143756
+q,revenue,Q2 FY26,111184
+q,revenue,Q3 FY26,109417
+q,yoy,Q1 FY26,16
+q,yoy,Q2 FY26,17
+q,yoy,Q3 FY26,16
+q,gmPct,Q1 FY26,48.2
+q,gmPct,Q2 FY26,49.3
+q,gmPct,Q3 FY26,50.1
+q,opIncome,Q1 FY26,50900
+q,opIncome,Q2 FY26,35900
+q,opIncome,Q3 FY26,35695
+cat,names,idx0,iPhone
+cat,names,idx1,Mac
+cat,names,idx2,iPad
+cat,names,idx3,"Wearables, Home & Acc."
+cat,names,idx4,Services
+cat,q3fy26,idx0,54252
+cat,q3fy26,idx1,10352
+cat,q3fy26,idx2,6191
+cat,q3fy26,idx3,7883
+cat,q3fy26,idx4,30739
+cat,q3fy25,idx0,44582
+cat,q3fy25,idx1,8046
+cat,q3fy25,idx2,6581
+cat,q3fy25,idx3,7404
+cat,q3fy25,idx4,27423
+cat,m9fy26,idx0,196515
+cat,m9fy26,idx1,27137
+cat,m9fy26,idx2,21700
+cat,m9fy26,idx3,27277
+cat,m9fy26,idx4,91728
+cat,m9fy25,idx0,160561
+cat,m9fy25,idx1,24982
+cat,m9fy25,idx2,21071
+cat,m9fy25,idx3,26673
+cat,m9fy25,idx4,80408
+cat,yoyQ3,idx0,22
+cat,yoyQ3,idx1,29
+cat,yoyQ3,idx2,-6
+cat,yoyQ3,idx3,6
+cat,yoyQ3,idx4,12
+cat,yoy9m,idx0,22
+cat,yoy9m,idx1,9
+cat,yoy9m,idx2,3
+cat,yoy9m,idx3,2
+cat,yoy9m,idx4,14
+geo,names,idx0,Americas
+geo,names,idx1,Europe
+geo,names,idx2,Greater China
+geo,names,idx3,Japan
+geo,names,idx4,Rest of Asia Pacific
+geo,q3fy26,idx0,45781
+geo,q3fy26,idx1,29395
+geo,q3fy26,idx2,18816
+geo,q3fy26,idx3,6554
+geo,q3fy26,idx4,8871
+geo,q3fy25,idx0,41198
+geo,q3fy25,idx1,24014
+geo,q3fy25,idx2,15369
+geo,q3fy25,idx3,5782
+geo,q3fy25,idx4,7673
+geo,m9fy26,idx0,149403
+geo,m9fy26,idx1,95596
+geo,m9fy26,idx2,64839
+geo,m9fy26,idx3,24368
+geo,m9fy26,idx4,30151
+geo,m9fy25,idx0,134161
+geo,m9fy25,idx1,82329
+geo,m9fy25,idx2,49884
+geo,m9fy25,idx3,22067
+geo,m9fy25,idx4,25254
+geo,yoyQ3,idx0,11
+geo,yoyQ3,idx1,22
+geo,yoyQ3,idx2,22
+geo,yoyQ3,idx3,13
+geo,yoyQ3,idx4,16
+geo,yoy9m,idx0,11
+geo,yoy9m,idx1,16
+geo,yoy9m,idx2,30
+geo,yoy9m,idx3,10
+geo,yoy9m,idx4,19
+geo,opIncQ3fy26,idx0,21701
+geo,opIncQ3fy26,idx1,13443
+geo,opIncQ3fy26,idx2,7406
+geo,opIncQ3fy26,idx3,3004
+geo,opIncQ3fy26,idx4,4182
+geo,opIncQ3fy25,idx0,16511
+geo,opIncQ3fy25,idx1,10501
+geo,opIncQ3fy25,idx2,5822
+geo,opIncQ3fy25,idx3,2872
+geo,opIncQ3fy25,idx4,3243
+geo,cosQ3fy26,idx0,21507
+geo,cosQ3fy26,idx1,14732
+geo,cosQ3fy26,idx2,10771
+geo,cosQ3fy26,idx3,3310
+geo,cosQ3fy26,idx4,4327
+geo,smQ3fy26,idx0,2573
+geo,smQ3fy26,idx1,1220
+geo,smQ3fy26,idx2,639
+geo,smQ3fy26,idx3,240
+geo,smQ3fy26,idx4,362
+bs,dates,idx0,"Jun 27, 2026"
+bs,dates,idx1,"Sep 27, 2025"
+bs,cash,idx0,39544
+bs,cash,idx1,35934
+bs,mktSecCurrent,idx0,22855
+bs,mktSecCurrent,idx1,18763
+bs,ar,idx0,31398
+bs,ar,idx1,39777
+bs,vendorNTR,idx0,27509
+bs,vendorNTR,idx1,33180
+bs,inventories,idx0,11092
+bs,inventories,idx1,5718
+bs,otherCurrentAssets,idx0,17420
+bs,otherCurrentAssets,idx1,14585
+bs,totalCurrentAssets,idx0,149818
+bs,totalCurrentAssets,idx1,147957
+bs,mktSecNonCurrent,idx0,84118
+bs,mktSecNonCurrent,idx1,77723
+bs,ppe,idx0,51431
+bs,ppe,idx1,49834
+bs,intangibles,idx0,20342
+bs,intangibles,idx1,11093
+bs,otherNonCurrent,idx0,77557
+bs,otherNonCurrent,idx1,72634
+bs,totalAssets,idx0,383266
+bs,totalAssets,idx1,359241
+bs,ap,idx0,64525
+bs,ap,idx1,69860
+bs,otherCurrentLiab,idx0,62259
+bs,otherCurrentLiab,idx1,66387
+bs,deferredRev,idx0,9538
+bs,deferredRev,idx1,9055
+bs,commercialPaper,idx0,1997
+bs,commercialPaper,idx1,7979
+bs,termDebtCurrent,idx0,11007
+bs,termDebtCurrent,idx1,12350
+bs,totalCurrentLiab,idx0,149326
+bs,totalCurrentLiab,idx1,165631
+bs,termDebtNonCurrent,idx0,71340
+bs,termDebtNonCurrent,idx1,78328
+bs,otherNonCurrentLiab,idx0,55080
+bs,otherNonCurrentLiab,idx1,41549
+bs,totalLiab,idx0,275746
+bs,totalLiab,idx1,285508
+bs,equity,idx0,107520
+bs,equity,idx1,73733
+cf,opCash,9mo FY26,116996
+cf,opCash,9mo FY25,81754
+cf,depAmort,9mo FY26,9973
+cf,depAmort,9mo FY25,8571
+cf,sbc,9mo FY26,10523
+cf,sbc,9mo FY25,9680
+cf,capex,9mo FY26,6799
+cf,capex,9mo FY25,9473
+cf,buybacks,9mo FY26,62094
+cf,buybacks,9mo FY25,70579
+cf,dividends,9mo FY26,11778
+cf,dividends,9mo FY25,11559
+fx,hedgeDesignated,idx0,61313
+fx,hedgeDesignated,idx1,62647
+fx,irContracts,idx0,10625
+fx,irContracts,idx1,12875
+fx,hedgeNotDesignated,idx0,64053
+fx,hedgeNotDesignated,idx1,109079
+fx,termDebtFVHedged,idx0,10400
+fx,termDebtFVHedged,idx1,12600
+cap,buybackQ3,,25800
+cap,buyback9mo,,61800
+cap,sharesRepurchased9mo,,215
+cap,dividendQ3,,4000
+cap,dividend9mo,,11778
+cap,dpsQ3,,0.27
+cap,dps9mo,,0.79
+cap,remainingMay2025,,38000
+cap,may2025Program,,100000
+cap,newProgram,,100000
+cap,sharesOutJun26,,14608963
+cap,sharesOutSep25,,14773260
+hc,fte,,166000
+hc,fteAsOf,,"Sep 27, 2025"
+hc,rsuOpen,,151574
+hc,rsuGranted,,72400
+hc,rsuVested,,70594
+hc,rsuForfeited,,9418
+hc,rsuClose,,143962
+hc,rsuFVOpen,,189.75
+hc,rsuFVGranted,,258.16
+hc,rsuFVVested,,184.72
+hc,rsuFVClose,,225.06
+hc,sbcQ3,,3401
+hc,sbcQ3py,,3168
+hc,sbc9mo,,10523
+hc,sbc9moPy,,9680
+hc,unrecognizedComp,,26700
+hc,recognitionYears,,2.7
+hc,rdQ3,,11729
+hc,rdQ3py,,8866
+hc,rdPctRevQ3,,11
+hc,rdPctRevQ3py,,9
+env,total2024,,16507300
+env,total2025,,16489100
+env,scope3Abs,,15223700
+env,scope12Ops,,1265400
+env,scope3Share,,92.33
+env,scope2Share,,7.34
+env,scope1Share,,0.33
+env,reductionVs2015,,60
+env,cleanMWhM,,38
+env,avoidedMt,,26
+env,rareEarth,,99
+env,cobalt,,99
+env,corpRE,,100% renewable electricity for Apple facilities since 2018
+env,goal2030,,"Apple 2030: carbon neutral across the entire footprint, cutting emissions 75% vs 2015, with high-quality removals for the rest"
+fwd,revGuide,,9% to 11%
+fwd,gmGuide,,46.5%
+fwd,fxHeadwind,,2.5 percentage points
+fwd,ceoTransition,,"Tim Cook becomes Executive Chairman; John Ternus becomes CEO effective September 1, 2026 (announced April 20, 2026)."

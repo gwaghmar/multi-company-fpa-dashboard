@@ -1,0 +1,430 @@
+// Ask AI endpoint. Dashboard mode retrieves a compact, deterministic evidence set from
+// data.json; General mode receives no dashboard data. The API key always stays server-side.
+import { readFileSync } from "fs";
+
+const CURATED_DATA = JSON.parse(readFileSync(new URL("../data.json", import.meta.url), "utf8"));
+const COMPANY_DATA = JSON.parse(readFileSync(new URL("../companies.json", import.meta.url), "utf8"));
+const QUARTER_COUNT = CURATED_DATA.meta.quarters.length;
+
+const SECTION_KEYWORDS = {
+  is: ["revenue", "sales", "margin", "gross", "opex", "operating income", "r&d", "rd", "sg&a", "sga", "net income", "eps", "tax", "cost of sales", "income statement", "earnings"],
+  q: ["quarter", "quarterly", "q1", "q2", "q3", "q4", "trend", "yoy", "sequential", "fy25", "fy26", "2025", "2026", "annual", "full year", "history"],
+  cat: ["iphone", "mac", "ipad", "wearable", "service", "category", "product", "product mix"],
+  geo: ["geography", "region", "americas", "europe", "china", "japan", "asia", "segment"],
+  bs: ["balance sheet", "receivable", "payable", "inventory", "asset", "liability", "equity", "dso", "dpo", "working capital", "debt"],
+  cf: ["cash flow", "cash", "free cash flow", "fcf", "capex", "depreciation", "operating cash"],
+  fx: ["fx", "hedge", "currency", "foreign exchange", "derivative", "hedging"],
+  cap: ["buyback", "dividend", "shares outstanding", "capital return", "repurchase"],
+  hc: ["headcount", "employee", "rsu", "stock comp", "share-based", "fte", "sbc"],
+  env: ["carbon", "emission", "csrd", "environment", "scope 1", "scope 2", "scope 3", "co2", "climate", "renewable", "sustainability"],
+  fwd: ["guidance", "outlook", "forecast", "guide", "cfo", "ceo", "forward", "management said", "supply constraint"],
+};
+
+const TAB_SECTIONS = {
+  home: ["is", "cf", "env"], revenue: ["cat", "geo", "q"], profit: ["is", "geo"],
+  balance: ["bs"], fx: ["fx", "cap"], people: ["hc", "is"], outlook: ["q", "fwd", "is"],
+  env: ["env"], glass: ["is", "q", "cf"],
+};
+
+const BROAD_DASHBOARD_TERMS = [
+  "apple", "dashboard", "company", "performance", "financial", "filing", "10-q", "10-k",
+  "sec", "xbrl", "this figure", "selected figure", "these numbers", "what can you do",
+];
+const FILING_SEARCH_TERMS = [
+  "filing", "10-q", "10-k", "sec", "xbrl", "disclosure", "tag", "maturity", "bond",
+  "trading plan", "10b5-1", "commitment", "contractual", "contingency",
+];
+const STOP_WORDS = new Set([
+  "all", "also", "and", "are", "about", "can", "could", "current", "did", "does", "for",
+  "from", "had", "has", "have", "how", "into", "more", "most", "not", "please", "selected",
+  "show", "than", "that", "the", "their", "these", "this", "those", "was", "were", "what",
+  "when", "where", "which", "who", "why", "with", "would", "year", "quarter", "quarters",
+  "fy25", "fy26", "2025", "2026", "q1", "q2", "q3", "q4",
+]);
+
+const SUM_FIELDS = {
+  is: ["totalRev", "productsRev", "servicesRev", "totalCos", "productsCos", "servicesCos", "grossMargin", "rd", "sga", "totalOpex", "opIncome", "otherIncome", "pretax", "tax", "netIncome"],
+  q: ["revenue", "opIncome"],
+  cf: ["opCash", "depAmort", "sbc", "capex", "buybacks", "dividends"],
+};
+
+function cleanText(value, max = 2000) {
+  return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+function includesAny(text, terms) {
+  return terms.some(term => {
+    if (term.length > 3) return text.includes(term);
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`(^|[^a-z0-9])${escaped}($|[^a-z0-9])`).test(text);
+  });
+}
+
+function matchedSections(question) {
+  const text = question.toLowerCase();
+  return Object.entries(SECTION_KEYWORDS)
+    .filter(([, keywords]) => includesAny(text, keywords))
+    .map(([section]) => section);
+}
+
+function isDashboardQuestion(question, selectedText = "") {
+  if (selectedText) return true;
+  const text = question.toLowerCase();
+  return matchedSections(text).length > 0 || includesAny(text, BROAD_DASHBOARD_TERMS);
+}
+
+function chooseSections(question, tab, selectedText = "") {
+  const matched = matchedSections(question);
+  if (matched.length) return matched;
+  if (selectedText || includesAny(question.toLowerCase(), BROAD_DASHBOARD_TERMS)) {
+    return TAB_SECTIONS[tab] || ["is"];
+  }
+  return [];
+}
+
+function normalizeFilters(filters = {}) {
+  const rawIndexes = Array.isArray(filters.quarterIndexes) ? filters.quarterIndexes : [];
+  const quarterIndexes = [...new Set(rawIndexes
+    .map(Number)
+    .filter(index => Number.isInteger(index) && index >= 0 && index < QUARTER_COUNT))]
+    .sort((a, b) => a - b);
+  const validNames = (requested, available) => {
+    if (!Array.isArray(requested)) return [...available];
+    const allowed = new Set(available);
+    return [...new Set(requested.filter(name => allowed.has(name)))];
+  };
+  return {
+    quarterIndexes: quarterIndexes.length ? quarterIndexes : [4, 5, 6],
+    categories: validNames(filters.categories, CURATED_DATA.cat.names),
+    geographies: validNames(filters.geographies, CURATED_DATA.geo.names),
+  };
+}
+
+function projectAligned(value, quarterIndexes) {
+  if (Array.isArray(value)) return value.length === QUARTER_COUNT ? quarterIndexes.map(index => value[index]) : value;
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, projectAligned(child, quarterIndexes)]));
+}
+
+function filterNamedMap(map, selectedNames) {
+  if (!map || typeof map !== "object" || Array.isArray(map)) return map;
+  const selected = new Set(selectedNames);
+  return Object.fromEntries(Object.entries(map).filter(([name]) => selected.has(name)));
+}
+
+function projectSection(section, filters) {
+  const source = CURATED_DATA[section];
+  if (source === undefined) return undefined;
+  let scoped = source;
+  if (section === "cat") {
+    scoped = { ...source, names: filters.categories,
+      revenue: filterNamedMap(source.revenue, filters.categories),
+      revenuePY: filterNamedMap(source.revenuePY, filters.categories) };
+  } else if (section === "geo") {
+    scoped = { ...source, names: filters.geographies,
+      revenue: filterNamedMap(source.revenue, filters.geographies),
+      revenuePY: filterNamedMap(source.revenuePY, filters.geographies),
+      cos: filterNamedMap(source.cos, filters.geographies),
+      sm: filterNamedMap(source.sm, filters.geographies),
+      opInc: filterNamedMap(source.opInc, filters.geographies),
+      opIncPY: filterNamedMap(source.opIncPY, filters.geographies) };
+  }
+  return projectAligned(scoped, filters.quarterIndexes);
+}
+
+function sumSeries(series, quarterIndexes) {
+  if (!Array.isArray(series)) return null;
+  let total = 0;
+  for (const index of quarterIndexes) {
+    if (typeof series[index] !== "number") return null;
+    total += series[index];
+  }
+  return total;
+}
+
+function filedDilutedEps(quarterIndexes) {
+  const signature = quarterIndexes.join(",");
+  if (quarterIndexes.length === 1) return CURATED_DATA.is.epsDiluted[quarterIndexes[0]] ?? null;
+  if (signature === "0,1,2") return CURATED_DATA.is.epsDiluted9mo?.fy25 ?? null;
+  if (signature === "4,5,6") return CURATED_DATA.is.epsDiluted9mo?.fy26 ?? null;
+  if (signature === "0,1,2,3") return CURATED_DATA.is.epsDilutedAnnual?.fy25 ?? null;
+  return null;
+}
+
+function aggregateNamedSeries(map, names, quarterIndexes) {
+  const result = {};
+  for (const name of names) {
+    const value = sumSeries(map?.[name], quarterIndexes);
+    if (value !== null) result[name] = value;
+  }
+  return result;
+}
+
+// Deterministic data tools. The model receives their results instead of the whole database.
+function getMetric(section, filters) {
+  return { tool: "getMetric", section, values: projectSection(section, filters) };
+}
+
+function comparePeriods(section, filters) {
+  return { tool: "comparePeriods", section, values: projectSection(section, filters) };
+}
+
+function getBreakdown(section, filters) {
+  return { tool: "getBreakdown", section, values: projectSection(section, filters) };
+}
+
+function calculateKpi(section, filters) {
+  const indexes = filters.quarterIndexes;
+  if (section === "cat") {
+    return { tool: "calculateKpi", section,
+      selectedPeriodRevenueByCategory: aggregateNamedSeries(CURATED_DATA.cat.revenue, filters.categories, indexes),
+      selectedPeriodPriorYearByCategory: aggregateNamedSeries(CURATED_DATA.cat.revenuePY, filters.categories, indexes) };
+  }
+  if (section === "geo") {
+    return { tool: "calculateKpi", section,
+      selectedPeriodRevenueByGeography: aggregateNamedSeries(CURATED_DATA.geo.revenue, filters.geographies, indexes),
+      selectedPeriodPriorYearByGeography: aggregateNamedSeries(CURATED_DATA.geo.revenuePY, filters.geographies, indexes) };
+  }
+  const fields = SUM_FIELDS[section];
+  if (!fields) return null;
+  const source = CURATED_DATA[section];
+  const totals = {};
+  for (const field of fields) {
+    const value = sumSeries(source?.[field], indexes);
+    if (value !== null) totals[field] = value;
+  }
+  if (section === "is") {
+    totals.dilutedEpsFiledForExactSelection = filedDilutedEps(indexes);
+    totals.dilutedEpsNote = "Never sum quarterly EPS. Null means Apple did not file EPS for this exact selection.";
+    if (totals.totalRev) {
+      totals.grossMarginPct = Math.round((1000 * totals.grossMargin) / totals.totalRev) / 10;
+      totals.operatingMarginPct = Math.round((1000 * totals.opIncome) / totals.totalRev) / 10;
+    }
+  }
+  if (section === "q") {
+    const grossMargin = sumSeries(CURATED_DATA.is.grossMargin, indexes);
+    if (grossMargin !== null && totals.revenue) totals.grossMarginPct = Math.round((1000 * grossMargin) / totals.revenue) / 10;
+  }
+  if (section === "cf" && totals.opCash !== undefined && totals.capex !== undefined) totals.freeCashFlow = totals.opCash - totals.capex;
+  return { tool: "calculateKpi", section, selectedPeriodTotals: totals };
+}
+
+let XBRL_FACTS = [];
+try {
+  XBRL_FACTS = JSON.parse(readFileSync(new URL("./xbrl-facts.json", import.meta.url), "utf8"));
+} catch {
+  XBRL_FACTS = [];
+}
+
+function searchableTokens(value) {
+  return String(value || "").replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").split(/\s+/)
+    .filter(token => token.length >= 3 && !STOP_WORDS.has(token));
+}
+
+function sanitizeFact(fact) {
+  const value = String(fact.value ?? "").trim();
+  if (!value || value.length > 240 || /<[^>]+>/.test(value) || /textblock/i.test(fact.concept || "")) return null;
+  return { concept: fact.concept, label: fact.label, value, unit: fact.unit, period: fact.period, segment: fact.segment };
+}
+
+function searchFiling(question, limit = 6) {
+  const queryTokens = [...new Set(searchableTokens(question))];
+  if (!queryTokens.length || !XBRL_FACTS.length) return [];
+  const ranked = [];
+  for (const fact of XBRL_FACTS) {
+    const safeFact = sanitizeFact(fact);
+    if (!safeFact) continue;
+    const haystack = new Set(searchableTokens(`${safeFact.label} ${safeFact.concept} ${safeFact.segment || ""}`));
+    const matched = queryTokens.filter(token => haystack.has(token));
+    if (!matched.length) continue;
+    ranked.push({ fact: safeFact, score: matched.length, specificity: matched.reduce((n, token) => n + token.length, 0) });
+  }
+  ranked.sort((a, b) => b.score - a.score || b.specificity - a.specificity);
+  return ranked.slice(0, limit).map(({ fact }) => fact);
+}
+
+function sourceMetadata(quarterIndexes) {
+  const sources = [];
+  for (const index of quarterIndexes) {
+    const label = CURATED_DATA.meta.quarters[index];
+    const source = CURATED_DATA.meta.sources[label];
+    if (source) sources.push({ label, ...source });
+  }
+  if (quarterIndexes.includes(3) && CURATED_DATA.meta.sources["FY25 10-K"]) {
+    sources.push({ label: "FY25 10-K", ...CURATED_DATA.meta.sources["FY25 10-K"] });
+  }
+  return sources;
+}
+
+function buildDashboardEvidence(question, selectedText, tab, rawFilters) {
+  const filters = normalizeFilters(rawFilters);
+  const sections = chooseSections(question, tab, selectedText);
+  const results = [];
+  for (const section of sections) {
+    const result = section === "cat" || section === "geo"
+      ? getBreakdown(section, filters)
+      : filters.quarterIndexes.length > 1 && ["is", "q", "cf"].includes(section)
+        ? comparePeriods(section, filters)
+        : getMetric(section, filters);
+    if (result.values !== undefined) results.push(result);
+    const kpi = calculateKpi(section, filters);
+    if (kpi) results.push(kpi);
+  }
+  const filingFacts = includesAny(question.toLowerCase(), FILING_SEARCH_TERMS) ? searchFiling(question) : [];
+  if (filingFacts.length) results.push({ tool: "searchFiling", facts: filingFacts });
+  return {
+    activeTab: tab || "unknown",
+    activeFilters: {
+      quarters: filters.quarterIndexes.map(index => CURATED_DATA.meta.quarters[index]),
+      categories: filters.categories,
+      geographies: filters.geographies,
+    },
+    selectedText: selectedText || undefined,
+    units: "Dollar figures are USD millions unless a field or source says otherwise.",
+    sources: sourceMetadata(filters.quarterIndexes),
+    results,
+  };
+}
+
+function dashboardSystemPrompt(evidence) {
+  return [
+    "You are Dashboard AI in an Apple FP&A and CSRD dashboard.",
+    "Answer only from the EVIDENCE JSON below. Never invent a number or silently use general knowledge.",
+    "The backend already applied the active filters and calculated selected-period totals. Use calculateKpi results for totals instead of adding values yourself.",
+    "EPS rule: use dilutedEpsFiledForExactSelection only. Never sum quarterly EPS. If it is null, say Apple did not file EPS for that exact selection.",
+    "Lead with the answer. Default to 2 to 4 sentences. Use a short list only when it improves a comparison.",
+    "Bold only key numbers. Do not use headings, tables, nested lists, or em dashes.",
+    "Briefly name the supporting filing or report from evidence.sources. If evidence does not cover the question, say so and suggest General AI.",
+    "EVIDENCE:", JSON.stringify(evidence),
+  ].join("\n");
+}
+
+function generalSystemPrompt() {
+  return [
+    "You are General AI embedded in a public-company finance dashboard.",
+    "No private dashboard data or active filters were provided. Answer from general knowledge only and never imply that the answer came from the dashboard.",
+    "Lead with the answer and stay concise by default. If the question requires live or current information you cannot verify, state that limitation plainly.",
+    "Use plain English. Do not use headings, tables, nested lists, or em dashes unless the user explicitly requests a structured format.",
+  ].join("\n");
+}
+
+function companyEvidence(companySlug, filters = {}, tab = "company") {
+  const company = COMPANY_DATA.companies?.[companySlug];
+  if (!company) return null;
+  const requestedIndexes = Array.isArray(filters?.quarterIndexes) ? filters.quarterIndexes.filter(Number.isInteger) : [];
+  const selectedPeriods = requestedIndexes.length
+    ? requestedIndexes.map(index => company.periods[index]).filter(Boolean)
+    : company.periods;
+  const rawScenario = tab === "plan" && filters?.scenario ? filters.scenario : null;
+  let planningModel = null;
+  if (rawScenario && selectedPeriods.length) {
+    const basePeriod = selectedPeriods[selectedPeriods.length - 1];
+    const revenue = basePeriod.metrics?.revenue;
+    const grossProfit = basePeriod.metrics?.grossProfit;
+    const operatingIncome = basePeriod.metrics?.operatingIncome;
+    const revenueGrowth = Math.max(-50, Math.min(100, Number(rawScenario.revenueGrowth) || 0));
+    const grossMarginDelta = Math.max(-20, Math.min(20, Number(rawScenario.grossMarginDelta) || 0));
+    const opexGrowth = Math.max(-50, Math.min(100, Number(rawScenario.opexGrowth) || 0));
+    if ([revenue, grossProfit, operatingIncome].every(Number.isFinite) && revenue !== 0) {
+      const grossMargin = 100 * grossProfit / revenue;
+      const operatingExpense = grossProfit - operatingIncome;
+      const modeledRevenue = revenue * (1 + revenueGrowth / 100);
+      const modeledGrossMargin = Math.max(0, Math.min(100, grossMargin + grossMarginDelta));
+      const modeledGrossProfit = modeledRevenue * modeledGrossMargin / 100;
+      const modeledOperatingExpense = operatingExpense * (1 + opexGrowth / 100);
+      const modeledOperatingIncome = modeledGrossProfit - modeledOperatingExpense;
+      planningModel = {
+        basis: "MODELED arithmetic from the latest selected filed quarter",
+        basePeriod: basePeriod.label,
+        assumptions: { scenario: cleanText(rawScenario.scenario, 40) || "custom", revenueGrowthPct: revenueGrowth, grossMarginDeltaPts: grossMarginDelta, operatingExpenseGrowthPct: opexGrowth },
+        actual: { revenue, grossProfit, grossMarginPct: grossMargin, operatingExpense, operatingIncome },
+        modeledNextQuarter: { revenue: modeledRevenue, grossProfit: modeledGrossProfit, grossMarginPct: modeledGrossMargin, operatingExpense: modeledOperatingExpense, operatingIncome: modeledOperatingIncome, operatingMarginPct: modeledRevenue ? 100 * modeledOperatingIncome / modeledRevenue : null },
+      };
+    }
+  }
+  return {
+    company: { name: company.name, ticker: company.ticker, cik: company.cik },
+    context: {
+      tab,
+      selectedPeriodLabels: selectedPeriods.map(period => period.label),
+      scenario: rawScenario,
+    },
+    units: COMPANY_DATA.units,
+    methodology: COMPANY_DATA.methodology,
+    periods: selectedPeriods,
+    planningModel,
+  };
+}
+
+function companySystemPrompt(evidence) {
+  return [
+    `You are Dashboard AI for ${evidence.company.name} (${evidence.company.ticker}).`,
+    "Use only the supplied SEC-sourced evidence. Never invent a missing value, business driver, budget, forecast, product split, or geographic split.",
+    "A null value means unavailable. Metrics marked in derivedMetrics are arithmetic derivations from filed annual or year-to-date facts, not estimates.",
+    "Respect the active tab and selected periods in evidence.context. If a requested product, geography, guidance, headcount, FX, or environmental fact is absent, say it is unavailable in the connected source.",
+    "If evidence.context.scenario is present, treat it as a user-visible modeled FP&A scenario. evidence.planningModel contains the same deterministic model displayed in the UI. Use its basePeriod, actual values, assumptions, and modeledNextQuarter outputs. Always label outputs modeled, and never present them as company guidance, consensus, or an internal budget.",
+    "Separate what the figures show from causal explanations. If the evidence does not establish a cause, say that operational or management commentary is needed.",
+    "Lead with the answer, use plain English, and stay concise.",
+    `Evidence: ${JSON.stringify(evidence)}`,
+  ].join("\n");
+}
+
+export const __test = { buildDashboardEvidence, dashboardSystemPrompt, isDashboardQuestion, normalizeFilters, searchFiling };
+
+export default async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") { res.status(204).end(); return; }
+  if (req.method !== "POST") { res.status(405).json({ error: "method_not_allowed" }); return; }
+
+  const { question: rawQuestion, selectedText: rawSelectedText, tab, filters } = req.body || {};
+  const question = cleanText(rawQuestion);
+  const selectedText = cleanText(rawSelectedText, 600);
+  const mode = req.body?.mode === "general" ? "general" : "dashboard";
+  const selectedCompany = cleanText(req.body?.company, 40) || "apple";
+  const selectedCompanyEvidence = selectedCompany !== "apple" || tab === "company" || tab === "plan"
+    ? companyEvidence(selectedCompany, filters, tab)
+    : null;
+  if (!question) { res.status(400).json({ error: "missing_question" }); return; }
+
+  if (mode === "dashboard" && !selectedCompanyEvidence && !isDashboardQuestion(question, selectedText)) {
+    res.status(200).json({
+      answer: "That question is outside the Apple dashboard data. Switch to General AI to ask it without sending any dashboard context.",
+      meta: { mode, route: "local_scope", systemChars: 0, usage: { input_tokens: 0, output_tokens: 0 } },
+    });
+    return;
+  }
+
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) { res.status(200).json({ error: "no_key" }); return; }
+
+  const evidence = mode === "dashboard" ? (selectedCompanyEvidence || buildDashboardEvidence(question, selectedText, tab, filters)) : null;
+  const system = mode === "dashboard" ? (selectedCompanyEvidence ? companySystemPrompt(evidence) : dashboardSystemPrompt(evidence)) : generalSystemPrompt();
+  const userMessage = selectedText ? `Selected dashboard text: ${selectedText}\n\nQuestion: ${question}` : question;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01",
+        ...(process.env.ANTHROPIC_WORKSPACE_ID ? { "anthropic-workspace-id": process.env.ANTHROPIC_WORKSPACE_ID } : {}),
+      },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5",
+        max_tokens: mode === "dashboard" ? 320 : 420,
+        system,
+        messages: [{ role: "user", content: userMessage }],
+      }),
+    });
+    const payload = await response.json();
+    if (!response.ok) { res.status(200).json({ error: "api_error", detail: payload?.error?.message || response.status }); return; }
+    const answer = (payload.content || []).filter(block => block.type === "text").map(block => block.text).join("\n");
+    if (!answer) { res.status(200).json({ error: "api_error", detail: "empty answer, try again" }); return; }
+    res.status(200).json({ answer, meta: {
+      mode, route: mode === "dashboard" ? (selectedCompanyEvidence ? "company_source" : "dashboard_tools") : "general", systemChars: system.length, usage: payload.usage || null,
+    } });
+  } catch (error) {
+    res.status(200).json({ error: "network_error", detail: String(error).slice(0, 200) });
+  }
+}
