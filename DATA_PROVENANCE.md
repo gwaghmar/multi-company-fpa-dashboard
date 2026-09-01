@@ -203,6 +203,13 @@ above); that does not prevent the directly filed FY25 annual figure from being u
 
 ## Part D. Multi-company source and Planning & Scenarios
 
+`company-context.json` is rebuilt by `tools/fetch_public_context.py` from recent
+SEC submissions, 10-Q/10-K narrative, SEC-filed earnings exhibits, U.S. Treasury
+yield-curve data, the BLS public API, and ECB reference FX rates. The management
+items are short source excerpts with dates and links. They are context, not proof
+of causality. Internal plans, analyst consensus, and stock prices remain explicitly
+unavailable.
+
 `companies.json` is rebuilt from the SEC Company Facts API by
 `tools/fetch_company_sources.py`. It currently contains seven standardized fiscal
 quarters for Apple, Alphabet, NVIDIA, Microsoft, Amazon, Meta, AMD, Broadcom,

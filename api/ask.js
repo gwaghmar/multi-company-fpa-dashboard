@@ -4,6 +4,12 @@ import { readFileSync } from "fs";
 
 const CURATED_DATA = JSON.parse(readFileSync(new URL("../data.json", import.meta.url), "utf8"));
 const COMPANY_DATA = JSON.parse(readFileSync(new URL("../companies.json", import.meta.url), "utf8"));
+let PUBLIC_CONTEXT = { companies: {}, macro: {} };
+try {
+  PUBLIC_CONTEXT = JSON.parse(readFileSync(new URL("../company-context.json", import.meta.url), "utf8"));
+} catch {
+  PUBLIC_CONTEXT = { companies: {}, macro: {} };
+}
 const QUARTER_COUNT = CURATED_DATA.meta.quarters.length;
 
 const SECTION_KEYWORDS = {
@@ -296,6 +302,7 @@ function dashboardSystemPrompt(evidence) {
     "Lead with the answer. Default to 2 to 4 sentences. Use a short list only when it improves a comparison.",
     "Bold only key numbers. Do not use headings, tables, nested lists, or em dashes.",
     "Briefly name the supporting filing or report from evidence.sources. If evidence does not cover the question, say so and suggest General AI.",
+    "If evidence.publicContext is present, its management signals are dated official-source excerpts, not verified causal conclusions. Macro values are external planning context, never company guidance.",
     "EVIDENCE:", JSON.stringify(evidence),
   ].join("\n");
 }
@@ -396,6 +403,7 @@ function companyEvidence(companySlug, filters = {}, tab = "company") {
     company: { name: company.name, ticker: company.ticker, cik: company.cik },
     dataFreshness: { generatedAt: COMPANY_DATA.generatedAt, sourceType: company.sourceType, sourceUrl: company.sourceUrl },
     availableMetrics,
+    publicContext: publicContextForCompany(companySlug, tab),
     context: {
       tab,
       selectedPeriodLabels: selectedPeriods.map(period => period.label),
@@ -409,6 +417,35 @@ function companyEvidence(companySlug, filters = {}, tab = "company") {
   };
 }
 
+function publicContextForCompany(companySlug, tab = "home") {
+  const context = PUBLIC_CONTEXT.companies?.[companySlug];
+  if (!context) return null;
+  const categoriesByTab = {
+    revenue: ["Demand and revenue", "Guidance"],
+    variance: ["Demand and revenue", "Margin and cost", "Investment", "Risk and supply"],
+    profit: ["Margin and cost", "Investment", "Workforce"],
+    balance: ["Investment", "Risk and supply"],
+    fx: ["Risk and supply", "Guidance"],
+    people: ["Workforce", "Investment"],
+    plan: ["Guidance", "Demand and revenue", "Margin and cost", "Investment"],
+  };
+  const allowed = new Set(categoriesByTab[tab] || []);
+  const signals = categoriesByTab[tab]
+    ? (context.managementSignals || []).filter(signal => allowed.has(signal.category))
+    : (context.managementSignals || []);
+  const includeMacro = ["home", "glass", "variance", "plan", "fx", "outlook", "reports"].includes(tab);
+  return {
+    refreshedAt: PUBLIC_CONTEXT.generatedAt,
+    methodology: PUBLIC_CONTEXT.methodology,
+    irUrl: context.irUrl,
+    coverage: context.coverage,
+    managementSignals: signals.slice(0, 6),
+    recentFilings: (context.recentFilings || []).slice(0, 6),
+    sourceDocuments: (context.documents || []).slice(0, 3),
+    macro: includeMacro ? PUBLIC_CONTEXT.macro : undefined,
+  };
+}
+
 function companySystemPrompt(evidence) {
   return [
     `You are Dashboard AI for ${evidence.company.name} (${evidence.company.ticker}).`,
@@ -416,6 +453,8 @@ function companySystemPrompt(evidence) {
     "A null value means unavailable. Metrics marked in derivedMetrics are arithmetic derivations from filed annual or year-to-date facts, not estimates.",
     "Use evidence.availableMetrics to understand the connected coverage. Supplemental SEC metrics may include inventory, goodwill, PP&E, deferred revenue, noncurrent marketable securities, SG&A, depreciation and amortization, interest, taxes, acquisitions, and stock compensation when the issuer filed them.",
     "State the data refresh timestamp from evidence.dataFreshness when the user asks how current the connected data is.",
+    "evidence.publicContext contains dated official-source excerpts and macro observations. Treat managementSignals as source excerpts, not verified causal explanations. Paraphrase carefully and name the source document and filing date.",
+    "Macro observations provide external planning context only. Never present Treasury, BLS, or ECB values as company guidance or as proof of a company-specific cause.",
     "When fiscalYtdMetrics are present for the latest selected period and the selected periods form that fiscal YTD, prefer those exact filed span values over adding rounded quarter values.",
     "Respect the active tab and selected periods in evidence.context. If a requested product, geography, guidance, headcount, FX, or environmental fact is absent, say it is unavailable in the connected source.",
     "If evidence.context.scenario is present, treat it as a user-visible modeled FP&A scenario. evidence.planningModel contains the same deterministic model displayed in the UI. Use its basePeriod, actual values, assumptions, and modeledNextQuarter outputs. Always label outputs modeled, and never present them as company guidance, consensus, or an internal budget.",
@@ -426,7 +465,7 @@ function companySystemPrompt(evidence) {
   ].join("\n");
 }
 
-export const __test = { buildDashboardEvidence, companyEvidence, companySystemPrompt, dashboardSystemPrompt, isDashboardQuestion, normalizeFilters, searchFiling };
+export const __test = { buildDashboardEvidence, companyEvidence, companySystemPrompt, dashboardSystemPrompt, isDashboardQuestion, normalizeFilters, publicContextForCompany, searchFiling };
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -455,7 +494,9 @@ export default async function handler(req, res) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) { res.status(200).json({ error: "no_key" }); return; }
 
-  const evidence = mode === "dashboard" ? (selectedCompanyEvidence || buildDashboardEvidence(question, selectedText, tab, filters)) : null;
+  const evidence = mode === "dashboard"
+    ? (selectedCompanyEvidence || { ...buildDashboardEvidence(question, selectedText, tab, filters), publicContext: publicContextForCompany(selectedCompany, tab) })
+    : null;
   const system = mode === "dashboard" ? (selectedCompanyEvidence ? companySystemPrompt(evidence) : dashboardSystemPrompt(evidence)) : generalSystemPrompt();
   const userMessage = selectedText ? `Selected dashboard text: ${selectedText}\n\nQuestion: ${question}` : question;
 

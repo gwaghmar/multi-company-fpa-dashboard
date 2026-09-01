@@ -878,9 +878,11 @@ footer{
 .report-sheet{width:min(1040px,100%);margin:4px auto 18px;background:var(--surface);border:1px solid var(--ring);box-shadow:0 16px 42px rgba(17,17,19,.08);padding:28px 32px;display:flex;flex-direction:column;gap:22px}.report-sheet>header{display:flex;justify-content:space-between;gap:24px;border-bottom:2px solid var(--ink);padding-bottom:18px}.report-sheet>header span,.report-status>span{font:650 9px/1 "Inter",sans-serif;letter-spacing:.09em;color:var(--cfo)}.report-sheet h1{font:700 32px/1 "Inter Tight",sans-serif;letter-spacing:-.035em;margin-top:6px}.report-sheet header p{font-size:11px;color:var(--muted);margin-top:7px}.report-status{text-align:right;display:flex;flex-direction:column;gap:4px}.report-status strong{font:650 12px/1.2 "Inter",sans-serif}.report-status small{font-size:9.5px;color:var(--muted)}
 .report-sheet section>h3{font:650 10px/1.3 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.08em;border-top:2px solid var(--ink);padding-top:8px;margin-bottom:9px}.report-sheet section>h3 span{color:var(--cfo);font-size:8px;margin-left:5px}.report-sheet section p,.report-sheet section li{font-size:11px;line-height:1.55;color:var(--ink2)}.report-sheet section ul,.report-sheet section ol{padding-left:18px}.report-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}.report-table{width:100%;border-collapse:collapse;font-size:10.5px}.report-table th,.report-table td{text-align:right;padding:7px;border-bottom:1px solid var(--ring);white-space:nowrap}.report-table th{font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.report-table th:first-child,.report-table td:first-child{text-align:left;font-weight:600}.report-table a{color:var(--cfo)}
 .report-callout{border:1px solid var(--ring);border-radius:12px;padding:13px}.report-callout>span{font:650 8px/1 "Inter",sans-serif;letter-spacing:.08em}.report-callout>strong{display:block;font:650 13px/1.2 "Inter Tight",sans-serif;margin-top:7px}.report-callout>p{font-size:10px;line-height:1.45;color:var(--muted);margin-top:4px}.report-callout.unavailable>span{color:var(--down)}.report-callout.connected>span{color:var(--up)}.report-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.report-facts div{background:var(--page);padding:10px;border-radius:10px}.report-facts dt{font-size:9px;color:var(--muted)}.report-facts dd{font:650 16px/1.2 "Inter Tight",sans-serif;margin-top:3px}.report-note{font-size:9.5px!important;color:var(--muted)!important;margin-top:6px}.report-sheet>footer{border-top:1px solid var(--ring);padding-top:10px;font-size:9px;color:var(--muted)}
+.evidence-strip,.macro-strip{border:1px solid var(--ring);border-radius:16px;background:var(--surface);padding:15px;margin:10px 0;flex:0 0 auto}.evidence-strip-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:11px}.evidence-strip-head h2{font:650 18px/1.1 "Inter Tight",sans-serif;letter-spacing:-.02em;margin-top:4px}.evidence-strip-head>span{font-size:10px;color:var(--muted);text-align:right}.evidence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.evidence-signal{min-width:0;background:var(--page);border:1px solid var(--ring);border-radius:12px;padding:12px}.evidence-signal>span,.macro-cell>span{font:650 9px/1.2 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--cfo)}.evidence-signal p{font-size:11px;line-height:1.45;color:var(--ink2);margin:8px 0}.evidence-signal small,.macro-cell small{font-size:9px;color:var(--muted)}.evidence-strip a,.macro-strip a{color:var(--ink2);text-decoration:none}.evidence-strip a:hover,.macro-strip a:hover{text-decoration:underline}.evidence-details{margin-top:9px;border-top:1px solid var(--ring);padding-top:8px}.evidence-details summary{cursor:pointer;font:650 10px/1.2 "Inter",sans-serif;color:var(--ink2)}.evidence-details>div{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:8px;font-size:10px}.evidence-empty{display:flex;align-items:center;justify-content:space-between;gap:20px}.evidence-empty p{max-width:700px;font-size:11px;color:var(--muted)}.macro-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--ring);border:1px solid var(--ring);border-radius:12px;overflow:hidden}.macro-cell{display:flex;flex-direction:column;gap:5px;background:var(--page);padding:12px}.macro-cell strong{font:650 20px/1 "Inter Tight",sans-serif}.report-sheet>.evidence-strip{margin:0}.report-sheet>.evidence-strip .evidence-strip-head h2{font-size:16px}.report-sheet>.evidence-strip .evidence-signal p{font-size:10px}
+.planning-assumptions{flex:0 0 auto}
 
-@media(max-width:900px){.home-primary-grid,.home-operating-grid{grid-template-columns:1fr}.planning-spine{grid-template-columns:repeat(3,1fr);row-gap:18px}.planning-spine::before{display:none}.report-card-grid{grid-template-columns:1fr}.report-columns{grid-template-columns:1fr}.report-toolbar .report-print{margin-left:0}.report-sheet{padding:20px}.comparison-state-grid{grid-template-columns:1fr}.architecture-scroll-hint{display:block}.architecture-flow{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:210px;overflow-x:auto;padding-bottom:6px}.architecture-arrow{display:none}.architecture-rails{grid-template-columns:1fr}.cadence-flow{grid-template-columns:repeat(3,1fr);row-gap:14px}.cadence-flow li:nth-child(4){border-left:0}.decision-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.decision-result{grid-column:1/-1}.decision-kpis{grid-column:1/-1}}
-@media(max-width:600px){#home .home-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.planning-spine{grid-template-columns:repeat(2,1fr)}.report-sheet>header{flex-direction:column}.report-status{text-align:left}.report-table{min-width:620px}.report-sheet section{overflow-x:auto}.finance-architecture .home-section-head>span{text-align:left}.architecture-rails>div{grid-template-columns:1fr}.architecture-rails small{grid-column:1}.cadence-flow{grid-template-columns:repeat(2,1fr)}.cadence-flow li:nth-child(odd){border-left:0;padding-left:0}.decision-inputs{grid-template-columns:1fr}.decision-inputs input{font-size:16px}.decision-kpis{grid-template-columns:repeat(2,1fr)}.decision-kpis>div:nth-child(3){border-left:0;border-top:1px solid var(--ring)}.decision-kpis>div:nth-child(4){border-top:1px solid var(--ring)}.decision-sensitivity{grid-template-columns:1fr}}
+@media(max-width:900px){.home-primary-grid,.home-operating-grid{grid-template-columns:1fr}.planning-spine{grid-template-columns:repeat(3,1fr);row-gap:18px}.planning-spine::before{display:none}.report-card-grid{grid-template-columns:1fr}.report-columns{grid-template-columns:1fr}.report-toolbar .report-print{margin-left:0}.report-sheet{padding:20px}.comparison-state-grid{grid-template-columns:1fr}.evidence-grid{grid-template-columns:1fr}.macro-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.architecture-scroll-hint{display:block}.architecture-flow{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:210px;overflow-x:auto;padding-bottom:6px}.architecture-arrow{display:none}.architecture-rails{grid-template-columns:1fr}.cadence-flow{grid-template-columns:repeat(3,1fr);row-gap:14px}.cadence-flow li:nth-child(4){border-left:0}.decision-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.decision-result{grid-column:1/-1}.decision-kpis{grid-column:1/-1}}
+@media(max-width:600px){#home .home-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.planning-spine{grid-template-columns:repeat(2,1fr)}.report-sheet>header{flex-direction:column}.report-status{text-align:left}.report-table{min-width:620px}.report-sheet section{overflow-x:auto}.evidence-strip-head{flex-direction:column}.evidence-strip-head>span{text-align:left}.evidence-empty{align-items:flex-start;flex-direction:column}.finance-architecture .home-section-head>span{text-align:left}.architecture-rails>div{grid-template-columns:1fr}.architecture-rails small{grid-column:1}.cadence-flow{grid-template-columns:repeat(2,1fr)}.cadence-flow li:nth-child(odd){border-left:0;padding-left:0}.decision-inputs{grid-template-columns:1fr}.decision-inputs input{font-size:16px}.decision-kpis{grid-template-columns:repeat(2,1fr)}.decision-kpis>div:nth-child(3){border-left:0;border-top:1px solid var(--ring)}.decision-kpis>div:nth-child(4){border-top:1px solid var(--ring)}.decision-sensitivity{grid-template-columns:1fr}}
 @media print{
   body{display:block;overflow:visible;background:#fff;color:#111}.topbar,.filterbar,#foot,.ai-drawer,.sel-pill,.report-toolbar,.vhead,.sowhat,.note{display:none!important}main,.view{position:static!important;display:block!important;overflow:visible!important;padding:0!important}.view>*:not(.report-sheet){display:none!important}.report-sheet{display:flex!important;width:100%;margin:0;border:0;box-shadow:none;padding:0;color:#111;background:#fff}.report-sheet *{color:#111!important}.report-sheet a{text-decoration:none}.report-callout,.report-facts div{break-inside:avoid}
 }
@@ -979,6 +981,7 @@ footer{
    ============================================================ */
 let D = null; // loaded from data.json at startup, see loadData() below
 let COMPANY_DATA = null;
+let PUBLIC_CONTEXT = {companies:{},macro:{}};
 let companySlug = "apple";
 const SLOT=["--s1","--s2","--s3","--s4","--s5"];
 
@@ -2047,6 +2050,7 @@ function renderVariance(v){
     ${tile("Gross margin variance",gmCmp==null?"n/a":sgn(gm-gmCmp)+" pts",gmCmp==null?"No comparison available":`${pct(gm)} vs ${pct(gmCmp)}`,gmCmp==null?undefined:gm>=gmCmp)}
     ${tile("Opex ratio variance",opexCmp==null?"n/a":sgn(opex-opexCmp)+" pts",opexCmp==null?"No comparison available":`${pct(opex)} vs ${pct(opexCmp)}`,opexCmp==null?undefined:opex<=opexCmp)}
   </div>
+  ${managementSignalsHTML({title:"Signals to test against the variance",limit:3,categories:["Demand and revenue","Margin and cost","Investment","Risk and supply"]})}
   <div class="variance-chart-grid">
     <div class="card variance-chart"><h3>Net sales bridge <span class="h3-note">$M · current vs comparison</span></h3><div class="chart"><svg id="varianceRevenueChart" aria-label="Net sales current period versus comparison"></svg></div></div>
     <div class="card variance-chart"><h3>Operating income bridge <span class="h3-note">$M · current vs comparison</span></h3><div class="chart"><svg id="varianceProfitChart" aria-label="Operating income current period versus comparison"></svg></div></div>
@@ -2395,6 +2399,7 @@ function renderHome(v){
       <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $M</span></h3><div class="fill"><svg id="appleHomeRevenue"></svg></div></div>
       ${companyExecutiveOverview()}
     </div>
+    ${managementSignalsHTML({limit:3})}
     ${companyHomeSections()}
   </div>`;
   document.getElementById("homeExecBtn").addEventListener("click",()=>go("glass"));
@@ -2583,6 +2588,7 @@ function renderGlass(v){
     <span class="sub">all figures as reported</span>
     <span class="vhead-right"><span class="gpill">Total assets&nbsp;<b style="font:650 13px 'Inter Tight'">${B(b.totalAssets[bsIdx])}</b></span><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${homeSoWhat(sq)}
+  ${managementSignalsHTML({title:"Management context for executive review",limit:3})}
   <div class="gwrap">
     <div class="gcard" style="grid-row:span 2">
       <h3>Analytics · revenue by quarter</h3>
@@ -3039,6 +3045,7 @@ function renderFX(v){
     ${tile("Capital returned · % of FCF",fcfStat.pctOfFcf!=null?pct(fcfStat.pctOfFcf,0):"n/a",`${B(fcfStat.capReturned)} returned / ${B(fcfStat.fcfSum)} FCF · ${lbl}`)}
     ${tile("Share count",sgn(shareChgPct)+"%",`${(c.sharesOutSep25/1e6).toFixed(2)}B → ${(c.sharesOutJun26/1e6).toFixed(2)}B shares · 9mo FY26, as filed`,shareChgPct<=0)}
   </div>
+  ${macroContextHTML("Rates and FX context")}
   <div class="body g2">
     <div class="card"><h3>Derivative notional amounts</h3>
       <div class="note">Jun 27, 2026 vs Sep 27, 2025. ${notFilteredNote()}</div>
@@ -3244,6 +3251,7 @@ function renderOutlook(v){
     ${tile(qLabel(snap)+" actual growth",sgn(q.yoy[snap])+"%","for reference",q.yoy[snap]>=0)}
     ${tile("CEO transition",ceoDate,"John Ternus succeeds Tim Cook")}
   </div>
+  ${managementSignalsHTML({title:"Latest outlook signals",limit:3,categories:["Guidance","Demand and revenue","Margin and cost","Investment","Risk and supply"]})}
   <div class="body g12">
     <div class="card"><h3>Quarterly revenue · reported, selected quarters</h3>
       <div class="note">Q4 FY26 is guided, not reported. Click a bar to focus that quarter.</div>
@@ -3814,9 +3822,13 @@ document.getElementById("main").addEventListener("click",e=>{
 
 async function loadData(){
   try{
-    const [dataResponse,companyResponse] = await Promise.all([fetch("./data.json"),fetch("./companies.json")]);
+    const contextPromise=fetch("./company-context.json")
+      .then(response=>response.ok?response.json():Promise.reject(new Error("Public context unavailable")))
+      .catch(()=>({companies:{},macro:{}}));
+    const [dataResponse,companyResponse,publicContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise]);
     D = await dataResponse.json();
     COMPANY_DATA = await companyResponse.json();
+    PUBLIC_CONTEXT = publicContext;
   }catch(e){
     document.getElementById("main").innerHTML =
       '<p style="padding:40px;color:var(--muted)">Couldn\'t load data.json. This dashboard needs to be served over http(s) (not opened as a bare file://), and data.json must sit next to index.html.</p>';

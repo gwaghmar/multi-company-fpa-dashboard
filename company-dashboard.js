@@ -149,11 +149,59 @@ function companyMetricChange(key,indexes){
   return {currentValue,comparisonValue,delta:100*(currentValue-comparisonValue)/Math.abs(comparisonValue),comparison};
 }
 
+function selectedPublicContext(){
+  return PUBLIC_CONTEXT?.companies?.[companySlug]||null;
+}
+
+function publicContextDate(value){
+  if(!value) return "date unavailable";
+  const date=new Date(`${String(value).slice(0,10)}T12:00:00Z`);
+  return Number.isNaN(date.getTime())?String(value):date.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric",timeZone:"UTC"});
+}
+
+function publicContextLink(url,label){
+  return url?`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(label)} <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>`:"";
+}
+
+function managementSignalsHTML(options={}){
+  const context=selectedPublicContext();
+  const categories=new Set(options.categories||[]);
+  const signals=(context?.managementSignals||[]).filter(signal=>!categories.size||categories.has(signal.category)).slice(0,options.limit||3);
+  if(!signals.length) return `<section class="evidence-strip evidence-empty"><div><span class="section-kicker">Official source context</span><h2>${escapeHtml(options.title||"Latest management signals")}</h2></div><p>No relevant management excerpt is available from the connected SEC documents. The dashboard will not infer one.</p></section>`;
+  const links=[...(context?.documents||[]).slice(0,2).map(document=>publicContextLink(document.url,`${document.sourceType} · ${publicContextDate(document.filed)}`)),publicContextLink(context?.irUrl,`${selectedCompany().name} investor relations`)].filter(Boolean);
+  return `<section class="evidence-strip" aria-label="Official source context">
+    <div class="evidence-strip-head"><div><span class="section-kicker">Official source context</span><h2>${escapeHtml(options.title||"Latest management signals")}</h2></div><span>Source excerpts, not causal conclusions</span></div>
+    <div class="evidence-grid">${signals.map(signal=>`<article class="evidence-signal"><span>${escapeHtml(signal.category)}</span><p>${escapeHtml(signal.text)}</p><small>${publicContextLink(signal.url,`${signal.sourceType} · ${publicContextDate(signal.filed)}`)}</small></article>`).join("")}</div>
+    <details class="evidence-details"><summary>View evidence</summary><div>${links.join("")}</div></details>
+  </section>`;
+}
+
+function macroContextHTML(title="External planning context"){
+  const macro=PUBLIC_CONTEXT?.macro||{};
+  const treasury=macro.treasury||{}, labor=macro.labor||{}, fx=macro.fx||{};
+  const cells=[
+    ["10Y Treasury",treasury.tenYear?`${treasury.tenYear}%`:"n/a",treasury.date,treasury.source,treasury.sourceUrl],
+    ["CPI, year over year",Number.isFinite(labor.cpi?.yearOverYearPct)?`${labor.cpi.yearOverYearPct.toFixed(2)}%`:"n/a",labor.cpi?.period,labor.source,labor.sourceUrl],
+    ["Unemployment",Number.isFinite(labor.unemployment?.ratePct)?`${labor.unemployment.ratePct.toFixed(1)}%`:"n/a",labor.unemployment?.period,labor.source,labor.sourceUrl],
+    ["EUR / USD",Number.isFinite(fx.ratesPerEuro?.USD)?fx.ratesPerEuro.USD.toFixed(4):"n/a",fx.asOf,fx.source,fx.sourceUrl]
+  ];
+  return `<section class="macro-strip" aria-label="${escapeHtml(title)}"><div class="evidence-strip-head"><div><span class="section-kicker">Official macro sources</span><h2>${escapeHtml(title)}</h2></div><span>Context only, not company guidance</span></div><div class="macro-grid">${cells.map(([label,value,date,source,url])=>`<div class="macro-cell"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>${publicContextLink(url,`${source||"Source"} · ${publicContextDate(date)}`)}</small></div>`).join("")}</div></section>`;
+}
+
+function reportPublicSourceAppendix(){
+  const context=selectedPublicContext();
+  if(!context) return "";
+  const rows=[...(context.documents||[]).slice(0,3),...(context.recentFilings||[]).slice(0,3).map(item=>({title:item.description||item.form,sourceType:`SEC ${item.form}`,filed:item.filed,url:item.url}))];
+  return `<section class="report-public-sources"><h3>Management and public context</h3><table class="report-table"><thead><tr><th>Source</th><th>Date</th><th>Type</th><th>Evidence</th></tr></thead><tbody>${rows.map(row=>`<tr><td>${escapeHtml(row.title||"Official source")}</td><td>${escapeHtml(row.filed||"n/a")}</td><td>${escapeHtml(row.sourceType||"SEC filing")}</td><td>${publicContextLink(row.url,"Open")}</td></tr>`).join("")}</tbody></table><p class="report-note">Official-source excerpts provide context. They do not establish the cause of a financial variance. Internal plan, consensus and market prices remain unavailable.</p></section>`;
+}
+
 function companySourceBadge(){
   const selected=selectedCompanyIndexes();
   const hasDerived=selected.some(index=>(companyPeriodAt(index)?.derivedMetrics||[]).length);
   const exactYtd=selectedIndexesAreFiscalYtd(selected)&&Object.values(companyPeriodAt(selected[selected.length-1])?.fiscalYtdMetrics||{}).some(Number.isFinite);
-  return `<span class="badge">SEC sourced${exactYtd?" · exact filed YTD":hasDerived?" · derived values marked":""}</span>`;
+  const context=selectedPublicContext();
+  const commentary=context?.coverage?.managementCommentary?" · commentary connected":"";
+  return `<span class="badge">SEC sourced${exactYtd?" · exact filed YTD":hasDerived?" · derived values marked":""}${commentary}</span>`;
 }
 
 function companyDownloadButton(){
@@ -192,12 +240,12 @@ const COMPANY_PLANNING_SPINES={
 };
 
 function companySourceCoverage(){
-  const apple=companySlug==="apple";
+  const context=selectedPublicContext(), commentary=Boolean(context?.coverage?.managementCommentary), workforce=(context?.managementSignals||[]).some(signal=>signal.category==="Workforce");
   return [
     ["Financial actuals","Connected","SEC filings and XBRL","connected"],
-    ["Guidance and management commentary",apple?"Connected":"Not connected",apple?"Earnings call and curated IR sources":"Requires official IR releases and transcripts",apple?"connected":"missing"],
-    ["Workforce narrative",apple?"Annual only":"Not connected",apple?"Annual employee disclosure":"Requires annual-report narrative ingestion",apple?"partial":"missing"],
-    ["Sustainability",apple?"Connected":"Not connected",apple?"Environmental Progress Report":"Requires a governed sustainability report",apple?"connected":"missing"],
+    ["Guidance and management commentary",commentary?"Connected":"Not available",commentary?"Official SEC-filed earnings materials":"No relevant excerpt found in connected SEC documents",commentary?"connected":"missing"],
+    ["Workforce narrative",workforce?"Partial":"Not available",workforce?"Short official-source excerpt; no internal workforce plan":"No comparable workforce excerpt found",workforce?"partial":"missing"],
+    ["Sustainability",companySlug==="apple"?"Connected":"Not connected",companySlug==="apple"?"Environmental Progress Report":"Requires a governed sustainability report",companySlug==="apple"?"connected":"missing"],
     ["Market performance","Not connected","Requires a licensed price and benchmark feed","missing"]
   ];
 }
@@ -313,8 +361,9 @@ function companyExecutiveOverview(){
     ["Gross margin",companyPercent(gm)],
     ["Operating margin",companyPercent(om)]
   ];
+  const commentaryConnected=Boolean(selectedPublicContext()?.coverage?.managementCommentary);
   const watch=[
-    companySlug==="apple"?"Guidance is connected to a dated earnings-call source.":"Guidance and management commentary are not connected.",
+    commentaryConnected?"Official management excerpts are connected with source and date.":"No relevant management excerpt was found in the connected SEC documents.",
     rd.delta==null?"A comparable R&D movement is unavailable.":`R&D moved ${sgn(rd.delta)}% versus the ${rd.comparison.label}.`
   ];
   return `<aside class="executive-overview" aria-labelledby="executiveOverviewHeading">
@@ -342,6 +391,7 @@ function renderPeerHome(v){
       <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $M</span></h3><div class="fill"><svg id="peerHomeRevenue"></svg></div></div>
       ${companyExecutiveOverview()}
     </div>
+    ${managementSignalsHTML({limit:3})}
     ${companyHomeSections()}`;
   const periods=companyPeriods();
   chartTable(document.getElementById("peerHomeRevenue"),"bar",{labels:periods.map(period=>companyChartLabel(period)),values:periods.map(period=>period.metrics.revenue),active:latest,fmt:B});
@@ -362,6 +412,7 @@ function renderPeerGlass(v){
       ${tile("R&D",companyMoney(rd.currentValue),rd.delta==null?"comparable change unavailable":`${sgn(rd.delta)}% vs ${rd.comparison.label}`,rd.delta==null?undefined:rd.delta<=0)}
       ${tile("Free cash flow",companyMoney(fcf),"operating cash less capex",fcf==null?undefined:fcf>=0)}
     </div>
+    ${managementSignalsHTML({title:"Management context for executive review",limit:3})}
     <div class="body g12" style="height:47%">
       <div class="card"><h3>Selected-period financials</h3>${companyPeriodTable(["revenue","grossProfit","operatingIncome","netIncome","rd","freeCashFlow"],indexes)}</div>
       ${companyUnavailable("Company-specific planning disclosures","Budgets and internal forecasts are not public filings. Ask AI can summarize the sourced figures, but it will not create or present an invented management plan as fact.")}
@@ -414,6 +465,7 @@ function renderPeerVariance(v){
       <div data-state="missing"><span>Actual vs approved plan</span><strong>Not connected</strong><small>Requires a governed planning version</small></div>
       <div data-state="missing"><span>Actual vs latest forecast</span><strong>Not connected</strong><small>Requires forecast version and timestamp</small></div>
     </div>
+    ${managementSignalsHTML({title:"Signals to test against the variance",limit:3,categories:["Demand and revenue","Margin and cost","Investment","Risk and supply"]})}
     <div class="body g21" style="height:52%">
       <div class="card"><h3>Variance by financial line</h3>${chartRows.length?'<div class="fill"><svg id="peerVarianceChart"></svg></div>':emptyState("No comparable filed metrics for this selection.")}</div>
       <div class="card management-followup"><h3>Management follow-up</h3>${movers.length?`<ol>${movers.map(row=>`<li><span>${escapeHtml(row.label)}</span><strong>${sgn(row.delta)}%</strong><small>${row.expense?"Validate investment level, timing and return.":"Confirm operating driver, sustainability and forecast impact."}</small></li>`).join("")}</ol>`:emptyState("No comparable movement is available.")}<div class="action-boundary">Owners, actions and status remain unavailable until a workflow source is connected.</div></div>
@@ -478,6 +530,7 @@ function renderPeerCapital(v){
       ${tile("Debt",companyMoney(debt),qLabel(latest),debt==null?undefined:false)}
       ${tile("FX impact","n/a","not standardized across issuers")}
     </div>
+    ${macroContextHTML("Rates and FX context")}
     <div class="body g21" style="height:47%">
       <div class="card"><h3>Capital returns trend</h3>${capitalPeriods.length?'<div class="fill"><svg id="peerCapitalChart"></svg></div>':emptyState("No comparable capital-return facts were filed for these periods.")}</div>
       ${companyUnavailable("Comparable FX exposure","SEC Company Facts does not provide a consistent cross-company constant-currency or foreign-exchange exposure metric. This dashboard will not infer one.")}
@@ -509,15 +562,16 @@ function renderPeerOutlook(v){
   const revenue=companyMetricAt(latest,"revenue"), op=companyMetricAt(latest,"operatingIncome"), gm=companyMetricAt(latest,"grossProfit")!=null&&revenue?100*companyMetricAt(latest,"grossProfit")/revenue:null, om=op!=null&&revenue?100*op/revenue:null;
   const revenueChange=companyMetricChange("revenue",[latest]);
   v.innerHTML=`${companyHeader(`${company.name} outlook & investor relations`,`${qLabel(latest)} · latest filed quarter`)}
-    ${companyContextNote("This view separates reported momentum from management guidance. The standardized SEC source contains filed results, not earnings-call guidance or an internal forecast.")}
+    ${companyContextNote("This view separates reported momentum from official management commentary. Internal forecasts and analyst consensus remain unavailable.")}
     ${sowhat(`${qLabel(latest)} revenue was ${companyMoney(revenue)}${revenueChange.delta==null?"":`, ${sgn(revenueChange.delta)}% year over year`}. Gross margin was ${companyPercent(gm)} and operating margin was ${companyPercent(om)}.`)}
     <div class="tiles">
       ${tile("Latest revenue",companyMoney(revenue),revenueChange.delta==null?qLabel(latest):`${sgn(revenueChange.delta)}% YoY`,revenueChange.delta==null?undefined:revenueChange.delta>=0)}
       ${tile("Gross margin",companyPercent(gm),qLabel(latest),"neutral")}
       ${tile("Operating margin",companyPercent(om),qLabel(latest),op==null?undefined:op>=0)}
-      ${tile("Formal guidance","n/a","not available from SEC Company Facts")}
-      ${tile("Management quotes","n/a","requires a sourced earnings-call feed")}
+      ${tile("Management context",selectedPublicContext()?.coverage?.managementCommentary?"Connected":"n/a",selectedPublicContext()?.coverage?.managementCommentary?"official SEC-filed materials":"no relevant excerpt found")}
+      ${tile("Internal forecast","n/a","not publicly available")}
     </div>
+    ${managementSignalsHTML({title:"Latest outlook signals",limit:3,categories:["Guidance","Demand and revenue","Margin and cost","Investment","Risk and supply"]})}
     <div class="body g21" style="height:48%">
       <div class="card"><h3>Reported revenue trajectory</h3><div class="fill"><svg id="peerOutlookRevenue"></svg></div></div>
       ${companyUnavailable("Guidance and forecast","Ask AI can interpret the filed trend above. It will not invent company guidance, budgets, or forecasts that are absent from the selected evidence.")}
@@ -659,7 +713,8 @@ function renderPlan(v){
   v.innerHTML=`${companyHeader(`${company.name} planning & scenarios`,model.period?`${escapeHtml(model.period.label)} actual → modeled next quarter`:"modeled scenario")}
     <div class="note" style="margin-bottom:10px"><span class="badge" style="margin-right:7px">MODELED</span>This tab is an FP&A planning scaffold. It applies visible assumptions to the latest selected filed quarter. It is not ${escapeHtml(company.name)} guidance, an internal budget, or an analyst consensus forecast.</div>
     ${model.available?sowhat(`The ${planningState.scenario} scenario produces ${companyMoney(model.forecastRevenue)} of modeled revenue and ${companyMoney(model.forecastOperatingIncome)} of modeled operating income, at a ${companyPercent(model.forecastOperatingMargin)} operating margin.`):sowhat("The selected company does not have enough comparable revenue, gross-profit, and operating-income facts to build this scenario.")}
-    <div class="card" style="margin-bottom:10px;padding:14px">
+    ${macroContextHTML()}
+    <div class="card planning-assumptions" style="margin-bottom:10px;padding:14px">
       <div class="fp-head"><h3 style="margin:0">Scenario assumptions</h3><span class="badge">User-visible inputs</span></div>
       <div class="gp-presets plan-preset-row" role="group" aria-label="Scenario presets" style="margin:9px 0 12px">
         ${["downside","base","upside"].map(name=>`<button type="button" class="gp-preset" data-plan-scenario="${name}" aria-pressed="${planningState.scenario===name}">${name[0].toUpperCase()+name.slice(1)}</button>`).join("")}
@@ -779,14 +834,14 @@ function irReportBody(indexes,rows){
   const company=selectedCompany(), latest=indexes[indexes.length-1];
   const latestRevenue=companyMetricAt(latest,"revenue"), latestGross=companyMetricAt(latest,"grossProfit"), latestOp=companyMetricAt(latest,"operatingIncome"), latestNet=companyMetricAt(latest,"netIncome");
   const latestChange=companyMetricChange("revenue",[latest]);
-  const hasIr=companySlug==="apple";
+  const hasIr=Boolean(selectedPublicContext()?.coverage?.managementCommentary);
   return `<div class="report-columns">
     <section><h3>Quarterly message</h3><p>${escapeHtml(company.name)} reported ${companyMoney(latestRevenue)} of revenue in ${qLabel(latest)}${latestChange.delta==null?"":`, ${sgn(latestChange.delta)}% year over year`}. Gross margin was ${latestRevenue&&latestGross!=null?companyPercent(100*latestGross/latestRevenue):"n/a"}.</p></section>
     <section><h3>Reported earnings</h3><dl class="report-facts"><div><dt>Revenue</dt><dd>${companyMoney(latestRevenue)}</dd></div><div><dt>Operating income</dt><dd>${companyMoney(latestOp)}</dd></div><div><dt>Net income</dt><dd>${companyMoney(latestNet)}</dd></div></dl></section>
   </div>
   <section><h3>Investor question set</h3><ol><li>What changed in revenue growth and business mix?</li><li>Which factors affected gross margin and operating leverage?</li><li>How is investment translating into future growth and cash generation?</li><li>What guidance, supply, demand, regulatory or capital risks matter next?</li></ol></section>
   <div class="report-columns">
-    ${hasIr?`<div class="report-callout connected"><span>CONNECTED</span><strong>Guidance and commentary</strong><p>Apple’s curated earnings-call evidence is available in Outlook.</p></div>`:reportUnavailable("Guidance and management commentary","Connect the company’s official earnings release, CFO commentary, presentation and transcript.")}
+    ${hasIr?`<div class="report-callout connected"><span>CONNECTED</span><strong>Management commentary</strong><p>Official SEC-filed earnings materials are available with source dates. Guidance appears only when an explicit relevant excerpt was found.</p></div>`:reportUnavailable("Guidance and management commentary","No relevant excerpt was found in the connected SEC documents.")}
     ${reportUnavailable("Stock and benchmark performance","A licensed market-data feed is required before showing price performance or earnings-day reaction.")}
   </div>`;
 }
@@ -803,7 +858,9 @@ function renderReports(v){
     <article class="report-sheet" aria-labelledby="reportTitle">
       <header><div><span>${definition.code}</span><h1 id="reportTitle">${escapeHtml(definition.label)}</h1><p>${escapeHtml(company.name)} · ${escapeHtml(periodLabel(indexes))}</p></div><div class="report-status"><span>Evidence status</span><strong>FILED + DERIVED</strong><small>Modeled and unavailable sections are marked.</small></div></header>
       ${body}
+      ${managementSignalsHTML({title:"Official management context",limit:3})}
       <section class="report-sources"><h3>Source appendix</h3>${reportSourceAppendix(indexes)}</section>
+      ${reportPublicSourceAppendix()}
       <footer>Prepared from governed public-company evidence. This report does not represent ${escapeHtml(company.name)} internal planning, guidance, or management approval.</footer>
     </article>`;
   document.querySelectorAll("[data-report-switch]").forEach(button=>button.addEventListener("click",()=>{reportState=button.dataset.reportSwitch;render();}));

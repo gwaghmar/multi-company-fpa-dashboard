@@ -132,9 +132,23 @@ test("company AI evidence exposes refresh metadata and expanded SEC metric cover
   assert.match(evidence.dataFreshness.generatedAt, /^\d{4}-\d{2}-\d{2}T/);
   assert.ok(evidence.availableMetrics.includes("inventory"));
   assert.ok(evidence.availableMetrics.includes("incomeTaxExpense"));
+  assert.ok(evidence.publicContext.managementSignals.length >= 2);
+  assert.equal(evidence.publicContext.coverage.managementCommentary, true);
   const prompt = __test.companySystemPrompt(evidence);
   assert.match(prompt, /Supplemental SEC metrics/);
   assert.match(prompt, /data refresh timestamp/);
+  assert.match(prompt, /official-source excerpts/);
+});
+
+test("public context is tab-scoped and preserves unavailable boundaries", () => {
+  const planning = __test.publicContextForCompany("alphabet", "plan");
+  assert.ok(planning.managementSignals.every(signal => ["Guidance", "Demand and revenue", "Margin and cost", "Investment"].includes(signal.category)));
+  assert.equal(planning.coverage.internalPlan, false);
+  assert.equal(planning.coverage.analystConsensus, false);
+  assert.equal(planning.macro.fx.status, "connected");
+  const people = __test.publicContextForCompany("nvidia", "people");
+  assert.ok(people.managementSignals.every(signal => ["Workforce", "Investment"].includes(signal.category)));
+  assert.equal(people.macro, undefined);
 });
 
 test("planning AI receives the visible modeled scenario and labels it modeled", async () => {
@@ -191,6 +205,23 @@ test("NVIDIA exact filed fiscal YTD values reconcile to the six-month filing", (
   assert.equal(latest.fiscalYtdMetrics.operatingIncome, 117270);
 });
 
+test("official public context is auditable and bounded", () => {
+  const context = JSON.parse(readFileSync(new URL("../company-context.json", import.meta.url), "utf8"));
+  assert.equal(Object.keys(context.companies).length, 11);
+  assert.deepEqual(Object.values(context.macro).map(source => source.status), ["connected", "connected", "connected"]);
+  for (const company of Object.values(context.companies)) {
+    assert.ok(company.irUrl?.startsWith("https://"));
+    assert.equal(company.coverage.internalPlan, false);
+    assert.equal(company.coverage.analystConsensus, false);
+    assert.equal(company.coverage.stockPrices, false);
+    for (const signal of company.managementSignals) {
+      assert.ok(signal.url.startsWith("https://"));
+      assert.ok(signal.filed);
+      assert.ok(signal.text.length <= 260);
+    }
+  }
+});
+
 test("browser UI exposes both modes and sends structured filters", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const companyUi = readFileSync(new URL("../company-dashboard.js", import.meta.url), "utf8");
@@ -202,5 +233,8 @@ test("browser UI exposes both modes and sends structured filters", () => {
   assert.match(companyUi, /From source record to CFO decision/);
   assert.match(companyUi, /Strategic finance decision lab/i);
   assert.match(companyUi, /decisionNpv/);
+  assert.match(companyUi, /Latest management signals/);
+  assert.match(companyUi, /External planning context/);
+  assert.match(companyUi, /View evidence/);
   assert.doesNotMatch(html, /selectionPayload/);
 });

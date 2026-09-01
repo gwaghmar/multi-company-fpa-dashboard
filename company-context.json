@@ -1,0 +1,1447 @@
+{
+  "generatedAt": "2026-09-01T04:01:33.668245+00:00",
+  "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
+  "macro": {
+    "treasury": {
+      "status": "connected",
+      "date": "2026-08-31",
+      "threeMonth": "3.91",
+      "twoYear": "4.34",
+      "tenYear": "4.75",
+      "thirtyYear": "5.25",
+      "unit": "%",
+      "source": "U.S. Treasury",
+      "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
+    },
+    "labor": {
+      "status": "connected",
+      "cpi": {
+        "period": "2026-07",
+        "index": 333.918,
+        "yearOverYearPct": 3.36
+      },
+      "unemployment": {
+        "period": "2026-07",
+        "ratePct": 4.1
+      },
+      "source": "U.S. Bureau of Labor Statistics",
+      "sourceUrl": "https://www.bls.gov/developers/"
+    },
+    "fx": {
+      "status": "connected",
+      "asOf": "2026-08-31",
+      "ratesPerEuro": {
+        "CNY": 7.7922,
+        "GBP": 0.85648,
+        "JPY": 185.22,
+        "USD": 1.1596
+      },
+      "source": "European Central Bank",
+      "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
+    }
+  },
+  "companies": {
+    "apple": {
+      "name": "Apple",
+      "ticker": "AAPL",
+      "irUrl": "https://investor.apple.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0000320193.json",
+      "recentFilings": [
+        {
+          "form": "10-Q",
+          "filed": "2026-07-31",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-30",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/aapl-20260730.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-05-01",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000013/aapl-20260328.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-30",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000011/aapl-20260430.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-20",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126015711/ef20071035_8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-02-24",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126006577/ef20060722_8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-01-30",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-01-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000005/aapl-20260129.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-31",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Demand and revenue",
+          "text": "June quarter records for total company revenue and EPS.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "Company gross margin was 50.1 percent, including a favorable impact of approximately 2 percentage points from tariff refunds.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "More information on these risks and other potential factors that could affect the Company\u2019s business, reputation, results of operations, financial condition, and stock price\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "The following tables show the Company\u2019s cash, cash equivalents and marketable securities by significant investment category as of June 27, 2026 and September 27,\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-31",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "Research and development (\u201cR&D\u201d) expense increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-31",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "alphabet": {
+      "name": "Alphabet",
+      "ticker": "GOOGL",
+      "irUrl": "https://abc.xyz/investor/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0001652044.json",
+      "recentFilings": [
+        {
+          "form": "8-K",
+          "filed": "2026-08-10",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526342390/d171253d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-07-23",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-22",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/goog-20260722.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-11",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526267578/d57679d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/d36818d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/goog-20260602.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-04",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/d83560d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-21",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/d144566d8k.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-22",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Demand and revenue",
+          "text": "\u2022Consolidated Alphabet revenues increased 24%, or 23% in constant currency, to $119.8 billion, reflecting strong performance across the business and our 12th consecutive quarter\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-22",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "\u2022Consolidated Alphabet operating income increased 30% and operating margin expanded by 2 percentage points to 34%.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-22",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "\u2022Google Cloud saw a meaningful acceleration in growth as revenues increased 82% to $24.8 billion, led by an increase in Google Cloud Platform (GCP)\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-22",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+        },
+        {
+          "category": "Guidance",
+          "text": "In May 2026, the FASB issued ASU 2026-02 \"Environmental Credits and Environmental Credit Obligations (Topic 818)\u201d to provide recognition, measurement, presentation, and disclosure guidance\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "These costs, including the associated depreciation, are allocated to operating segments as a service cost generally based on usage, headcount, or revenue.",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "Our valuation methods include option pricing models, market comparable approach, and common stock equivalent method, which may include a combination of the observable transaction\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "nvidia": {
+      "name": "NVIDIA",
+      "ticker": "NVDA",
+      "irUrl": "https://investor.nvidia.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0001045810.json",
+      "recentFilings": [
+        {
+          "form": "10-Q",
+          "filed": "2026-08-26",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-08-26",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/nvda-20260826.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-08-17",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-02",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-30",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-18",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-05-20",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-20",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/nvda-20260520.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "CFO commentary",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        },
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27pr.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Demand and revenue",
+          "text": "During the second quarter we reclassified a company from AI Clouds, Industrial, & Enterprise (ACIE) to Hyperscale due to a change in their business\u2026",
+          "sourceTitle": "CFO commentary",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "GAAP and non-GAAP gross margins for the second quarter increased from a year ago on improved mix from Blackwell Ultra.",
+          "sourceTitle": "CFO commentary",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "Data Center revenue for the second quarter was a record $89.0 billion, up 117% from a year ago and up 18% sequentially, driven by\u2026",
+          "sourceTitle": "CFO commentary",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "We continue to make strategic commitments across our supply, infrastructure, and partner ecosystems to capitalize on the substantial growth opportunities ahead of us.",
+          "sourceTitle": "CFO commentary",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "microsoft": {
+      "name": "Microsoft",
+      "ticker": "MSFT",
+      "irUrl": "https://www.microsoft.com/en-us/Investor/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0000789019.json",
+      "recentFilings": [
+        {
+          "form": "10-K",
+          "filed": "2026-07-29",
+          "description": "10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-20260729.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526258667/d26760d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-14",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526224155/d125909d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-04-29",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/msft-20260429.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-01-28",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-01-28",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/msft-20260128.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        },
+        {
+          "title": "Latest 10-K narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "Several discrete items impacted our financial results in the quarter when compared to our forward-looking guidance provided on April 29, 2026, resulting in a\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "\u2022 Revenue was $90.0 billion and increased 18% (up 17% in constant currency).",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "These include a $3.2 billion gain from our investment in Anthropic and lower-than-expected expenses related to the Voluntary Retirement Program which were partially offset\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "\u2022 Non-GAAP results exclude the impact from investments in OpenAI, explained in the Non-GAAP Definition section below.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "\u2022 substantial investments in cloud and AI strategy that depend on customer demand, technological developments, competitive dynamics, and regulatory condition.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "Through our employee listening systems, we gather direct feedback from our workforce, enabling us to adapt our programs and address employee needs globally with\u2026",
+          "sourceTitle": "Latest 10-K narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "amazon": {
+      "name": "Amazon",
+      "ticker": "AMZN",
+      "irUrl": "https://ir.aboutamazon.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0001018724.json",
+      "recentFilings": [
+        {
+          "form": "10-Q",
+          "filed": "2026-07-31",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-30",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260730.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-09",
+          "description": "FORM 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926082293/tm2619352d4_8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-12",
+          "description": "FORM 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926073562/tm2613616d5_8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-10",
+          "description": "FORM 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926072140/tm2613616d4_8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-22",
+          "description": "FORM 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926065717/tm2614288d1_8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-04-30",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000012/amzn-20260429.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex992.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-31",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "This guidance anticipates an unfavorable impact of approximately 80 basis points from foreign exchange rates.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "AWS net sales increased 37%\u2014its fastest growth in 18 quarters\u2014to a $169 billion annualized revenue run rate.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "Kiro is up to 50% more cost-effective than alternatives and tripled in usage quarter-over-quarter.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "\u2022Second quarter 2026 net income includes non-operating pre-tax other income of $53.4 billion, primarily from our investments in Anthropic.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "\u2022Launched Amazon Supply Chain Services so any business can move, store, and deliver everything from raw materials to finished products using the same supply\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "In addition, changes in laws and regulations applicable to employees, independent contractors, and temporary personnel could increase our payroll costs, decrease our operational flexibility,\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-31",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "meta": {
+      "name": "Meta",
+      "ticker": "META",
+      "irUrl": "https://investor.atmeta.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0001326801.json",
+      "recentFilings": [
+        {
+          "form": "10-Q",
+          "filed": "2026-07-30",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-20260729.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026039193/meta-20260527.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-04",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526204128/d134616d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-04-30",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/meta-20260429.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-14",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025108/meta-20260408.htm"
+        },
+        {
+          "form": "10-K",
+          "filed": "2026-01-29",
+          "description": "10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "We expect third quarter 2026 total revenue to be in the range of $61-64 billion.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "\u2022Revenue \u2013 Revenue was $60.80 billion, an increase of 28% year-over-year.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "\u2022Costs and expenses \u2013 Total costs and expenses were $42.03 billion, an increase of 55% year-over-year.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "\u2022Capital expenditures \u2013 Capital expenditures, including principal payments on finance leases, were $31.08 billion.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "This includes $2.40 billion of charges related to legal proceedings and $1.18 billion of severance expenses in connection with the May 2026 headcount reduction.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "Finally, we continue to monitor active legal and regulatory matters that could significantly impact our business and financial results.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "amd": {
+      "name": "AMD",
+      "ticker": "AMD",
+      "irUrl": "https://ir.amd.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0000002488.json",
+      "recentFilings": [
+        {
+          "form": "8-K",
+          "filed": "2026-08-19",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000163/amd-20260817.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-08-17",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312526354029/d142696d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-08-05",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-08-04",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amd-20260804.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-01",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000115/amd-20260626.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-15",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312526226746/d118163d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-05-06",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000076/amd-20260328.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000072/amd-20260505.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+        },
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-08-05",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "17 | | Q2 2026 FINANCIAL RESULTS \u2013 August 4, 2026 Financial Outlook \u2013 NON-GAAP(1) (1) See Cautionary Statement on Slide 2.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "6 | | Q2 2026 FINANCIAL RESULTS \u2013 August 4, 2026 Q2 2026 Revenue Record revenue of $11.5 billion, up 50% y/y Driven by\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "Additionally, AMD has provided an adjusted non-GAAP gross profit and gross margin for Q2\u201925 which excludes the inventory and related charges associated with U.S.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "\u25aa Launched AMD Instinct MI350P GPUs, bringing seamless AI acceleration to existing infrastructure with leadership token economics.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "21 | | Q2 2026 FINANCIAL RESULTS \u2013 August 4, 2026 Appendices (1) Acquisition-related and other costs primarily include transaction costs, purchase price fair\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "The Company enters into foreign currency forward contracts to hedge its exposure to foreign currency exchange rate risk related to future forecasted transactions denominated\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-08-05",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "broadcom": {
+      "name": "Broadcom",
+      "ticker": "AVGO",
+      "irUrl": "https://investors.broadcom.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0001730168.json",
+      "recentFilings": [
+        {
+          "form": "8-K",
+          "filed": "2026-07-06",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526295589/d84378d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-18",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526275077/d149683d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-11",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526266777/d152717d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-06-09",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-03",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-20260603.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-21",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000039/avgo-20260420.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-06",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526144028/d87999d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-02",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526140574/d109450d8k.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-06-09",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "\u2022Third quarter fiscal year 2026 revenue guidance of approximately $29.4 billion, an increase of 84 percent from the prior year period.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "\u2022Revenue of $22,187 million for the second quarter, up 48 percent from the prior year period.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "\u201cIn Q3 we expect consolidated revenue growth to increase 84% year-over-year to $29.4 billion, with non-GAAP operating margin stable at 67% reflecting our strong\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "\u2022Cash from operations of $10,493 million for the second quarter, less capital expenditures of $231 million, resulted in $10,262 million of free cash flow,\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "Shared expenses are primarily allocated based on revenue and headcount.",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-06-09",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "Due to the inherent uncertainty with respect to the timing of future cash outflows associated with our unrecognized tax benefits as of May 3,\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-06-09",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "oracle": {
+      "name": "Oracle",
+      "ticker": "ORCL",
+      "irUrl": "https://investor.oracle.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0001341439.json",
+      "recentFilings": [
+        {
+          "form": "10-K",
+          "filed": "2026-06-22",
+          "description": "10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-10",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-20260610.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-12",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526219708/d76569d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-06",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526142939/d132760d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-03-11",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/orcl-20260228.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-03-10",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/orcl-20260310.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-02-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526039344/d63638d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-02-04",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526037840/d23732d8k.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+        },
+        {
+          "title": "Latest 10-K narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-06-22",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "Oracle is providing the following forward-looking guidance for Q1 FY 2027.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "\u2022 Record Q4 Total Revenues $19.2 billion, up 21% USD, and up 20% constant currency.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "Improvements in patient care are expected to yield much better patient outcomes, while dramatically lowering the cost of healthcare throughout the world.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "Oracle Announces Record Q4 and FY 2026 Results Driven by Cloud Infrastructure & Cloud Applications.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "We use third-party manufacturing partners to produce most of our cloud infrastructure assets and in some cases supply them with components purchased directly from\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-06-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "\u2022 Oracle Fusion Cloud Human Capital Management (HCM), which is designed to help organizations find, develop and retain their talent, enable collaboration, provide workforce\u2026",
+          "sourceTitle": "Latest 10-K narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-06-22",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "salesforce": {
+      "name": "Salesforce",
+      "ticker": "CRM",
+      "irUrl": "https://investor.salesforce.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0001108524.json",
+      "recentFilings": [
+        {
+          "form": "10-Q",
+          "filed": "2026-08-27",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000190/crm-20260731.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-08-26",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-20260826.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-08-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000160/crm-20260805.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-02",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000138/crm-20260527.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-06-01",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000131/crm-20260528.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-05-28",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000127/crm-20260430.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-27",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000125/crm-20260527.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-03-16",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000119312526107403/d887663d8k.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-08-27",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000190/crm-20260731.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "cRPO growth accelerates to 14% Y/Y CC; Raises FY27 revenue guidance by $200M, $300M in CC.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "cRPO growth accelerates to 14% Y/Y CC; Raises FY27 revenue guidance by $200M, $300M in CC.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "\u2022GAAP operating margin of 20.5% and non-GAAP operating margin of 34.1%.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "(2) The Company's projected GAAP and non-GAAP diluted net income per share assumes no change to the value of our strategic investment portfolio as\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "\u2022uncertainties regarding the effect of geopolitical events, inflationary pressures, market and macroeconomic volatility, financial institution instability, changes in monetary policy, foreign currency exchange rate\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "\u2022current and potential litigation and regulatory investigations involving us or our industry.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    },
+    "intel": {
+      "name": "Intel",
+      "ticker": "INTC",
+      "irUrl": "https://www.intc.com/",
+      "submissionsUrl": "https://data.sec.gov/submissions/CIK0000050863.json",
+      "recentFilings": [
+        {
+          "form": "8-K",
+          "filed": "2026-08-12",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000119312526346806/d117670d8k.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-07-24",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000157/intc-20260627.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-07-23",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/intc-20260723.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-05-15",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000118/intc-20260513.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-30",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000119312526197845/d143782d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-24",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000083/intc-20260424.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-04-24",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000079/intc-20260328.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-04-23",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000077/intc-20260423.htm"
+        }
+      ],
+      "documents": [
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+        },
+        {
+          "title": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-24",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000157/intc-20260627.htm"
+        }
+      ],
+      "managementSignals": [
+        {
+          "category": "Guidance",
+          "text": "\u25aaForecasting third-quarter 2026 revenue of $15.8 billion to $16.8 billion; expecting third-quarter EPS attributable to Intel of $0.31 and non-GAAP EPS attributable to Intel\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+        },
+        {
+          "category": "Demand and revenue",
+          "text": "\u25aaSecond-quarter revenue was $16.1 billion, up 25% year-over-year (YoY).",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+        },
+        {
+          "category": "Margin and cost",
+          "text": "The gross margin and EPS outlooks are based on the midpoint of the revenue range.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+        },
+        {
+          "category": "Investment",
+          "text": "\u201cAI-driven compute continues to strengthen, and to support expected growth this year and next across products and foundry, we are meaningfully increasing our investments\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+        },
+        {
+          "category": "Workforce",
+          "text": "\u25aaIntel and Google Cloud expanded their multi-year strategic collaboration to scale AI capabilities across Intel\u2019s workforce and strengthen existing workflows as part of Intel\u2019s\u2026",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "\u25aaIntel launched next-generation data center CPU, Xeon\u00ae 6+, Intel's first server class product on Intel 18A for sustained performance under real-world power constraints.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+        }
+      ],
+      "coverage": {
+        "secFilings": true,
+        "managementCommentary": true,
+        "investorRelationsLink": true,
+        "internalPlan": false,
+        "analystConsensus": false,
+        "stockPrices": false
+      }
+    }
+  }
+}

@@ -42,8 +42,10 @@ browser never sees the key. Dashboard AI receives the selected company, fiscal
 period, tab, supported filters, source evidence, and visible scenario assumptions.
 General AI receives no dashboard evidence. Missing company data remains unavailable.
 
-For every company, Dashboard AI also receives the connected refresh timestamp and
-all standardized SEC metrics available for the selected periods. Coverage includes
+For every company, Dashboard AI also receives the connected refresh timestamp,
+all standardized SEC metrics available for the selected periods, and tab-scoped
+official management excerpts from recent SEC-filed earnings materials. Planning
+and Treasury also receive U.S. Treasury, BLS, and ECB macro context. Coverage includes
 core statements plus inventory, goodwill, PP&E, deferred revenue, noncurrent
 marketable securities, SG&A, depreciation and amortization, interest, taxes,
 acquisitions, and stock compensation when filed by the issuer.
@@ -52,7 +54,8 @@ acquisitions, and stock compensation when filed by the issuer.
 
 `.github/workflows/refresh-company-data.yml` runs daily at 10:17 UTC and can also
 be started manually. It rebuilds `companies.json` from official SEC Company Facts,
-runs the AI evidence tests, commits the verified dataset, and deploys the clean
+refreshes `company-context.json` from SEC filings, U.S. Treasury, BLS, and ECB,
+runs the AI evidence tests, commits the verified datasets, and deploys the clean
 repository contents to the existing Vercel project. The repository must contain a
 `VERCEL_TOKEN` Actions secret with deploy access to `apple-dashboard`.
 
