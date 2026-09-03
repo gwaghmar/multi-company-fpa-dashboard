@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-02T14:32:23.006245+00:00",
+  "generatedAt": "2026-09-03T14:36:45.072367+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-09-01",
+      "date": "2026-09-02",
       "threeMonth": "3.92",
       "twoYear": "4.39",
       "tenYear": "4.79",
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-09-02",
+      "asOf": "2026-09-03",
       "ratesPerEuro": {
-        "CNY": 7.7822,
-        "GBP": 0.8587,
-        "JPY": 184.78,
-        "USD": 1.1578
+        "CNY": 7.8042,
+        "GBP": 0.86055,
+        "JPY": 181.21,
+        "USD": 1.1615
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -460,6 +460,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001045810.json",
       "recentFilings": [
         {
+          "form": "8-K",
+          "filed": "2026-09-03",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/nvda-20260902.htm"
+        },
+        {
           "form": "10-Q",
           "filed": "2026-08-26",
           "description": "10-Q",
@@ -500,12 +506,6 @@
           "filed": "2026-05-20",
           "description": "10-Q",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-20",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/nvda-20260520.htm"
         }
       ],
       "documents": [
@@ -660,6 +660,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0000789019.json",
       "recentFilings": [
         {
+          "form": "8-K",
+          "filed": "2026-09-02",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965d8k.htm"
+        },
+        {
           "form": "10-K",
           "filed": "2026-07-29",
           "description": "10-K",
@@ -700,12 +706,6 @@
           "filed": "2026-01-28",
           "description": "10-Q",
           "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-01-28",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/msft-20260128.htm"
         }
       ],
       "documents": [
@@ -1513,6 +1513,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-09-02",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-20260902.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-07-06",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526295589/d84378d8k.htm"
@@ -1552,20 +1558,14 @@
           "filed": "2026-04-06",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526144028/d87999d8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-02",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526140574/d109450d8k.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-03",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+          "filed": "2026-09-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
         },
         {
           "title": "Latest 10-Q narrative",
@@ -1577,35 +1577,35 @@
       "managementSignals": [
         {
           "category": "Guidance",
-          "text": "\u2022Third quarter fiscal year 2026 revenue guidance of approximately $29.4 billion, an increase of 84 percent from the prior year period.",
+          "text": "\u2022Fourth quarter fiscal year 2026 revenue guidance of approximately $34.8 billion, an increase of 93 percent from the prior year period.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-03",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+          "filed": "2026-09-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
         },
         {
           "category": "Demand and revenue",
-          "text": "\u2022Revenue of $22,187 million for the second quarter, up 48 percent from the prior year period.",
+          "text": "\u2022Revenue of $29.6 billion for the third quarter, up 86 percent from the prior year period.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-03",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+          "filed": "2026-09-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "\u201cIn Q3 we expect consolidated revenue growth to increase 84% year-over-year to $29.4 billion, with non-GAAP operating margin stable at 67% reflecting our strong\u2026",
+          "text": "\u201cQ4 consolidated revenue growth is forecasted to increase 93% year-over-year to $34.8 billion, and we expect to maintain our non-GAAP operating margin at 66%,\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-03",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+          "filed": "2026-09-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
         },
         {
           "category": "Investment",
-          "text": "\u2022Cash from operations of $10,493 million for the second quarter, less capital expenditures of $231 million, resulted in $10,262 million of free cash flow,\u2026",
+          "text": "\u2022Cash from operations of $14.2 billion for the third quarter, less capital expenditures of $0.5 billion, resulted in $13.7 billion of free cash flow,\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-03",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-05032026x8kxex99.htm"
+          "filed": "2026-09-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm"
         },
         {
           "category": "Workforce",
