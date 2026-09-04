@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-03T14:36:45.072367+00:00",
+  "generatedAt": "2026-09-04T14:23:52.898677+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-09-02",
-      "threeMonth": "3.92",
-      "twoYear": "4.39",
-      "tenYear": "4.79",
-      "thirtyYear": "5.27",
+      "date": "2026-09-03",
+      "threeMonth": "3.89",
+      "twoYear": "4.34",
+      "tenYear": "4.77",
+      "thirtyYear": "5.25",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -21,7 +21,7 @@
         "yearOverYearPct": 3.36
       },
       "unemployment": {
-        "period": "2026-07",
+        "period": "2026-08",
         "ratePct": 4.1
       },
       "source": "U.S. Bureau of Labor Statistics",
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-09-03",
+      "asOf": "2026-09-04",
       "ratesPerEuro": {
-        "CNY": 7.8042,
-        "GBP": 0.86055,
-        "JPY": 181.21,
-        "USD": 1.1615
+        "CNY": 7.7994,
+        "GBP": 0.85898,
+        "JPY": 181.59,
+        "USD": 1.1622
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
