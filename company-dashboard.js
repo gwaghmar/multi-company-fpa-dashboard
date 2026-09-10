@@ -186,7 +186,8 @@ const ANNUAL_AREAS_BY_TAB={
   balance:["Liquidity and capital","Risk and supply"],
   fx:["Market and FX","Liquidity and capital"],
   people:["Workforce","Strategy and investment"],
-  outlook:["Strategy and investment","Risk and supply","Legal and regulatory"]
+  outlook:["Strategy and investment","Risk and supply","Legal and regulatory"],
+  hwcogs:["Business and segments","Strategy and investment","Risk and supply"]
 };
 
 function annualReportHTML(options={}){
@@ -244,6 +245,30 @@ function companyHeader(title,subtitle,opts){
 function companyContextNote(text){
   const company=selectedCompany();
   return `<div class="note" style="margin-bottom:10px">${escapeHtml(text||`${company.name} standardized financials from SEC Company Facts. Company-specific disclosures are shown only when comparable facts are available.`)}</div>`;
+}
+
+// aiLabsHardwareContext: a small, sourced context card for the Hardware COGS & Inventory tab
+// only -- OpenAI and Anthropic are both private (no SEC filings), and neither has shipped a
+// hardware product with reported financials, so they can never carry real COGS/inventory figures
+// the way the 11 SEC-filing companies do. This is deliberately NOT a full company profile: it's a
+// one-off curated note, clearly split into REAL (each company's own on-the-record statement) vs
+// REPORTED (leaked to press / disclosed only to investors, not a public company statement) so nothing
+// here gets mistaken for the same sourcing tier as the rest of this dashboard.
+function aiLabsHardwareContext(){
+  return `<div class="body" style="flex:0 0 auto; height:340px; grid-template-columns:1fr 1fr">
+    <div class="card"><h3>OpenAI</h3><div class="note">Private company -- no SEC filings exist. Curated one-off, not part of the standardized SEC pipeline.</div>
+      <div class="comm scrollbox">
+        <p><b>$852B post-money valuation</b> after a $122B raise closed Mar 31, 2026 (Amazon $50B, Nvidia $30B, SoftBank $30B among investors). <b>REAL</b> -- OpenAI's own announcement.</p>
+        <p>Annualized revenue "surpassed $20B in 2025, up from $6B in 2024" -- CFO Sarah Friar, official OpenAI blog, Jan 19, 2026. <b>REAL.</b> A newer ~$40B figure (Jul 2026) surfaced from a closed-door investor meeting and was reported by press, not stated publicly by OpenAI -- <b>REPORTED</b>, not verified as REAL.</p>
+        <p><b>Hardware:</b> acquired Jony Ive's io for ~$6.5B (2025); developing a screenless, voice-first device with manufacturing partner Foxconn, initial production target 40-50M units -- now delayed to 2027. Acquisition is <b>REAL</b>; device specifics and timeline are <b>REPORTED</b> via press, not company-confirmed detail.</p>
+      </div></div>
+    <div class="card"><h3>Anthropic</h3><div class="note">Private company -- no SEC filings exist (a confidential S-1 has been filed, see below). Curated one-off, not part of the standardized SEC pipeline.</div>
+      <div class="comm scrollbox">
+        <p><b>$965B post-money valuation</b> after a $65B Series H announced May 28, 2026. <b>REAL</b> -- Anthropic's own announcement.</p>
+        <p>Run-rate revenue "crossed $47B" -- Anthropic's own statement, May 2026. <b>REAL.</b> A newer ~$65B figure and Q2 revenue over $11.5B (Jul 2026) were disclosed privately to investors and reported by press; Anthropic declined to comment -- <b>REPORTED</b>, not REAL.</p>
+        <p>Filed a <b>confidential S-1</b> with the SEC in June 2026, targeting a Nasdaq IPO around October 2026. <b>REAL</b> -- the fact of the filing is public, though its contents are not.</p>
+      </div></div>
+  </div>`;
 }
 
 function companyUnavailable(title,detail){
@@ -370,7 +395,7 @@ function wireCompanyHomeSections(){
 
 function companyPeriodTable(metricKeys,indexes){
   const keys=metricKeys||["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"];
-  const labels={revenue:"Revenue",grossProfit:"Gross profit",operatingIncome:"Operating income",netIncome:"Net income",rd:"R&D",operatingCashFlow:"Operating cash",capex:"Capex",freeCashFlow:"FCF",cash:"Cash",shortTermInvestments:"Short-term investments",accountsReceivable:"Receivables",accountsPayable:"Payables",currentAssets:"Current assets",currentLiabilities:"Current liabilities",totalAssets:"Total assets",totalLiabilities:"Total liabilities",totalDebt:"Debt",repurchases:"Repurchases",dividends:"Dividends",shareBasedCompensation:"Stock compensation"};
+  const labels={revenue:"Revenue",grossProfit:"Gross profit",operatingIncome:"Operating income",netIncome:"Net income",rd:"R&D",operatingCashFlow:"Operating cash",capex:"Capex",freeCashFlow:"FCF",cash:"Cash",shortTermInvestments:"Short-term investments",accountsReceivable:"Receivables",accountsPayable:"Payables",currentAssets:"Current assets",currentLiabilities:"Current liabilities",totalAssets:"Total assets",totalLiabilities:"Total liabilities",totalDebt:"Debt",repurchases:"Repurchases",dividends:"Dividends",shareBasedCompensation:"Stock compensation",costOfRevenue:"Cost of revenue",inventory:"Inventory",propertyPlantEquipment:"PP&E"};
   const rows=(indexes||selectedCompanyIndexes()).map(index=>{
     const period=companyPeriodAt(index);
     return `<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.periodEnd)}</td>${keys.map(key=>{
@@ -525,6 +550,28 @@ function renderPeerProfit(v){
   chartTable(document.getElementById("peerProfitIncome"),"grouped",{cats:periods.map(companyChartLabel),seriesA:periods.map(period=>period.metrics.operatingIncome||0),seriesB:periods.map(period=>period.metrics.netIncome||0),nameA:"Operating income",nameB:"Net income",fmt:B});
   const rdPeriods=periods.filter(period=>Number.isFinite(period.metrics.rd));
   if(rdPeriods.length) chartTable(document.getElementById("peerProfitRd"),"bar",{labels:rdPeriods.map(companyChartLabel),values:rdPeriods.map(period=>period.metrics.rd),fmt:B});
+}
+
+function renderPeerHardware(v){
+  const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
+  const cogs=companyMetricAt(latest,"costOfRevenue"), inventory=companyMetricAt(latest,"inventory"), ppe=companyMetricAt(latest,"propertyPlantEquipment"), payables=companyMetricAt(latest,"accountsPayable"), capex=companyMetricAt(latest,"capex"), revenue=companyMetricAt(latest,"revenue");
+  const turns=(cogs!=null&&inventory)?(cogs*4)/inventory:null; // quarterly cost of revenue, annualized, over the point-in-time inventory balance
+  const inventoryLight=inventory!=null&&revenue&&inventory/revenue<0.02;
+  v.innerHTML=`${companyHeader(`${company.name} hardware COGS & inventory`,`${qLabel(latest)} · point in time · $M`)}
+    ${companyContextNote("Cost of revenue, inventory, property/plant/equipment, and capex are standardized from SEC filings, same as every other tab. Inventory is a point-in-time balance, never summed across quarters.")}
+    ${inventory==null?sowhat(`${company.name} does not disclose a comparable inventory balance in the standardized SEC source.`)
+      :inventoryLight?sowhat(`${company.name} carries minimal inventory (${companyMoney(inventory)}, ${companyPercent(revenue?100*inventory/revenue:null)} of quarterly revenue) -- consistent with a software/services business, not a hardware manufacturer.`)
+      :sowhat(`${company.name} inventory is ${companyMoney(inventory)}${turns!=null?`, turning over about ${turns.toFixed(1)}x/year`:""} against ${qLabel(latest)} cost of revenue of ${companyMoney(cogs)}.`)}
+    <div class="tiles">
+      ${tile("Cost of revenue",companyMoney(cogs),qLabel(latest),"neutral")}
+      ${tile("Inventory",companyMoney(inventory),qLabel(latest),"neutral")}
+      ${tile("Inventory turns (annualized)",turns==null?"n/a":turns.toFixed(1)+"x",turns==null?"needs cost of revenue and inventory both filed":"cost of revenue (annualized) / inventory","neutral")}
+      ${tile("Property, plant & equipment",companyMoney(ppe),qLabel(latest),"neutral")}
+      ${tile("Manufacturing capex",companyMoney(capex),qLabel(latest),"neutral")}
+      ${tile("Accounts payable",companyMoney(payables),qLabel(latest),"neutral")}
+    </div>
+    <div class="card" style="height:32%;margin-top:10px"><h3>Hardware-relevant facts by selected quarter</h3>${companyPeriodTable(["costOfRevenue","inventory","propertyPlantEquipment","capex","accountsPayable"],indexes)}</div>
+    ${aiLabsHardwareContext()}`;
 }
 
 function renderPeerBalance(v){
@@ -955,13 +1002,14 @@ function csvReports(){
 }
 
 function renderPeerTab(tab,v){
-  ({home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment,reports:renderReports}[tab]||renderPeerHome)(v);
+  ({home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,hwcogs:renderPeerHardware,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment,reports:renderReports}[tab]||renderPeerHome)(v);
 }
 
 function peerMetricKeysForTab(tab){
   return {
     revenue:["revenue"], variance:["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"],
-    profit:["revenue","grossProfit","operatingIncome","netIncome","rd"], balance:["cash","shortTermInvestments","accountsReceivable","accountsPayable","currentAssets","currentLiabilities","totalAssets","totalLiabilities","totalDebt"],
+    profit:["revenue","grossProfit","operatingIncome","netIncome","rd"], hwcogs:["costOfRevenue","inventory","propertyPlantEquipment","capex","accountsPayable"],
+    balance:["cash","shortTermInvestments","accountsReceivable","accountsPayable","currentAssets","currentLiabilities","totalAssets","totalLiabilities","totalDebt"],
     fx:["repurchases","dividends","shareBasedCompensation","cash","totalDebt"], people:["revenue","rd"], outlook:["revenue","grossProfit","operatingIncome"], env:[], reports:["revenue","grossProfit","operatingIncome","netIncome","rd","freeCashFlow"]
   }[tab] || ["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"];
 }

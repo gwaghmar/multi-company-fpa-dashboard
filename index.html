@@ -1093,7 +1093,10 @@ function barChart(svg,{labels,values,colors,fmt=B,sub=null,onClick=null,active=-
   if(ih<40) return;
   const nSlots=values.length+(ghost?1:0);
   const scaleVals = ghost? values.concat([ghost.value]) : values;
-  const max=Math.max(...scaleVals,guide&&guide.value!=null?guide.value:0)*1.15;
+  // "|| 1" guards a company/period whose whole series is 0 (e.g. Intel's suspended dividend) --
+  // without it max is 0, every v/max below divides by zero, and the chart silently renders NaN
+  // into every SVG coordinate instead of a flat, honest zero baseline.
+  const max=Math.max(...scaleVals,guide&&guide.value!=null?guide.value:0)*1.15 || 1;
   const Y=v=>T+ih*(1-v/max);
   for(let g=0;g<=3;g++){ const v=max*g/3,y=Y(v);
     el("line",{x1:L,x2:W-R,y1:y,y2:y,stroke:css("--grid"),"stroke-width":1},svg);
@@ -1152,7 +1155,7 @@ function groupedBar(svg,{cats,seriesA,seriesB,nameA,nameB,fmt=B,onClick=null,mar
   // right-anchored just past its bar (see below) and would otherwise clip against the svg edge.
   const L=54,R=34,T=18+legendH,Bm=34, iw=W-L-R, ih=H-T-Bm;
   if(ih<40) return;
-  const max=Math.max(...seriesA,...seriesB)*1.15;
+  const max=Math.max(...seriesA,...seriesB)*1.15 || 1; // see barChart's identical guard
   const Y=v=>T+ih*(1-v/max);
   for(let g=0;g<=3;g++){ const v=max*g/3,y=Y(v);
     el("line",{x1:L,x2:W-R,y1:y,y2:y,stroke:css("--grid"),"stroke-width":1},svg);
@@ -1226,7 +1229,7 @@ function divergingBar(svg,{names,values,fmt=v=>sgn(v)+"%"}){
   const {W,H}=svgBox(svg);
   const L=Math.min(128,W*0.3),R=46,T=10,Bm=18, iw=W-L-R, ih=H-T-Bm;
   if(ih<30) return;
-  const maxAbs=Math.max(...values.map(Math.abs))*1.25;
+  const maxAbs=Math.max(...values.map(Math.abs))*1.25 || 1; // see barChart's identical zero-series guard
   // A centered zero-line only earns its half-width of empty run-up when the data actually has
   // both signs -- otherwise it just leaves the whole unused half as a gap between the labels and
   // every bar (e.g. a quarter where every working-capital line item happens to move the same
@@ -2158,6 +2161,7 @@ const VIEWS=[
   {id:"variance", name:"Variance Analysis"},
   {id:"plan", name:"Planning & Scenarios"},
   {id:"profit", name:"Profitability & Opex"},
+  {id:"hwcogs", name:"Hardware COGS & Inventory"},
   {id:"balance", name:"Liquidity & Working Capital"},
   {id:"fx", name:"Treasury & Capital"},
   {id:"people", name:"Workforce & Investment"},
@@ -2938,6 +2942,60 @@ function csvProfit(){
     ["je_id","posting_date","fiscal_quarter","cost_element","category_or_subelement","cost_center","amount_usd","field_basis"], rows);
 }
 
+/* ---------- tab renderers: Hardware COGS & Inventory (renderHwCogs/csvHwCogs) ---------- */
+function hwcogsSoWhat(){
+  const i=snapQ(), sq=selQ(), lbl=periodLabel(sq), {dio}=cccFor(i);
+  const turns=365/dio, cogsYoy=aggYoYSameQtr(D.is.totalCos,sq);
+  return sowhat(`Inventory is turning about ${turns.toFixed(1)}x/year (~${dio} days on hand) in ${qLabel(i)}. Cost of revenue ${cogsYoy!=null?sgn(cogsYoy)+"% YoY":"n/a"} over ${lbl}.`);
+}
+function renderHwCogs(v){
+  const is=D.is, bs=D.bs, cf=D.cf, sq=selQ(), i=snapQ(), bsIdx=i+1, prevIdx=i, lbl=periodLabel(sq);
+  const {dio}=cccFor(i), turns=365/dio;
+  const capexAgg=aggSum(cf.capex,sq), revAgg=aggSum(is.totalRev,sq);
+  v.innerHTML=`
+  <div class="vhead"><h2>Hardware COGS &amp; Inventory</h2>
+    <span class="sub">${lbl} · $M</span>
+    <span class="vhead-right"><span class="badge">Real · Apple 10-Q/10-K</span><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
+  ${hwcogsSoWhat()}
+  <div class="tiles">
+    ${yoyTile("Cost of revenue · "+lbl,is.totalCos,sq)}
+    ${tile("Inventory",B(bs.inventories[bsIdx]),`${sgn(100*(bs.inventories[bsIdx]-bs.inventories[prevIdx])/bs.inventories[prevIdx])}% vs prior quarter-end (${bs.dates[prevIdx]})`)}
+    ${tile("Inventory turns (annualized)",turns.toFixed(1)+"x",`≈${dio} days on hand, ${qLabel(i)}`)}
+    ${tile("Manufacturing capex · "+lbl,B(capexAgg),`${pct(100*capexAgg/revAgg,1)} of revenue`)}
+    ${tile("Property, plant &amp; equipment",B(bs.ppe[bsIdx]),`${sgn(100*(bs.ppe[bsIdx]-bs.ppe[prevIdx])/bs.ppe[prevIdx])}% vs prior quarter-end`)}
+    ${tile("Accounts payable",B(bs.ap[bsIdx]),"funds part of the inventory cycle")}
+  </div>
+  <div class="body g21">
+    <div class="card"><h3>Cost of revenue by quarter</h3><div class="note">${sq.length} selected quarter${sq.length>1?"s":""}, real reported. Click a bar to focus that quarter.</div>
+      <div class="fill"><svg id="hwCogsChart"></svg></div></div>
+    <div class="card"><h3>Hardware finance commentary</h3><div class="note">Generated from the reported figures.</div>
+      <div class="comm" id="hwCogsComm"></div></div>
+  </div>
+  <div class="body g2" style="flex:0 0 auto; height:26%">
+    <div class="card"><h3>Inventory by quarter</h3><div class="note">Quarter-end balances.</div><div class="fill"><svg id="hwInvChart"></svg></div></div>
+    <div class="card"><h3>Manufacturing capex by quarter</h3><div class="note">Property/tooling investment, from the cash flow statement.</div><div class="fill"><svg id="hwCapexChart"></svg></div></div>
+  </div>
+  ${aiLabsHardwareContext()}`;
+  const act=sq.indexOf(i), qClick=idx=>toggleQuarterFocus(sq[idx]);
+  chartTable(document.getElementById("hwCogsChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>is.totalCos[k]),active:act,onClick:qClick});
+  chartTable(document.getElementById("hwInvChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>bs.inventories[k+1]),active:act,onClick:qClick});
+  chartTable(document.getElementById("hwCapexChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>cf.capex[k]),active:act,onClick:qClick});
+  const cogsYoy=aggYoYSameQtr(is.totalCos,sq);
+  document.getElementById("hwCogsComm").innerHTML=`
+    <p><b>Cost of revenue was ${B(aggSum(is.totalCos,sq))}</b> over ${lbl}${cogsYoy!=null?`, ${sgn(cogsYoy)}% year over year`:""}.</p>
+    <p><b>Inventory stands at ${B(bs.inventories[bsIdx])}</b> as of ${bs.dates[bsIdx]}, turning over about ${turns.toFixed(1)}x per year (${dio} days on hand) against ${qLabel(i)}'s cost of revenue.</p>
+    <p><b>Manufacturing capex was ${B(capexAgg)}</b> over ${lbl} (${pct(100*capexAgg/revAgg,1)} of revenue), against a property, plant &amp; equipment base of ${B(bs.ppe[bsIdx])}.</p>`;
+}
+function csvHwCogs(){
+  const qIdxs=selQ();
+  const rows=qIdxs.map(i=>{
+    const bsIdx=i+1;
+    return [qLabel(i),D.meta.quarterEnds[i],D.is.totalCos[i],D.bs.inventories[bsIdx],D.bs.ppe[bsIdx],D.cf.capex[i],D.bs.ap[bsIdx]];
+  });
+  downloadCSV(`apple_hardware_cogs_inventory_${periodFileTag(qIdxs)}.csv`, REAL_LINE,
+    ["fiscal_quarter","period_end","cost_of_revenue_usd_m","inventory_usd_m","ppe_usd_m","capex_usd_m","accounts_payable_usd_m"],rows);
+}
+
 /* ---------- tab renderers: Balance Sheet (renderBalance/csvBalance) ---------- */
 function renderBalance(v){
   const i=snapQ(), sq=selQ(), b=D.bs, cf=D.cf; // i: point-in-time -- balance sheet reads the latest selected quarter's snapshot
@@ -3607,9 +3665,9 @@ function syncThemeBtn(){
   btn.textContent=dark?"Light":"Dark";
 }
 const RENDER={home:renderHome,company:renderCompany,glass:renderGlass,revenue:renderRevenue,plan:renderPlan,profit:renderProfit,
-  variance:renderVariance,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv,reports:renderReports};
+  variance:renderVariance,hwcogs:renderHwCogs,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv,reports:renderReports};
 const CSV_FN={home:csvHome,company:csvCompany,glass:csvGlass,revenue:csvRevenue,plan:csvPlan,profit:csvProfit,
-  variance:csvVariance,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv,reports:csvReports};
+  variance:csvVariance,hwcogs:csvHwCogs,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv,reports:csvReports};
 // relocateFiltersUnit: the Filters button+panel+summary is ONE node (#filtersUnit), built once
 // in buildFiltersBar(). Home keeps it on the dedicated line under the header (#filterbar,
 // visible); every other tab instead hosts it inline in that tab's own .vhead-right cluster,
