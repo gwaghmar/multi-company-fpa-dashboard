@@ -531,7 +531,12 @@ export default async function handler(req, res) {
   // whenever the question (or the active tab/company context) is actually dashboard-relevant, and
   // skipped otherwise -- the model still answers, just from general knowledge, instead of the old
   // behavior of rejecting the question locally and telling the user to go flip a switch.
-  const dashboardRelevant = Boolean(selectedCompanyEvidence) || isDashboardQuestion(question, selectedText);
+  // knownSecCompany guards the buildDashboardEvidence() fallback below, which is *always* Apple's
+  // curated data regardless of which company string was passed in -- without this check, asking a
+  // dashboard-flavored question (e.g. "what's the revenue?") while a company with no SEC filings
+  // is selected (OpenAI, Anthropic) would silently attach Apple's real financials to the answer.
+  const knownSecCompany = Boolean(COMPANY_DATA.companies?.[selectedCompany]);
+  const dashboardRelevant = knownSecCompany && (Boolean(selectedCompanyEvidence) || isDashboardQuestion(question, selectedText));
   const mode = dashboardRelevant ? "dashboard" : "general";
   const route = selectedCompanyEvidence ? "company_source" : dashboardRelevant ? "dashboard_tools" : "general";
 

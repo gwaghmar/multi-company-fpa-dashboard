@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-09-10T00:00:00Z",
+  "methodology": "OpenAI and Anthropic are both private -- neither files with the SEC, so none of the standardized quarterly pipeline (companies.json, the 11-tab company view) applies to them. This file holds manually curated public facts only: each company's own on-the-record statements (basis REAL) and, separately, figures leaked to press or disclosed only to investors that the company has not confirmed publicly (basis REPORTED). Not part of the automated daily SEC refresh -- these numbers move on each company's own disclosure schedule (funding rounds, blog posts), not a fetchable API.",
+  "companies": {
+    "openai": {
+      "name": "OpenAI",
+      "ticker": "Private",
+      "facts": [
+        {"label":"Post-money valuation","value":852000,"unit":"$M","basis":"REAL","source":"OpenAI's own announcement","date":"2026-03-31"},
+        {"label":"Latest raise (this round)","value":122000,"unit":"$M","basis":"REAL","source":"OpenAI's own announcement (Amazon $50B, Nvidia $30B, SoftBank $30B among investors)","date":"2026-03-31"},
+        {"label":"Annualized revenue, year-end 2025","value":20000,"unit":"$M+","basis":"REAL","source":"CFO Sarah Friar, official OpenAI blog","date":"2026-01-19"},
+        {"label":"Annualized revenue, year-end 2024","value":6000,"unit":"$M","basis":"REAL","source":"CFO Sarah Friar, official OpenAI blog","date":"2026-01-19"},
+        {"label":"Annualized revenue, reported Jul 2026","value":40000,"unit":"$M","basis":"REPORTED","source":"Disclosed at a closed-door investor meeting, reported by press -- not an OpenAI public statement","date":"2026-07"},
+        {"label":"io acquisition, total value","value":6500,"unit":"$M","basis":"REAL","source":"OpenAI's own announcement; all-stock, closed Jul 9, 2025","date":"2025-07-09"}
+      ]
+    },
+    "anthropic": {
+      "name": "Anthropic",
+      "ticker": "Private",
+      "facts": [
+        {"label":"Post-money valuation","value":965000,"unit":"$M","basis":"REAL","source":"Anthropic's own announcement (Series H)","date":"2026-05-28"},
+        {"label":"Series H raise","value":65000,"unit":"$M","basis":"REAL","source":"Anthropic's own announcement","date":"2026-05-28"},
+        {"label":"Run-rate revenue, official","value":47000,"unit":"$M","basis":"REAL","source":"Anthropic's own statement (X / Series H announcement)","date":"2026-05"},
+        {"label":"Run-rate revenue, reported Jul 2026","value":65000,"unit":"$M","basis":"REPORTED","source":"Disclosed privately to investors, reported by press; Anthropic declined to comment","date":"2026-07"},
+        {"label":"Q2 2026 revenue, reported","value":11500,"unit":"$M+","basis":"REPORTED","source":"Same private investor update as above","date":"2026-07"}
+      ]
+    }
+  }
+}

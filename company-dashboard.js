@@ -247,29 +247,32 @@ function companyContextNote(text){
   return `<div class="note" style="margin-bottom:10px">${escapeHtml(text||`${company.name} standardized financials from SEC Company Facts. Company-specific disclosures are shown only when comparable facts are available.`)}</div>`;
 }
 
-// aiLabsHardwareContext: a small, sourced context card for the Hardware COGS & Inventory tab
-// only -- OpenAI and Anthropic are both private (no SEC filings), and neither has shipped a
-// hardware product with reported financials, so they can never carry real COGS/inventory figures
-// the way the 11 SEC-filing companies do. This is deliberately NOT a full company profile: it's a
-// one-off curated note, clearly split into REAL (each company's own on-the-record statement) vs
-// REPORTED (leaked to press / disclosed only to investors, not a public company statement) so nothing
-// here gets mistaken for the same sourcing tier as the rest of this dashboard.
-function aiLabsHardwareContext(){
-  return `<div class="body" style="flex:0 0 auto; height:330px; grid-template-columns:1fr 1fr">
-    <div class="card"><h3>OpenAI</h3><div class="note">Private company -- no SEC filings exist. Curated one-off, not part of the standardized SEC pipeline.</div>
-      <div class="comm scrollbox">
-        <p><b>$852B post-money valuation</b> after a $122B raise closed Mar 31, 2026 (Amazon $50B, Nvidia $30B, SoftBank $30B among investors). <b>REAL</b> -- OpenAI's own announcement.</p>
-        <p>Annualized revenue "surpassed $20B in 2025, up from $6B in 2024" -- CFO Sarah Friar, official OpenAI blog, Jan 19, 2026. <b>REAL.</b> A newer ~$40B figure (Jul 2026) surfaced from a closed-door investor meeting, reported by press, not stated publicly by OpenAI -- <b>REPORTED</b>, not verified as REAL.</p>
-        <p>Hardware, deal mechanics, manufacturing, and the capital backdrop it all sits inside are broken out in the sections below -- there's enough real, sourced detail here that it doesn't fit in one card.</p>
-      </div></div>
-    <div class="card"><h3>Anthropic</h3><div class="note">Private company -- no SEC filings exist (a confidential S-1 has been filed, see below). Curated one-off, not part of the standardized SEC pipeline.</div>
-      <div class="comm scrollbox">
-        <p><b>$965B post-money valuation</b> after a $65B Series H announced May 28, 2026. <b>REAL</b> -- Anthropic's own announcement.</p>
-        <p>Run-rate revenue "crossed $47B" -- Anthropic's own statement, May 2026. <b>REAL.</b> A newer ~$65B figure and Q2 revenue over $11.5B (Jul 2026) were disclosed privately to investors and reported by press; Anthropic declined to comment -- <b>REPORTED</b>, not REAL.</p>
-        <p>Filed a <b>confidential S-1</b> with the SEC in June 2026, targeting a Nasdaq IPO around October 2026. <b>REAL</b> -- the fact of the filing is public, though its contents are not. Because the S-1 is confidential, none of the numbers inside it (revenue, margins, share count, offering price) are public. No hardware ambitions comparable to OpenAI's have been confirmed for Anthropic -- it's included here as the direct peer-scale comparison, not because it has a hardware line.</p>
-      </div></div>
-  </div>
-  <div class="card" style="flex:0 0 auto; height:260px; margin-top:9px">
+// hardwarePeersPointer: a compact pointer card for the Hardware COGS & Inventory tab (Apple and
+// every SEC-filing peer). OpenAI and Anthropic are both private -- no SEC filings, no comparable
+// COGS/inventory line -- so their figures don't belong mixed into a filed-quarterly-data tab.
+// They get their own company pages instead (see renderPrivateCompany below); this just points there.
+function hardwarePeersPointer(){
+  return `<div class="card" style="flex:0 0 auto; height:110px; margin-top:9px; display:flex; flex-direction:column; justify-content:center; gap:6px">
+    <h3 style="margin:0">OpenAI and Anthropic have their own pages</h3>
+    <div class="note">Both are private -- no SEC filings, so their numbers don't belong on a filed-quarterly-data tab like this one. Valuation, revenue, the io hardware acquisition, manufacturing partners, and the capital backdrop behind it all live on their own company pages: <a href="javascript:void(0)" onclick="goToCompany('openai')">OpenAI</a> &middot; <a href="javascript:void(0)" onclick="goToCompany('anthropic')">Anthropic</a>.</div>
+  </div>`;
+}
+
+// privateFactValue: formats a private-companies.json fact ($M magnitudes) into a readable $B/$M string.
+function privateFactValue(fact){
+  if(fact.unit==="$M"||fact.unit==="$M+"){
+    const plus=fact.unit.endsWith("+")?"+":"";
+    const b=fact.value/1000;
+    return "$"+(b>=100?b.toFixed(0):b.toFixed(1))+"B"+plus;
+  }
+  return `${fact.value}${fact.unit?" "+fact.unit:""}`;
+}
+
+// openaiHardwareNarrative / anthropicPrivateNarrative: the curated, sourced narrative content for
+// each private company's own page (see renderPrivateCompany). Split by company since only OpenAI
+// has a hardware line -- Anthropic gets a shorter, honest note instead of padded-out filler.
+function openaiHardwareNarrative(){
+  return `<div class="card" style="flex:0 0 auto; height:260px; margin-top:9px">
     <h3>Comparable device economics -- the actual benchmarks a hardware finance model would use</h3>
     <div class="note">OpenAI's own device has zero public BOM, price, or margin data. These are the closest real, named-source comparables.</div>
     <div class="scrollbox" style="flex:1 1 auto">
@@ -308,6 +311,38 @@ function aiLabsHardwareContext(){
       <p><b>So what, for a hardware finance model:</b> CFO Sarah Friar has framed the device as the "next interface" -- a demand/interaction-layer play, not yet a disclosed revenue line. Hardware is currently reported as compute-constrained by the much larger training/inference buildout -- i.e. <b>the hardware business is a claimant on compute capacity right now, not a funder of it</b>, which is the opposite of how a typical hardware P&amp;L would want to sit inside a capital plan.</p>
     </div>
   </div>`;
+}
+function anthropicPrivateNarrative(){
+  return `<div class="card" style="flex:0 0 auto; height:200px; margin-top:9px">
+    <h3>Confidential S-1, and why there's no hardware section here</h3>
+    <div class="comm scrollbox">
+      <p>Filed a <b>confidential S-1</b> with the SEC in June 2026, targeting a Nasdaq IPO around October 2026. <b>REAL</b> -- the fact of the filing is public, though its contents are not. Because the S-1 is confidential, none of the numbers inside it (revenue, margins, share count, offering price) are public.</p>
+      <p>No hardware ambitions comparable to OpenAI's have been confirmed for Anthropic -- it's shown on this dashboard as the direct peer-scale comparison on valuation and revenue, not because it has a hardware line. For the hardware-specific detail -- comparable device economics, the io acquisition, manufacturing partners, the capital backdrop -- see the <a href="javascript:void(0)" onclick="goToCompany('openai')">OpenAI page</a>.</p>
+    </div>
+  </div>`;
+}
+
+// renderPrivateCompany / csvPrivateCompany: the single dedicated page shown for every tab when a
+// private company (OpenAI, Anthropic -- see PRIVATE_COMPANY_SLUGS in index.html) is selected. There
+// is no `periods` history to drive a per-tab renderer the way the 11 SEC-filing companies work, so
+// this renders one curated snapshot regardless of which tab is active.
+function renderPrivateCompany(v){
+  const company=selectedCompany();
+  const info=(PRIVATE_COMPANY_DATA.companies||{})[companySlug]||{facts:[]};
+  const factTiles=(info.facts||[]).map(f=>tile(f.label,privateFactValue(f),`${f.basis} · ${f.source}${f.date?` · ${f.date}`:""}`)).join("");
+  v.innerHTML=`<div class="vhead"><h2>${escapeHtml(company.name)}</h2><span class="sub">Private company &middot; no SEC filings</span>
+    <span class="vhead-right"><span class="badge">Manually curated &middot; REAL / REPORTED labeled</span>${companyDownloadButton()}</span></div>
+    <div class="note" style="margin-bottom:10px">${escapeHtml(company.name)} is private -- no SEC filings, no standardized Company Facts pipeline, and no automated daily refresh. Every figure below is labeled <b>REAL</b> (stated by ${escapeHtml(company.name)} itself, on the record) or <b>REPORTED</b> (reported by press or disclosed privately to investors, not confirmed by ${escapeHtml(company.name)}). Every tab shows this same snapshot -- there's no quarterly filing history here to break it out by period.</div>
+    <div class="tiles">${factTiles}</div>
+    ${companySlug==="openai"?openaiHardwareNarrative():anthropicPrivateNarrative()}`;
+}
+function csvPrivateCompany(){
+  const company=selectedCompany();
+  const info=(PRIVATE_COMPANY_DATA.companies||{})[companySlug]||{facts:[]};
+  const rows=(info.facts||[]).map(f=>[company.name,f.label,f.value,f.unit,f.basis,f.source,f.date]);
+  downloadCSV(`${companySlug}_private_company_facts.csv`,
+    `Manually curated public facts for ${company.name} (private -- no SEC filings). REAL = the company's own on-the-record statement; REPORTED = reported by press or disclosed privately to investors, not company-confirmed. See private-companies.json.`,
+    ["company","label","value","unit","field_basis","source","date"],rows);
 }
 
 function companyUnavailable(title,detail){
@@ -610,7 +645,7 @@ function renderPeerHardware(v){
       ${tile("Accounts payable",companyMoney(payables),qLabel(latest),"neutral")}
     </div>
     <div class="card" style="height:32%;margin-top:10px"><h3>Hardware-relevant facts by selected quarter</h3>${companyPeriodTable(["costOfRevenue","inventory","propertyPlantEquipment","capex","accountsPayable"],indexes)}</div>
-    ${aiLabsHardwareContext()}`;
+    ${hardwarePeersPointer()}`;
 }
 
 function renderPeerBalance(v){

@@ -271,3 +271,28 @@ confirm a figure against the company's own primary source, or where independent
 lookups returned conflicting numbers for the same reporting period -- the dashboard
 renders an explicit `unavailableNote` in that case instead of a guessed value. Each
 company entry cites its source report's title, URL, and publish date.
+
+## Private companies (`private-companies.json`)
+
+OpenAI and Anthropic are both private: neither files with the SEC, so none of the
+standardized quarterly pipeline (`companies.json`, the 11-tab company view) applies
+to them. They appear as their own selectable companies in the dropdown, under a
+"Private -- no SEC filings" group, but every tab renders the same single curated
+snapshot from `private-companies.json` instead of a per-tab, per-quarter view --
+there is no quarterly filing history to break it out by.
+
+Each company's `facts` array uses a two-tier basis, distinct from the REAL/DERIVED/
+MODELED tiers used everywhere else in this dashboard, because neither company makes
+audited filings public:
+
+- **REAL** -- the company's own on-the-record statement (an official blog post,
+  press release, executive statement, or a filed-but-confidential document where
+  only the fact of filing, not its contents, is public).
+- **REPORTED** -- reported by press or disclosed only to investors, not confirmed
+  by the company itself. Shown only when multiple independent outlets agree; single-
+  source or contradicted figures are excluded rather than shown as REPORTED.
+
+This file is manually curated and **not** part of the automated daily SEC refresh --
+these numbers move on each company's own disclosure schedule (funding rounds,
+blog posts, investor updates), not a fetchable API. It needs to be re-curated by
+hand when either company makes a new statement.

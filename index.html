@@ -963,7 +963,7 @@ footer{
 </aside>
 <button class="sel-pill" id="selPill">✦ Ask AI</button>
 
-<script src="./company-dashboard.js?v=20260910a"></script>
+<script src="./company-dashboard.js?v=20260910b"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -1017,6 +1017,8 @@ let D = null; // loaded from data.json at startup, see loadData() below
 let COMPANY_DATA = null;
 let PUBLIC_CONTEXT = {companies:{},macro:{}};
 let ENV_CONTEXT = {companies:{}};
+let PRIVATE_COMPANY_DATA = {companies:{}};
+const PRIVATE_COMPANY_SLUGS = new Set(["openai","anthropic"]);
 let companySlug = "apple";
 const SLOT=["--s1","--s2","--s3","--s4","--s5"];
 
@@ -2987,7 +2989,7 @@ function renderHwCogs(v){
     <div class="card"><h3>Inventory by quarter</h3><div class="note">Quarter-end balances.</div><div class="fill"><svg id="hwInvChart"></svg></div></div>
     <div class="card"><h3>Manufacturing capex by quarter</h3><div class="note">Property/tooling investment, from the cash flow statement.</div><div class="fill"><svg id="hwCapexChart"></svg></div></div>
   </div>
-  ${aiLabsHardwareContext()}`;
+  ${hardwarePeersPointer()}`;
   const act=sq.indexOf(i), qClick=idx=>toggleQuarterFocus(sq[idx]);
   chartTable(document.getElementById("hwCogsChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>is.totalCos[k]),active:act,onClick:qClick});
   chartTable(document.getElementById("hwInvChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>bs.inventories[k+1]),active:act,onClick:qClick});
@@ -3709,6 +3711,23 @@ function render(){
   if(filtersUnitNow && filterbarHold && filtersUnitNow.parentElement!==filterbarHold) filterbarHold.appendChild(filtersUnitNow);
   main.innerHTML=`<section class="view" data-active="true" id="${current}"></section>`;
   const view=document.getElementById(current);
+  // Private companies (no SEC filings -- see PRIVATE_COMPANY_SLUGS) have no `periods` to drive any
+  // of the per-tab renderers below, which all assume real quarterly SEC data exists. Every tab
+  // shows the same dedicated snapshot instead of a wall of "n/a" tiles, and none of the
+  // period/filter/annual-report machinery below (built entirely around fiscal quarters) applies,
+  // so this returns early rather than threading a "is this company private" check through it.
+  if(PRIVATE_COMPANY_SLUGS.has(companySlug)){
+    renderPrivateCompany(view);
+    relocateFiltersUnit();
+    const dl=document.getElementById("dlBtn");
+    if(dl) dl.addEventListener("click",()=>csvPrivateCompany());
+    document.getElementById("foot").textContent=`${COMPANY_DATA.companies[companySlug].name} is private -- no SEC filings exist. Every figure above is labeled REAL (the company's own statement) or REPORTED (media/investor-only, not company-confirmed). Built by Govind Waghmare · govindwaghmare.me`;
+    updateAICtx();
+    if(COMPANY_DATA) renderAISugg();
+    applyDropVisibility();
+    syncHash();
+    return;
+  }
   if(companySlug!=="apple" && current!=="company" && current!=="plan") renderPeerTab(current,view);
   else RENDER[current](view);
   if(current!=="reports" && current!=="env") view.insertAdjacentHTML("beforeend",annualReportHTML({tab:current}));
@@ -3980,11 +3999,22 @@ async function loadData(){
     const envContextPromise=fetch("./environment-context.json")
       .then(response=>response.ok?response.json():Promise.reject(new Error("Environment context unavailable")))
       .catch(()=>({companies:{}}));
-    const [dataResponse,companyResponse,publicContext,envContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise,envContextPromise]);
+    const privateContextPromise=fetch("./private-companies.json")
+      .then(response=>response.ok?response.json():Promise.reject(new Error("Private company context unavailable")))
+      .catch(()=>({companies:{}}));
+    const [dataResponse,companyResponse,publicContext,envContext,privateContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise,envContextPromise,privateContextPromise]);
     D = await dataResponse.json();
     COMPANY_DATA = await companyResponse.json();
     PUBLIC_CONTEXT = publicContext;
     ENV_CONTEXT = envContext;
+    PRIVATE_COMPANY_DATA = privateContext;
+    // Private companies (no SEC filings, so no `periods` array -- see PRIVATE_COMPANY_SLUGS) are
+    // injected into the same COMPANY_DATA.companies lookup every existing name/ticker/dropdown
+    // reference already uses, purely client-side -- this never touches companies.json on disk, so
+    // it can't be clobbered by tomorrow's automated SEC refresh, which only rewrites that file.
+    for(const [slug,company] of Object.entries(PRIVATE_COMPANY_DATA.companies||{})){
+      COMPANY_DATA.companies[slug]={name:company.name,ticker:company.ticker,periods:[]};
+    }
   }catch(e){
     document.getElementById("main").innerHTML =
       '<p style="padding:40px;color:var(--muted)">Couldn\'t load data.json. This dashboard needs to be served over http(s) (not opened as a bare file://), and data.json must sit next to index.html.</p>';
@@ -3993,7 +4023,11 @@ async function loadData(){
   initFilters();
   let restoredTab=parseHashState(); // may mutate state.q/cat/geo/pgeo; returns a tab id or null
   const companySelect=document.getElementById("companySelect");
-  companySelect.innerHTML=Object.entries(COMPANY_DATA.companies).map(([slug,company])=>`<option value="${slug}">${escapeHtml(company.name)} · ${escapeHtml(company.ticker)}</option>`).join("");
+  const secOptions=Object.entries(COMPANY_DATA.companies).filter(([slug])=>!PRIVATE_COMPANY_SLUGS.has(slug))
+    .map(([slug,company])=>`<option value="${slug}">${escapeHtml(company.name)} · ${escapeHtml(company.ticker)}</option>`).join("");
+  const privateOptions=Object.entries(COMPANY_DATA.companies).filter(([slug])=>PRIVATE_COMPANY_SLUGS.has(slug))
+    .map(([slug,company])=>`<option value="${slug}">${escapeHtml(company.name)}</option>`).join("");
+  companySelect.innerHTML=secOptions+(privateOptions?`<optgroup label="Private -- no SEC filings">${privateOptions}</optgroup>`:"");
   companySelect.value=companySlug;
   companySelect.addEventListener("change",()=>{
     companySlug=companySelect.value;
@@ -4007,6 +4041,7 @@ async function loadData(){
     buildNav();
     go(current);
   });
+  window.goToCompany=slug=>{ companySelect.value=slug; companySelect.dispatchEvent(new Event("change")); };
   buildNav(); syncThemeBtn(); buildFiltersBar(); renderAISugg();
   go(restoredTab||current); // routed through go() so glass-tab theme forcing runs correctly
 }
