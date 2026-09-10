@@ -244,3 +244,30 @@ Planning & Scenarios is explicitly MODELED. It applies visible revenue-growth,
 gross-margin, and operating-expense assumptions to the latest selected filed
 quarter. The output is arithmetic for FP&A exploration, not company guidance,
 analyst consensus, an approved budget, or an internal annual operating plan.
+
+## Environment / CSRD (`environment-context.json`)
+
+Apple's Environment tab uses Apple's own curated data in `data.json` (see above).
+Every other company's Environment tab reads `environment-context.json`, which holds
+each company's Scope 1/2/3 emissions, total footprint, renewable-energy share, and
+stated reduction/net-zero target, manually curated one company at a time from that
+company's own most-recently-published official sustainability/ESG report.
+
+This file is deliberately **not** part of the daily automated refresh
+(`.github/workflows/refresh-company-data.yml` only regenerates `companies.json` and
+`company-context.json` from the SEC Company Facts API). There is no free,
+structured, continuously-refreshing source for corporate environmental data: the
+SEC's climate disclosure rule is being rescinded as of 2026, the EU's CSRD filings
+won't appear on ESAP before 2028, and CDP's detailed disclosures are no longer
+public. The only real source for any of these figures -- including Apple's -- is
+each company's own report, published once a year on its own schedule. Refreshing
+this file means re-curating it by hand when a company publishes a new report, not
+running a script.
+
+Every figure in `environment-context.json` is labeled REAL (directly stated by the
+company) or DERIVED (simple arithmetic on REAL figures, e.g. a percentage share).
+Fields are omitted rather than estimated wherever the underlying research could not
+confirm a figure against the company's own primary source, or where independent
+lookups returned conflicting numbers for the same reporting period -- the dashboard
+renders an explicit `unavailableNote` in that case instead of a guessed value. Each
+company entry cites its source report's title, URL, and publish date.

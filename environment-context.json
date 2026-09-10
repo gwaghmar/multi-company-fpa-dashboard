@@ -1,0 +1,132 @@
+{
+  "generatedAt": "2026-09-10T00:00:00Z",
+  "methodology": "Manually curated, per company, from each company's own official most-recently-published environmental/sustainability report (or, for Oracle, its official ESG datasheet). This is NOT part of the automated daily SEC refresh (tools/fetch_company_sources.py / fetch_public_context.py never touch this file) -- unlike SEC financials, corporate sustainability reports are published once a year by each company on its own schedule, so there is no free, structured, continuously-refreshing source for this data (see DATA_PROVENANCE.md). Every figure below is either REAL (directly stated by the company's own report) or DERIVED (simple arithmetic on REAL figures, e.g. a percentage share). Any figure that could not be confirmed against a primary source, or where independent lookups returned conflicting numbers, is intentionally omitted rather than guessed -- the dashboard renders those fields as unavailable rather than silently filling them.",
+  "companies": {
+    "alphabet": {
+      "reportTitle": "Google 2025 Environmental Report (10th annual)",
+      "reportUrl": "https://sustainability.google/reports/google-2025-environmental-report/",
+      "publishDate": "2025-06-26",
+      "periodLabel": "CY2024",
+      "totalFootprint": {"value": 11500000, "unit": "tCO2e", "basis": "REAL", "note": "Google's own \"ambition-based\" total footprint (Scope 1 + Scope 2 market-based + Scope 3)"},
+      "scope3ShareOfTotal": {"value": 73, "unit": "%", "basis": "REAL"},
+      "renewableEnergyPct": {"value": 66, "unit": "%", "basis": "REAL", "label": "Carbon-free energy (CFE)"},
+      "target": {"text": "Net-zero across all operations and full value chain by 2030 (ambition set 2021): cut absolute Scope 1, 2 (market-based), and 3 emissions 50% vs. a 2019 baseline, combined with running all operations on 24/7 carbon-free energy by 2030.", "basis": "REAL"},
+      "unavailableNote": "Scope 1, Scope 2, and Scope 3 as individual absolute figures could not be confirmed against Google's primary report in this session -- independent lookups returned inconsistent numbers for the same reporting year, so they are shown as unavailable rather than risk an incorrect figure."
+    },
+    "nvidia": {
+      "reportTitle": "NVIDIA FY25 Sustainability Report",
+      "reportUrl": "https://images.nvidia.com/aem-dam/Solutions/documents/NVIDIA-Sustainability-Report-Fiscal-Year-2025.pdf",
+      "publishDate": "2025-06",
+      "periodLabel": "FY2025 (Jan 2024–Jan 2025)",
+      "scope1": {"value": 12952, "unit": "tCO2e", "basis": "REAL"},
+      "scope2MarketBased": {"value": 0, "unit": "tCO2e", "basis": "REAL", "note": "Achieved via 100% renewable electricity for offices and data centers under operational control"},
+      "scope2LocationBased": {"value": 228378, "unit": "tCO2e", "basis": "REAL"},
+      "scope3": {"value": 6912577, "unit": "tCO2e", "basis": "REAL", "dominantCategory": "Purchased goods and services (foundry/supply chain)", "dominantCategoryShare": 87},
+      "totalFootprint": {"value": 7153907, "unit": "tCO2e", "basis": "DERIVED", "note": "Sum of Scope 1 + Scope 2 (location-based) + Scope 3; NVIDIA does not itself state one combined total"},
+      "scope3ShareOfTotal": {"value": 96.6, "unit": "%", "basis": "REAL"},
+      "renewableEnergyPct": {"value": 100, "unit": "%", "basis": "REAL", "note": "Offices and data centers under NVIDIA's operational control"},
+      "target": {"text": "No company-wide net-zero commitment. SBTi-validated (June 2025): cut absolute Scope 1+2 emissions 50% by FY2030 (FY2023 baseline); cut Scope 3 emissions intensity from use of sold GPU products 75% per PFLOP by FY2030 (FY2023 baseline).", "basis": "REAL"}
+    },
+    "microsoft": {
+      "reportTitle": "2026 Environmental Sustainability Report — Responsibly Building the AI Future",
+      "reportUrl": "https://www.microsoft.com/en-us/corporate-responsibility/topics/sustainability/report/",
+      "publishDate": "2026-07-09",
+      "periodLabel": "FY2025 (Jul 2024–Jun 2025)",
+      "renewableEnergyPct": {"value": 100, "unit": "%", "basis": "REAL", "note": "Matched 100% of annual global electricity consumption with renewable energy in FY25"},
+      "target": {"text": "Committed to being carbon negative by 2030: reducing emissions by more than half, removing the rest, then removing the equivalent of Microsoft's historical emissions (since founding in 1975) by 2050.", "basis": "REAL"},
+      "unavailableNote": "Scope 1, Scope 2, Scope 3, and total-footprint absolute figures could not be verified against Microsoft's primary report in this session -- the primary PDF and data fact sheet were unreachable, and only secondary press paraphrases were found, so they are shown as unavailable rather than risk an incorrect figure."
+    },
+    "amazon": {
+      "reportTitle": "2025 Amazon Sustainability Report",
+      "reportUrl": "https://sustainability.aboutamazon.com/2025-amazon-sustainability-report.pdf",
+      "publishDate": "2026-07-01",
+      "periodLabel": "CY2025",
+      "scope1": {"value": 15370000, "unit": "tCO2e", "basis": "REAL"},
+      "scope2MarketBased": {"value": 3740000, "unit": "tCO2e", "basis": "REAL"},
+      "scope3": {"value": 61740000, "unit": "tCO2e", "basis": "REAL", "dominantCategory": "Purchased goods and services", "dominantCategoryValue": 18630000},
+      "totalFootprint": {"value": 80850000, "unit": "tCO2e", "basis": "REAL"},
+      "scope3ShareOfTotal": {"value": 76, "unit": "%", "basis": "REAL"},
+      "renewableEnergyPct": {"value": 100, "unit": "%", "basis": "REAL", "note": "Matched, third consecutive year"},
+      "target": {"text": "The Climate Pledge: net-zero carbon by 2040 (co-founded 2019). The 100% renewable-energy-matching goal, originally targeted for 2030, has already been achieved since 2023.", "basis": "REAL"}
+    },
+    "meta": {
+      "reportTitle": "2025 Sustainability Report — Connecting to a Better Reality",
+      "reportUrl": "https://sustainability.atmeta.com/2025-sustainability-report/",
+      "publishDate": "2025-09-12",
+      "periodLabel": "CY2024",
+      "scope1": {"value": 47468, "unit": "tCO2e", "basis": "REAL"},
+      "scope2MarketBased": {"value": 1358, "unit": "tCO2e", "basis": "REAL"},
+      "scope3": {"value": 8151769, "unit": "tCO2e", "basis": "REAL", "dominantCategory": "Purchased goods and services", "dominantCategoryValue": 1920413, "dominantCategoryShare": 63},
+      "totalFootprint": {"value": 8200595, "unit": "tCO2e", "basis": "REAL", "note": "Market-based total (Meta states ~8.2 million); ties exactly to Scope 1 + Scope 2 + Scope 3 above"},
+      "totalFootprintLocationBased": {"value": 15600000, "unit": "tCO2e", "basis": "REAL"},
+      "scope3ShareOfTotal": {"value": 99, "unit": "%", "basis": "REAL"},
+      "renewableEnergyPct": {"value": 100, "unit": "%", "basis": "REAL", "note": "Electricity use matched"},
+      "target": {"text": "Net-zero across the full value chain by 2030. Interim: cut Scope 1+2 emissions 42% by 2031, and hold Scope 3 emissions at or below 2021 levels through 2031 (2021 baseline).", "basis": "REAL"}
+    },
+    "amd": {
+      "reportTitle": "AMD 2024-25 Corporate Responsibility Report (scope detail); 2025-26 Corporate Responsibility Report — Scaling Impact (renewable %, target progress)",
+      "reportUrl": "https://www.amd.com/en/corporate/corporate-responsibility.html",
+      "publishDate": "2025-08",
+      "periodLabel": "CY2024 (scope detail) / CY2025 (renewable %, target progress)",
+      "scope1": {"value": 12419, "unit": "tCO2e", "basis": "REAL", "note": "CY2024"},
+      "scope2LocationBased": {"value": 91579, "unit": "tCO2e", "basis": "REAL", "note": "CY2024"},
+      "scope2MarketBased": {"value": 31771, "unit": "tCO2e", "basis": "REAL", "note": "CY2024"},
+      "scope3Category1": {"value": 2533494, "unit": "tCO2e", "basis": "REAL", "label": "Purchased goods & services (foundry/wafer fabrication)", "note": "CY2024; AMD's dominant disclosed Scope 3 category"},
+      "scope3Category6": {"value": 33467, "unit": "tCO2e", "basis": "REAL", "label": "Business travel", "note": "CY2024, externally assured"},
+      "renewableEnergyPct": {"value": 58, "unit": "%", "basis": "REAL", "note": "CY2025, up from 22% in 2020"},
+      "target": {"text": "No company-wide net-zero target. Goals: 50% absolute reduction in Scope 1+2 operational emissions by 2030 (2020 baseline, 30% achieved by CY2025); 100% renewable electricity by 2030 (58% achieved); 25% reduction in Scope 3 manufacturing supply-chain emissions intensity between 2024–2030.", "basis": "REAL"},
+      "unavailableNote": "AMD does not publish a full all-category Scope 3 total or a combined Scope 1+2+3 footprint -- it discloses only individual Scope 3 categories (shown above). A partial sum would misleadingly imply completeness, so total footprint and Scope 3 share of total are shown as unavailable rather than computed from an incomplete base."
+    },
+    "broadcom": {
+      "reportTitle": "Broadcom 2025 Corporate Responsibility Report",
+      "reportUrl": "https://docs.broadcom.com/docs/corporate-responsibility-report",
+      "publishDate": "2025-03",
+      "periodLabel": "FY2024",
+      "scope1": {"value": 53649, "unit": "tCO2e", "basis": "REAL"},
+      "scope2LocationBased": {"value": 247381, "unit": "tCO2e", "basis": "REAL"},
+      "scope2MarketBased": {"value": 166752, "unit": "tCO2e", "basis": "REAL"},
+      "scope3": {"value": 2410880, "unit": "tCO2e", "basis": "REAL", "dominantCategory": "Purchased goods and services", "dominantCategoryValue": 2181575, "dominantCategoryShare": 90.5},
+      "totalFootprint": {"value": 2631281, "unit": "tCO2e", "basis": "DERIVED", "note": "Sum of Scope 1 + Scope 2 (market-based) + Scope 3; Broadcom states an operational (Scope 1+2 only) total of 301,030 tCO2e but not a combined Scope 1+2+3 figure"},
+      "scope3ShareOfTotal": {"value": 91.6, "unit": "%", "basis": "DERIVED"},
+      "renewableEnergyPct": {"value": 42, "unit": "%", "basis": "REAL", "note": "FY2025, most recently reported (vs. FY2024 scope detail above)"},
+      "target": {"text": "Reduce Scope 1+2 (operational) emissions 38% by 2030 vs. a 2021 baseline; no Scope 3 target. FY2025 progress: 40% reduction already achieved, exceeding the target.", "basis": "REAL"}
+    },
+    "oracle": {
+      "reportTitle": "Oracle Environmental and Social Impact FY25 Datasheet",
+      "reportUrl": "https://www.oracle.com/a/ocom/docs/social-impact-datasheet.pdf",
+      "publishDate": "2026-02",
+      "periodLabel": "FY2025 (Jun 2024–May 2025)",
+      "scope1": {"value": 27532, "unit": "tCO2e", "basis": "REAL"},
+      "scope2LocationBased": {"value": 1600371, "unit": "tCO2e", "basis": "REAL"},
+      "scope2MarketBased": {"value": 237251, "unit": "tCO2e", "basis": "REAL"},
+      "scope3": {"value": 8526170, "unit": "tCO2e", "basis": "REAL", "dominantCategory": "Capital goods", "dominantCategoryValue": 6961412, "dominantCategoryShare": 81.7},
+      "totalFootprint": {"value": 8790952, "unit": "tCO2e", "basis": "REAL", "note": "Market-based total, as stated by Oracle"},
+      "scope3ShareOfTotal": {"value": 97.0, "unit": "%", "basis": "DERIVED"},
+      "renewableEnergyPct": {"value": 91, "unit": "%", "basis": "REAL", "note": "Coverage against Oracle's 100%-by-2025 goal"},
+      "target": {"text": "Net-zero emissions by 2050; halve Scope 1, 2, and 3 GHG emissions by 2030 vs. a 2020 baseline (up to 10% of base-year emissions may be offset via high-quality removals at net-zero).", "basis": "REAL"}
+    },
+    "salesforce": {
+      "reportTitle": "FY25 Stakeholder Impact Report",
+      "reportUrl": "https://www.salesforce.com/en-us/wp-content/uploads/sites/4/documents/white-papers/salesforce-fy25-stakeholder-impact-report.pdf",
+      "publishDate": "2025",
+      "periodLabel": "FY2025 (Feb 2024–Jan 2025)",
+      "scope1": {"value": 6000, "unit": "tCO2e", "basis": "REAL"},
+      "scope2LocationBased": {"value": 293000, "unit": "tCO2e", "basis": "REAL"},
+      "scope2MarketBased": {"value": 78000, "unit": "tCO2e", "basis": "REAL"},
+      "scope3": {"value": 972000, "unit": "tCO2e", "basis": "REAL", "dominantCategory": "Purchased goods and capital goods"},
+      "totalFootprint": {"value": 1271000, "unit": "tCO2e", "basis": "REAL", "note": "Location-based total, as stated by Salesforce; ties exactly to Scope 1 + Scope 2 (location-based) + Scope 3 above"},
+      "scope3ShareOfTotal": {"value": 76, "unit": "%", "basis": "DERIVED"},
+      "renewableEnergyPct": {"value": 100, "unit": "%", "basis": "REAL", "note": "Third consecutive year of 100% renewable energy and net-zero residual emissions across the full value chain"},
+      "target": {"text": "Achieved net-zero across its full value chain and 100% renewable energy in September 2021, maintained every year since. Refreshed science-based targets: cut Scope 1+2 emissions 67% by FY31 / 90% by FY41 vs. an FY19 baseline; Scope 3 emissions intensity down 68% by FY31 / 97% by FY41.", "basis": "REAL"}
+    },
+    "intel": {
+      "reportTitle": "2024-25 Intel Corporate Responsibility Report",
+      "reportUrl": "https://csrreportbuilder.intel.com/pdfbuilder/pdfs/CSR-2024-25-Full-Report.pdf",
+      "publishDate": "2025-07-10",
+      "periodLabel": "CY2024",
+      "renewableEnergyPct": {"value": 98, "unit": "%", "basis": "REAL", "note": "Global; 100% in Europe, Israel, Malaysia, Vietnam, and China; 98% in the US; 87% in Costa Rica"},
+      "target": {"text": "Net-zero Scope 1+2 emissions across global operations by 2040; net-zero upstream Scope 3 emissions by 2050. Interim: 100% renewable electricity by 2030 (98% achieved). Scope 1+2 emissions are down 24% vs. baseline and 70% below Intel's 2006 peak.", "basis": "REAL"},
+      "unavailableNote": "Scope 1, Scope 2, Scope 3, and total-footprint absolute figures could not be reconciled in this session -- independent lookups returned three different, mutually inconsistent total-footprint figures for the same reporting year, so they are shown as unavailable rather than risk an incorrect figure."
+    }
+  }
+}

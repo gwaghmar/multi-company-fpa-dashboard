@@ -186,7 +186,8 @@ const ANNUAL_AREAS_BY_TAB={
   balance:["Liquidity and capital","Risk and supply"],
   fx:["Market and FX","Liquidity and capital"],
   people:["Workforce","Strategy and investment"],
-  outlook:["Strategy and investment","Risk and supply","Legal and regulatory"]
+  outlook:["Strategy and investment","Risk and supply","Legal and regulatory"],
+  hwcogs:["Business and segments","Strategy and investment","Risk and supply"]
 };
 
 function annualReportHTML(options={}){
@@ -236,13 +237,77 @@ function companyDownloadButton(){
   return `<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button>`;
 }
 
-function companyHeader(title,subtitle){
-  return `<div class="vhead"><h2>${escapeHtml(title)}</h2><span class="sub">${escapeHtml(subtitle||periodSub("$M"))}</span><span class="vhead-right">${companySourceBadge()}${companyDownloadButton()}</span></div>`;
+function companyHeader(title,subtitle,opts){
+  const download=opts?.download!==false;
+  return `<div class="vhead"><h2>${escapeHtml(title)}</h2><span class="sub">${escapeHtml(subtitle||periodSub("$M"))}</span><span class="vhead-right">${companySourceBadge()}${download?companyDownloadButton():""}</span></div>`;
 }
 
 function companyContextNote(text){
   const company=selectedCompany();
   return `<div class="note" style="margin-bottom:10px">${escapeHtml(text||`${company.name} standardized financials from SEC Company Facts. Company-specific disclosures are shown only when comparable facts are available.`)}</div>`;
+}
+
+// aiLabsHardwareContext: a small, sourced context card for the Hardware COGS & Inventory tab
+// only -- OpenAI and Anthropic are both private (no SEC filings), and neither has shipped a
+// hardware product with reported financials, so they can never carry real COGS/inventory figures
+// the way the 11 SEC-filing companies do. This is deliberately NOT a full company profile: it's a
+// one-off curated note, clearly split into REAL (each company's own on-the-record statement) vs
+// REPORTED (leaked to press / disclosed only to investors, not a public company statement) so nothing
+// here gets mistaken for the same sourcing tier as the rest of this dashboard.
+function aiLabsHardwareContext(){
+  return `<div class="body" style="flex:0 0 auto; height:330px; grid-template-columns:1fr 1fr">
+    <div class="card"><h3>OpenAI</h3><div class="note">Private company -- no SEC filings exist. Curated one-off, not part of the standardized SEC pipeline.</div>
+      <div class="comm scrollbox">
+        <p><b>$852B post-money valuation</b> after a $122B raise closed Mar 31, 2026 (Amazon $50B, Nvidia $30B, SoftBank $30B among investors). <b>REAL</b> -- OpenAI's own announcement.</p>
+        <p>Annualized revenue "surpassed $20B in 2025, up from $6B in 2024" -- CFO Sarah Friar, official OpenAI blog, Jan 19, 2026. <b>REAL.</b> A newer ~$40B figure (Jul 2026) surfaced from a closed-door investor meeting, reported by press, not stated publicly by OpenAI -- <b>REPORTED</b>, not verified as REAL.</p>
+        <p>Hardware, deal mechanics, manufacturing, and the capital backdrop it all sits inside are broken out in the sections below -- there's enough real, sourced detail here that it doesn't fit in one card.</p>
+      </div></div>
+    <div class="card"><h3>Anthropic</h3><div class="note">Private company -- no SEC filings exist (a confidential S-1 has been filed, see below). Curated one-off, not part of the standardized SEC pipeline.</div>
+      <div class="comm scrollbox">
+        <p><b>$965B post-money valuation</b> after a $65B Series H announced May 28, 2026. <b>REAL</b> -- Anthropic's own announcement.</p>
+        <p>Run-rate revenue "crossed $47B" -- Anthropic's own statement, May 2026. <b>REAL.</b> A newer ~$65B figure and Q2 revenue over $11.5B (Jul 2026) were disclosed privately to investors and reported by press; Anthropic declined to comment -- <b>REPORTED</b>, not REAL.</p>
+        <p>Filed a <b>confidential S-1</b> with the SEC in June 2026, targeting a Nasdaq IPO around October 2026. <b>REAL</b> -- the fact of the filing is public, though its contents are not. Because the S-1 is confidential, none of the numbers inside it (revenue, margins, share count, offering price) are public. No hardware ambitions comparable to OpenAI's have been confirmed for Anthropic -- it's included here as the direct peer-scale comparison, not because it has a hardware line.</p>
+      </div></div>
+  </div>
+  <div class="card" style="flex:0 0 auto; height:260px; margin-top:9px">
+    <h3>Comparable device economics -- the actual benchmarks a hardware finance model would use</h3>
+    <div class="note">OpenAI's own device has zero public BOM, price, or margin data. These are the closest real, named-source comparables.</div>
+    <div class="scrollbox" style="flex:1 1 auto">
+    <table class="report-table hw-bench-table">
+      <thead><tr><th>Device</th><th>Retail price</th><th>Cost estimate</th><th>Source / confidence</th><th>What happened</th></tr></thead>
+      <tbody>
+        <tr><td>Apple Vision Pro</td><td>$3,499</td><td>$1,542 BOM (~56% BOM-basis margin, not true gross margin)</td><td><b>Omdia</b> teardown, Feb 2024; display cost (~$456) cross-checked by <b>Fomalhaut Techno Solutions</b>/Nikkei</td><td>Shipped, premium/low-volume positioning</td></tr>
+        <tr><td>Humane AI Pin</td><td>$699 → cut to $499 (Oct 2024)</td><td>No named-source $ figure exists -- the "lost money on every unit" claim is widely repeated but untraceable to a report</td><td>Price/discontinuation: Bloomberg, TechCrunch (REAL). Cost gap: unverified, excluded</td><td>~10K sold, returns outpaced sales by mid-2024; HP bought the IP/patents only for <b>$116M</b> (Feb 2025) -- the device itself was discontinued, not acquired</td></tr>
+        <tr><td>Rabbit R1</td><td>$199</td><td>~$100 (a single independent blogger's model, not a teardown firm -- low confidence)</td><td>Price, 130K sold: CEO statement, Forbes (REAL). Cost: media-report-unverified</td><td>130K sold (CEO, Jun 2024) but only ~5K daily active users -- large sales-vs-engagement gap</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <div class="body g2" style="flex:0 0 auto; height:460px; margin-top:9px">
+    <div class="card"><h3>The io acquisition -- deal mechanics</h3>
+      <div class="comm scrollbox">
+        <p>All-stock, ~<b>$6.5B</b> total. OpenAI already held a <b>23% stake</b> in io from a Q4 2024 investment; the acquisition paid <b>~$5B in OpenAI equity</b> for the remaining 77%. No cash component reported. <b>REPORTED</b>, consistent across outlets -- no primary deal document exists since OpenAI is private.</p>
+        <p>~<b>55 people</b> joined (hardware engineers, industrial designers, manufacturing specialists). Entity acquired: <b>io Products, Inc.</b> (named via Cooley's and Wilson Sonsini's own deal-counsel releases). <b>LoveFrom, Jony Ive's separate design studio, was not acquired</b> and remains independent, reportedly now working for OpenAI on a contract basis as effectively its primary client. <b>REAL</b> (OpenAI's own announcement) on Ive's non-employee status; team size and LoveFrom's contract terms are <b>REPORTED</b>.</p>
+        <p>Other named ex-Apple co-founders who joined: <b>Evans Hankey</b> (took over Ive's own design-leadership role at Apple after he left), <b>Tang Tan</b> (led iPhone design), <b>Scott Cannon</b> (led Mac/iPad design). <b>REPORTED</b>, consistent naming across outlets and deal-counsel releases.</p>
+        <p><b>Risk flag:</b> Apple has since sued OpenAI in a matter reportedly involving Tang Tan over alleged trade-secret issues (2026) -- a live legal/IP risk directly tied to this hires-via-acquisition structure. <b>REPORTED.</b></p>
+        <p>Announced May 21, 2025; closed Jul 9, 2025. The ~7-week gap is cited only as "pending regulatory approval" in Cooley's release -- no source confirms which regulator or why. Prior io funding: <b>$225M raised in 2024</b> (Sutter Hill, Emerson Collective, SV Angel, Maverick, Thrive), Ive personally ~11% stake -- note a separate "~$500M" figure floating in early reporting was tied to pre-deal acquisition-price rumors, not a funding round; don't conflate the two.</p>
+      </div></div>
+    <div class="card"><h3>Manufacturing partners -- real financials, an evolving story</h3>
+      <div class="comm scrollbox">
+        <p><b>Luxshare (Shenzhen: 002475):</b> FY2025 revenue RMB 332.3B (+23.6% YoY), net profit RMB 16.6B, ~416,000 employees, ~$65-75B market cap. Apple was ~70.7% of 2024 revenue (down from 75.2% in 2023). <b>REAL</b> -- Luxshare's own annual report.</p>
+        <p><b>Goertek (Shenzhen: 002241):</b> FY2025 revenue RMB 96.6B (-4.4% YoY, AirPods product-cycle gap), net profit RMB 3.9B (+47.9%), ~112,000 employees, ~$11-12B market cap -- an order of magnitude smaller than Luxshare. Goertek is reported as Meta and Pico's core VR contract manufacturer. <b>REAL</b> -- Goertek's own annual report.</p>
+        <p><b>OpenAI angle, in sequence:</b> Sept 2025, The Information reported Luxshare signed on for device assembly and Goertek for components (e.g. speaker modules) -- Luxshare's stock jumped ~10% on the news. <b>REPORTED.</b> By Jan 2026, TrendForce reported OpenAI had <b>shifted the order away from Luxshare to Foxconn</b>, citing supply-chain diversification away from mainland China, with assembly now expected in Vietnam or the US. Luxshare itself downplayed the rumors. Goertek's status wasn't addressed in that follow-up. <b>REPORTED, and still moving</b> -- the safest read is that no manufacturing partner is confirmed by OpenAI, and the reported partner has already changed once.</p>
+      </div></div>
+  </div>
+  <div class="card" style="flex:0 0 auto; height:340px; margin-top:9px">
+    <h3>The capital backdrop a hardware P&amp;L would sit inside</h3>
+    <div class="comm scrollbox">
+      <p>Altman: OpenAI has "~<b>$1.4 trillion</b>" in infrastructure commitments "over the next 8 years" (X post, Nov 6, 2025). <b>REAL</b> statement, but his own rounded estimate, not an audited disclosure. By Feb 2026, CNBC reported OpenAI had privately reset investor expectations toward <b>~$600B through 2030</b> after the $1.4T figure drew scrutiny -- <b>REPORTED</b>. The two aren't strictly contradictory (different end years), but the walk-back itself, within three months, is the more telling data point.</p>
+      <p><b>Named deals</b> (amount / REAL if company-confirmed, REPORTED if press-estimated): Stargate (Oracle/SoftBank/MGX) <b>$500B</b>, REAL, OpenAI's own blog. Microsoft +$250B in Azure purchases alongside a 27% OpenAI Group PBC equity stake (~$135B), REAL, joint press release. Oracle's own earnings disclosed <b>$317B</b> in new bookings largely attributed to OpenAI -- REAL (Oracle's own disclosure). Nvidia's LOI for up to $100B was downgraded by Nvidia's own Nov 2025 earnings call to "an opportunity to invest," reportedly stalled by early 2026. AMD (~6GW, warrant for up to 160M AMD shares) and Broadcom (10GW custom accelerators) partnerships are REAL; their dollar values are not disclosed -- Broadcom's CEO cited $10B on an earnings call, while one aggregator's unverified $350B figure could not be corroborated anywhere else and should be treated as unreliable.</p>
+      <p><b>Revenue and losses:</b> $20B+ ARR by end of 2025 (REAL, CFO Friar's own blog), compute scaling 0.2GW (2023) → 0.6GW (2024) → ~1.9GW (2025). FY2025 net loss has been reported as anywhere from <b>$21B to $38.5B</b> across outlets, with no audited public filing to settle it (OpenAI is private) -- the spread itself, not any single number, is the honest takeaway. Projected cumulative cash burn through 2029 has been reported at ~$115B.</p>
+      <p><b>So what, for a hardware finance model:</b> CFO Sarah Friar has framed the device as the "next interface" -- a demand/interaction-layer play, not yet a disclosed revenue line. Hardware is currently reported as compute-constrained by the much larger training/inference buildout -- i.e. <b>the hardware business is a claimant on compute capacity right now, not a funder of it</b>, which is the opposite of how a typical hardware P&amp;L would want to sit inside a capital plan.</p>
+    </div>
+  </div>`;
 }
 
 function companyUnavailable(title,detail){
@@ -369,7 +434,7 @@ function wireCompanyHomeSections(){
 
 function companyPeriodTable(metricKeys,indexes){
   const keys=metricKeys||["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"];
-  const labels={revenue:"Revenue",grossProfit:"Gross profit",operatingIncome:"Operating income",netIncome:"Net income",rd:"R&D",operatingCashFlow:"Operating cash",capex:"Capex",freeCashFlow:"FCF",cash:"Cash",shortTermInvestments:"Short-term investments",accountsReceivable:"Receivables",accountsPayable:"Payables",currentAssets:"Current assets",currentLiabilities:"Current liabilities",totalAssets:"Total assets",totalLiabilities:"Total liabilities",totalDebt:"Debt",repurchases:"Repurchases",dividends:"Dividends",shareBasedCompensation:"Stock compensation"};
+  const labels={revenue:"Revenue",grossProfit:"Gross profit",operatingIncome:"Operating income",netIncome:"Net income",rd:"R&D",operatingCashFlow:"Operating cash",capex:"Capex",freeCashFlow:"FCF",cash:"Cash",shortTermInvestments:"Short-term investments",accountsReceivable:"Receivables",accountsPayable:"Payables",currentAssets:"Current assets",currentLiabilities:"Current liabilities",totalAssets:"Total assets",totalLiabilities:"Total liabilities",totalDebt:"Debt",repurchases:"Repurchases",dividends:"Dividends",shareBasedCompensation:"Stock compensation",costOfRevenue:"Cost of revenue",inventory:"Inventory",propertyPlantEquipment:"PP&E"};
   const rows=(indexes||selectedCompanyIndexes()).map(index=>{
     const period=companyPeriodAt(index);
     return `<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.periodEnd)}</td>${keys.map(key=>{
@@ -526,6 +591,28 @@ function renderPeerProfit(v){
   if(rdPeriods.length) chartTable(document.getElementById("peerProfitRd"),"bar",{labels:rdPeriods.map(companyChartLabel),values:rdPeriods.map(period=>period.metrics.rd),fmt:B});
 }
 
+function renderPeerHardware(v){
+  const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
+  const cogs=companyMetricAt(latest,"costOfRevenue"), inventory=companyMetricAt(latest,"inventory"), ppe=companyMetricAt(latest,"propertyPlantEquipment"), payables=companyMetricAt(latest,"accountsPayable"), capex=companyMetricAt(latest,"capex"), revenue=companyMetricAt(latest,"revenue");
+  const turns=(cogs!=null&&inventory)?(cogs*4)/inventory:null; // quarterly cost of revenue, annualized, over the point-in-time inventory balance
+  const inventoryLight=inventory!=null&&revenue&&inventory/revenue<0.02;
+  v.innerHTML=`${companyHeader(`${company.name} hardware COGS & inventory`,`${qLabel(latest)} · point in time · $M`)}
+    ${companyContextNote("Cost of revenue, inventory, property/plant/equipment, and capex are standardized from SEC filings, same as every other tab. Inventory is a point-in-time balance, never summed across quarters.")}
+    ${inventory==null?sowhat(`${company.name} does not disclose a comparable inventory balance in the standardized SEC source.`)
+      :inventoryLight?sowhat(`${company.name} carries minimal inventory (${companyMoney(inventory)}, ${companyPercent(revenue?100*inventory/revenue:null)} of quarterly revenue) -- consistent with a software/services business, not a hardware manufacturer.`)
+      :sowhat(`${company.name} inventory is ${companyMoney(inventory)}${turns!=null?`, turning over about ${turns.toFixed(1)}x/year`:""} against ${qLabel(latest)} cost of revenue of ${companyMoney(cogs)}.`)}
+    <div class="tiles">
+      ${tile("Cost of revenue",companyMoney(cogs),qLabel(latest),"neutral")}
+      ${tile("Inventory",companyMoney(inventory),qLabel(latest),"neutral")}
+      ${tile("Inventory turns (annualized)",turns==null?"n/a":turns.toFixed(1)+"x",turns==null?"needs cost of revenue and inventory both filed":"cost of revenue (annualized) / inventory","neutral")}
+      ${tile("Property, plant & equipment",companyMoney(ppe),qLabel(latest),"neutral")}
+      ${tile("Manufacturing capex",companyMoney(capex),qLabel(latest),"neutral")}
+      ${tile("Accounts payable",companyMoney(payables),qLabel(latest),"neutral")}
+    </div>
+    <div class="card" style="height:32%;margin-top:10px"><h3>Hardware-relevant facts by selected quarter</h3>${companyPeriodTable(["costOfRevenue","inventory","propertyPlantEquipment","capex","accountsPayable"],indexes)}</div>
+    ${aiLabsHardwareContext()}`;
+}
+
 function renderPeerBalance(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
   const cash=companyMetricAt(latest,"cash"), investments=companyMetricAt(latest,"shortTermInvestments"), debt=companyMetricAt(latest,"totalDebt"), receivables=companyMetricAt(latest,"accountsReceivable"), payables=companyMetricAt(latest,"accountsPayable");
@@ -608,21 +695,68 @@ function renderPeerOutlook(v){
   chartTable(document.getElementById("peerOutlookRevenue"),"bar",{labels:periods.map(companyChartLabel),values:periods.map(period=>period.metrics.revenue),active:latest,fmt:B});
 }
 
+// ENV_ORDER / envMetricLabel / envValueText: shared between the peer Environment tab renderer and
+// its CSV export, so the tile list and the CSV rows can never drift out of sync with each other.
+const ENV_ORDER=["scope1","scope2MarketBased","scope2LocationBased","scope3","scope3Category1","scope3Category6",
+  "totalFootprint","totalFootprintLocationBased","scope3ShareOfTotal","renewableEnergyPct"];
+function envMetricLabel(key){
+  return {
+    scope1:"Scope 1 (direct)", scope2MarketBased:"Scope 2 (market-based)", scope2LocationBased:"Scope 2 (location-based)",
+    scope3:"Scope 3 (value chain)", scope3Category1:"Scope 3 – Purchased goods & services", scope3Category6:"Scope 3 – Business travel",
+    totalFootprint:"Total footprint", totalFootprintLocationBased:"Total footprint (location-based)",
+    scope3ShareOfTotal:"Scope 3 share of total", renewableEnergyPct:"Renewable / carbon-free energy"
+  }[key]||key;
+}
+function envValueText(field){
+  if(field.unit==="%") return pct(field.value,1);
+  const v=field.value;
+  return (Math.abs(v)>=1e6?(v/1e6).toFixed(2)+"M":v.toLocaleString("en-US"))+UNIT_TCO2E;
+}
+
 function renderPeerEnvironment(v){
   const company=selectedCompany(), latest=selectedCompanyIndexes().slice(-1)[0];
-  v.innerHTML=`${companyHeader(`${company.name} environment`,`${qLabel(latest)} · source availability`)}
-    ${companyContextNote("Environmental figures require a separately governed sustainability-report source. They are not part of the standardized SEC financial dataset.")}
-    ${sowhat(`${company.name} environmental metrics are not available in this dashboard's current standardized source. No carbon, Scope 1–3, or target figure is being inferred.`)}
-    <div class="tiles">
-      ${tile("Scope 1","n/a","sustainability source not connected")}
-      ${tile("Scope 2","n/a","sustainability source not connected")}
-      ${tile("Scope 3","n/a","sustainability source not connected")}
-      ${tile("Reduction target","n/a","sustainability source not connected")}
+  const env=(ENV_CONTEXT.companies||{})[companySlug];
+  if(!env){
+    v.innerHTML=`${companyHeader(`${company.name} environment`,`${qLabel(latest)} · source availability`,{download:false})}
+      ${companyContextNote("Environmental figures require a separately governed sustainability-report source. They are not part of the standardized SEC financial dataset.")}
+      ${sowhat(`${company.name} environmental metrics are not available in this dashboard's current standardized source. No carbon, Scope 1–3, or target figure is being inferred.`)}
+      <div class="tiles">
+        ${tile("Scope 1","n/a","sustainability source not connected")}
+        ${tile("Scope 2","n/a","sustainability source not connected")}
+        ${tile("Scope 3","n/a","sustainability source not connected")}
+        ${tile("Reduction target","n/a","sustainability source not connected")}
+      </div>
+      <div class="body g2" style="height:44%">
+        ${companyUnavailable("What is needed","A company-specific sustainability report, publication date, reporting boundary, units, and calculation methodology must be ingested and cited before this tab can display figures.")}
+        ${companyUnavailable("What Ask AI can do","Ask AI can explain why the data is unavailable and summarize the connected SEC financial evidence. It cannot fill this tab with unsourced environmental estimates.")}
+      </div>`;
+    return;
+  }
+  const tilesHTML=ENV_ORDER.filter(k=>env[k]).map(k=>{
+    const f=env[k];
+    const detail=[f.basis,f.note||(f.dominantCategory?`largest: ${f.dominantCategory}${f.dominantCategoryShare?` (${f.dominantCategoryShare}%)`:""}`:"")].filter(Boolean).join(" · ");
+    return tile(envMetricLabel(k),envValueText(f),detail);
+  }).join("");
+  v.innerHTML=`${companyHeader(`${company.name} environment`,`${env.periodLabel} · company-published sustainability report`)}
+    ${companyContextNote(`Sourced from ${company.name}'s ${env.reportTitle}${env.publishDate?` (published ${env.publishDate})`:""}. Curated by hand -- not part of the automated daily SEC refresh, since sustainability reports are published annually by each company, not continuously. REAL = directly stated by the company; DERIVED = simple arithmetic on REAL figures.`)}
+    <div class="tiles">${tilesHTML}</div>
+    <div class="body g2" style="flex:0 0 auto; height:150px">
+      <div class="card"><h3>Reduction / net-zero target</h3><div class="note">${escapeHtml(env.target?.text||"Not stated in the company's report.")}</div></div>
+      <div class="card"><h3>Source</h3><div class="note"><a href="${escapeHtml(env.reportUrl)}" target="_blank" rel="noopener">${escapeHtml(env.reportTitle)}</a>${env.publishDate?`, published ${escapeHtml(env.publishDate)}`:""}. Covers ${escapeHtml(env.periodLabel)}.</div></div>
     </div>
-    <div class="body g2" style="height:44%">
-      ${companyUnavailable("What is needed","A company-specific sustainability report, publication date, reporting boundary, units, and calculation methodology must be ingested and cited before this tab can display figures.")}
-      ${companyUnavailable("What Ask AI can do","Ask AI can explain why the data is unavailable and summarize the connected SEC financial evidence. It cannot fill this tab with unsourced environmental estimates.")}
-    </div>`;
+    ${env.unavailableNote?`<div class="body" style="flex:0 0 auto; height:150px; grid-template-columns:1fr">${companyUnavailable("What's not shown",env.unavailableNote)}</div>`:""}`;
+}
+function csvPeerEnv(){
+  const company=selectedCompany(), env=(ENV_CONTEXT.companies||{})[companySlug];
+  if(!env) return;
+  const rows=ENV_ORDER.filter(k=>env[k]).map(k=>{
+    const f=env[k];
+    return [company.name,envMetricLabel(k),f.value,f.unit,f.basis,env.periodLabel,env.reportTitle,env.reportUrl];
+  });
+  if(env.target) rows.push([company.name,"Reduction/net-zero target",env.target.text,"",env.target.basis,env.periodLabel,env.reportTitle,env.reportUrl]);
+  downloadCSV(`${companySlug}_environment_${env.periodLabel.replace(/[^A-Za-z0-9]+/g,"_")}.csv`,
+    `Manually curated from ${company.name}'s own official sustainability report. Not part of the automated SEC refresh -- see environment-context.json and DATA_PROVENANCE.md.`,
+    ["company","metric","value","unit","field_basis","period","source_report","source_url"],rows);
 }
 
 var planningState={scenario:"base",revenueGrowth:8,grossMarginDelta:0,opexGrowth:8};
@@ -897,7 +1031,7 @@ function renderReports(v){
   document.getElementById("reportPrint").addEventListener("click",()=>window.print());
   document.getElementById("reportAi").addEventListener("click",()=>{
     aiInput.value=`Draft the ${definition.label} narrative for ${company.name} using only the selected dashboard evidence. Separate filed results, modeled outputs, and unavailable information.`;
-    openAI("dashboard");
+    openAI();
   });
 }
 
@@ -907,18 +1041,20 @@ function csvReports(){
 }
 
 function renderPeerTab(tab,v){
-  ({home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment,reports:renderReports}[tab]||renderPeerHome)(v);
+  ({home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,hwcogs:renderPeerHardware,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment,reports:renderReports}[tab]||renderPeerHome)(v);
 }
 
 function peerMetricKeysForTab(tab){
   return {
     revenue:["revenue"], variance:["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"],
-    profit:["revenue","grossProfit","operatingIncome","netIncome","rd"], balance:["cash","shortTermInvestments","accountsReceivable","accountsPayable","currentAssets","currentLiabilities","totalAssets","totalLiabilities","totalDebt"],
+    profit:["revenue","grossProfit","operatingIncome","netIncome","rd"], hwcogs:["costOfRevenue","inventory","propertyPlantEquipment","capex","accountsPayable"],
+    balance:["cash","shortTermInvestments","accountsReceivable","accountsPayable","currentAssets","currentLiabilities","totalAssets","totalLiabilities","totalDebt"],
     fx:["repurchases","dividends","shareBasedCompensation","cash","totalDebt"], people:["revenue","rd"], outlook:["revenue","grossProfit","operatingIncome"], env:[], reports:["revenue","grossProfit","operatingIncome","netIncome","rd","freeCashFlow"]
   }[tab] || ["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"];
 }
 
 function csvPeerTab(tab){
+  if(tab==="env") return csvPeerEnv();
   const company=selectedCompany(), keys=peerMetricKeysForTab(tab), indexes=selectedCompanyIndexes();
   const rows=indexes.map(index=>{
     const period=companyPeriodAt(index);

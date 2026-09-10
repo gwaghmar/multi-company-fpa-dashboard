@@ -58,26 +58,51 @@ body{
   -webkit-font-smoothing:antialiased;
   display:flex; flex-direction:column; overflow:hidden;
 }
-/* thin persistent header */
+/* thin persistent header: brand/company row + its own slim tab-strip row underneath, both pinned
+   together as one sticky block so the wrapper -- not either row individually -- owns position:sticky.
+   That lets .topbar wrap to two lines on narrow phones without the tab row's sticky offset going stale. */
+.header{flex:0 0 auto; position:sticky; top:0; z-index:20; background:var(--page)}
 .topbar{
-  flex:0 0 auto; display:flex; align-items:center; gap:11px;
+  display:flex; align-items:center; gap:11px;
   padding:0 20px; height:38px; background:var(--page);
-  border-bottom:1px solid var(--ink); position:sticky; top:0; z-index:20;
+  border-bottom:1px solid var(--ink);
 }
 .brand{font:650 14px/1 "Inter Tight",Inter,sans-serif; letter-spacing:-.01em; white-space:nowrap;flex:0 0 auto}
 .brand span{color:var(--muted); font-weight:500}
-nav{display:flex; gap:2px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex:1; scrollbar-width:none}
+/* navbar: a dedicated slim strip for the tab strip, always its own row (not squeezed into .topbar
+   alongside the company picker/buttons). Previously nav only got its own row below ~1400px wide --
+   above that it shared .topbar and could silently overflow with zero visible cue that later tabs
+   (e.g. Outlook, Sustainability) existed off-screen. Giving it a permanent, always-full-width row
+   plus an always-on edge-fade and hint chevron below fixes that at every viewport size. */
+.navbar{
+  flex:0 0 auto; position:relative; display:flex; align-items:center;
+  height:32px; padding:0 20px; background:var(--page); border-bottom:1px solid var(--ring);
+}
+nav{
+  display:flex; gap:2px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex:1; min-width:0; scrollbar-width:none;
+  mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
+}
 nav::-webkit-scrollbar{display:none}
-/* nav-chevron: mobile-only "more tabs this way" affordance, layered over the scrollable nav strip
-   (not inside it, so it isn't caught by nav's own edge-fade mask) and JS-positioned in
-   positionNavChevron() since the topbar wraps to a variable height above the nav row on mobile.
-   Hidden on desktop and hidden once scrolled to the end -- see positionNavChevron(). */
+/* nav-chevron: "more tabs this way" affordance, pinned to the navbar's right edge (not inside nav,
+   so it isn't caught by nav's own edge-fade mask). display is toggled in positionNavChevron() based
+   on actual scroll state -- shown whenever there's unscrolled content to the right, at any viewport
+   width, and hidden once scrolled to the end. It nudges gently on a loop so an overflowing tab strip
+   reads as scrollable/clickable on sight rather than needing an accidental swipe to discover. */
 .nav-chevron{
-  display:none; position:absolute; z-index:5; pointer-events:none;
-  align-items:center; justify-content:center; width:24px; height:24px; border-radius:99px;
+  display:none; position:absolute; right:6px; top:50%; z-index:5; cursor:pointer; appearance:none;
+  align-items:center; justify-content:center; width:24px; height:24px; border-radius:99px; padding:0;
   background:var(--surface); border:1px solid var(--axis); color:var(--ink2); font:600 14px/1 "Inter",sans-serif;
   box-shadow:0 1px 5px rgba(0,0,0,.18);
+  animation:navChevronNudge 1.6s ease-in-out infinite;
 }
+.nav-chevron:hover{color:var(--ink); border-color:var(--ink)}
+.nav-chevron:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@keyframes navChevronNudge{
+  0%,100%{ transform:translateY(-50%) translateX(0); opacity:.75 }
+  50%{ transform:translateY(-50%) translateX(4px); opacity:1 }
+}
+@media (prefers-reduced-motion:reduce){ .nav-chevron{ animation:none } }
 .tab{
   border:0; background:transparent; color:var(--ink2); cursor:pointer; flex:0 0 auto;
   font:500 11.5px/1 "Inter",sans-serif; padding:6px 10px; border-radius:99px; white-space:nowrap;
@@ -605,16 +630,6 @@ footer{
   border-radius:8px; flex:0 0 auto;
 }
 .ai-head button:hover{color:var(--ink); background:var(--glass-bg2)}
-.ai-mode{
-  display:grid; grid-template-columns:1fr 1fr; gap:4px; margin:10px 16px 8px; padding:4px;
-  border:1px solid var(--glass-border); border-radius:12px; background:var(--glass-bg2);
-}
-.ai-mode button{
-  border:0; border-radius:9px; min-height:34px; padding:0 10px; cursor:pointer;
-  background:transparent; color:var(--ink2); font:600 11.5px/1 "Inter",sans-serif;
-}
-.ai-mode button[aria-pressed="true"]{background:var(--ink); color:var(--page); box-shadow:0 2px 8px var(--glass-shadow)}
-.ai-mode button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 .ai-msgs{flex:1 1 auto; overflow:auto; overscroll-behavior:contain; padding:14px 16px; display:flex; flex-direction:column; gap:10px}
 .ai-msg{max-width:92%; border-radius:14px; padding:9px 12px; font-size:12.5px; line-height:1.5; white-space:pre-wrap}
 .ai-msg.user{align-self:flex-end; background:var(--ink); color:var(--page)}
@@ -628,6 +643,26 @@ footer{
 .ai-msg.bot li{margin-bottom:3.5px}
 .ai-msg.bot ul:last-child,.ai-msg.bot ol:last-child{margin-bottom:0}
 .ai-msg.bot strong{font-weight:650; color:var(--ink)}
+.ai-msg.bot h4{font:650 12.5px/1.3 "Inter Tight",sans-serif; margin:2px 0 6px; color:var(--ink)}
+.ai-msg.bot h4:not(:first-child){margin-top:10px}
+.ai-msg.bot hr{border:0; border-top:1px solid var(--glass-border); margin:8px 0}
+/* status: the live "what it's doing" line while a reply streams in -- real pipeline stages
+   (evidence lookup, then the model call), not a fabricated progress animation. */
+.ai-msg.status{align-self:flex-start; color:var(--muted); font-size:11.5px; background:transparent; border:1px dashed var(--glass-border); display:flex; align-items:center; gap:7px}
+.ai-msg.status .dot{width:6px; height:6px; border-radius:99px; background:var(--accent); animation:aiPulse 1.1s ease-in-out infinite}
+@keyframes aiPulse{0%,100%{opacity:.35}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){ .ai-msg.status .dot{animation:none} }
+.ai-cursor{display:inline-block; width:2px; height:12px; margin-left:1px; background:var(--ink2); vertical-align:-1px; animation:aiCursor .8s step-end infinite}
+@keyframes aiCursor{0%,100%{opacity:1}50%{opacity:0}}
+@media (prefers-reduced-motion:reduce){ .ai-cursor{animation:none} }
+.ai-badge{display:inline-flex; align-items:center; gap:4px; font:600 9.5px/1 "Inter",sans-serif; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:6px}
+.ai-badge.dashboard{color:var(--accent)}
+.ai-followups{display:flex; flex-direction:column; gap:5px; margin-top:9px; padding-top:9px; border-top:1px solid var(--glass-border)}
+.ai-followups button{
+  text-align:left; border:1px solid var(--glass-border); background:var(--glass-bg2); color:var(--ink2); border-radius:9px;
+  padding:6px 9px; font:500 11.5px/1.35 "Inter",sans-serif; cursor:pointer;
+}
+.ai-followups button:hover{border-color:var(--accent); color:var(--ink)}
 .ai-msg.sys{align-self:stretch; background:transparent; border:1px dashed var(--axis); color:var(--muted); font-size:11.5px}
 .ai-form{display:flex; gap:8px; padding:12px 16px; border-top:1px solid var(--glass-border)}
 .ai-form textarea{
@@ -657,14 +692,11 @@ footer{
   font:600 11.5px/1 "Inter",sans-serif; box-shadow:0 6px 20px var(--glass-shadow);
   backdrop-filter:blur(18px) saturate(1.7); -webkit-backdrop-filter:blur(18px) saturate(1.7);
 }
-/* The expanded finance navigation no longer fits on one row at common laptop widths. Keep the
-   desktop dashboard layout, but give the tabs their own scrollable header row with a visible cue. */
+/* The expanded finance navigation no longer fits on one row at common laptop widths. .navbar
+   already gives the tabs their own always-scrollable row at every width (see base rules above) --
+   this breakpoint just tightens spacing/tap targets and lets .topbar wrap if it ever needs to. */
 @media (min-width:1100px) and (max-width:1399px){
   .topbar{height:auto;flex-wrap:wrap;padding:7px 20px;gap:7px 10px}
-  nav{order:3;flex:1 1 100%;width:100%;
-    mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
-  .nav-chevron{display:flex}
   .tab{min-height:32px;display:inline-flex;align-items:center}
   .source-tools{margin-left:auto}
 }
@@ -695,15 +727,10 @@ footer{
   .badge{margin-left:0}
   .brand{flex:1 1 auto; padding-top:5px}
   .icon-btn{flex:0 0 auto}
-  /* nav: horizontally scrollable tab strip, edge-fade hint so it reads as swipeable, active tab
-     kept in view (see go()'s scrollIntoView). No hamburger -- same tabs, just scrollable. */
-  nav{
-    order:3; flex:1 1 100%; width:100%; margin-top:2px;
-    -webkit-overflow-scrolling:touch;
-    mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
-  }
-  .nav-chevron{display:flex}
+  /* nav: already its own always-scrollable row via .navbar (base rules above), active tab kept in
+     view (see go()'s scrollIntoView). No hamburger -- same tabs, just scrollable. Just tighten the
+     side padding to match .topbar's mobile padding and give tabs a bigger touch target. */
+  .navbar{padding:0 14px}
   .tab{min-height:40px; display:inline-flex; align-items:center}
   .filterbar{padding:4px 14px}
   .vhead-right{margin-left:0; width:100%}
@@ -877,6 +904,12 @@ footer{
 .report-toolbar{display:flex;align-items:stretch;gap:7px;flex-wrap:wrap}.report-toolbar button{border:1px solid var(--ring);border-radius:10px;background:var(--surface);color:var(--ink);padding:8px 10px;cursor:pointer;font:600 10px/1.2 "Inter",sans-serif}.report-toolbar button>span{display:block;font-size:8px;letter-spacing:.08em;color:var(--muted);margin-bottom:2px}.report-toolbar button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--page)}.report-toolbar .report-print{margin-left:auto}.report-toolbar .report-ai{border-color:color-mix(in srgb,var(--cfo) 45%,var(--ring));color:var(--cfo)}
 .report-sheet{width:min(1040px,100%);margin:4px auto 18px;background:var(--surface);border:1px solid var(--ring);box-shadow:0 16px 42px rgba(17,17,19,.08);padding:28px 32px;display:flex;flex-direction:column;gap:22px}.report-sheet>header{display:flex;justify-content:space-between;gap:24px;border-bottom:2px solid var(--ink);padding-bottom:18px}.report-sheet>header span,.report-status>span{font:650 9px/1 "Inter",sans-serif;letter-spacing:.09em;color:var(--cfo)}.report-sheet h1{font:700 32px/1 "Inter Tight",sans-serif;letter-spacing:-.035em;margin-top:6px}.report-sheet header p{font-size:11px;color:var(--muted);margin-top:7px}.report-status{text-align:right;display:flex;flex-direction:column;gap:4px}.report-status strong{font:650 12px/1.2 "Inter",sans-serif}.report-status small{font-size:9.5px;color:var(--muted)}
 .report-sheet section>h3{font:650 10px/1.3 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.08em;border-top:2px solid var(--ink);padding-top:8px;margin-bottom:9px}.report-sheet section>h3 span{color:var(--cfo);font-size:8px;margin-left:5px}.report-sheet section p,.report-sheet section li{font-size:11px;line-height:1.55;color:var(--ink2)}.report-sheet section ul,.report-sheet section ol{padding-left:18px}.report-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}.report-table{width:100%;border-collapse:collapse;font-size:10.5px}.report-table th,.report-table td{text-align:right;padding:7px;border-bottom:1px solid var(--ring);white-space:nowrap}.report-table th{font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.report-table th:first-child,.report-table td:first-child{text-align:left;font-weight:600}.report-table a{color:var(--cfo)}
+/* .report-table is built for short numeric cells (right-aligned, nowrap) -- the hardware-comparable
+   benchmarks table is prose in every cell, so it needs to wrap and left-align instead of forcing a
+   single line per cell and overflowing the card horizontally. Placed after .report-table so it
+   wins the cascade at equal specificity (source order, not just class name, decides the tie). */
+.hw-bench-table th,.hw-bench-table td{white-space:normal; text-align:left; vertical-align:top; font-size:10.5px; line-height:1.4}
+.hw-bench-table td:nth-child(2){white-space:nowrap}
 .report-callout{border:1px solid var(--ring);border-radius:12px;padding:13px}.report-callout>span{font:650 8px/1 "Inter",sans-serif;letter-spacing:.08em}.report-callout>strong{display:block;font:650 13px/1.2 "Inter Tight",sans-serif;margin-top:7px}.report-callout>p{font-size:10px;line-height:1.45;color:var(--muted);margin-top:4px}.report-callout.unavailable>span{color:var(--down)}.report-callout.connected>span{color:var(--up)}.report-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.report-facts div{background:var(--page);padding:10px;border-radius:10px}.report-facts dt{font-size:9px;color:var(--muted)}.report-facts dd{font:650 16px/1.2 "Inter Tight",sans-serif;margin-top:3px}.report-note{font-size:9.5px!important;color:var(--muted)!important;margin-top:6px}.report-sheet>footer{border-top:1px solid var(--ring);padding-top:10px;font-size:9px;color:var(--muted)}
 .evidence-strip,.macro-strip{border:1px solid var(--ring);border-radius:16px;background:var(--surface);padding:15px;margin:10px 0;flex:0 0 auto}.evidence-strip-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:11px}.evidence-strip-head h2{font:650 18px/1.1 "Inter Tight",sans-serif;letter-spacing:-.02em;margin-top:4px}.evidence-strip-head>span{font-size:10px;color:var(--muted);text-align:right}.evidence-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.evidence-signal{min-width:0;background:var(--page);border:1px solid var(--ring);border-radius:12px;padding:12px}.evidence-signal>span,.macro-cell>span{font:650 9px/1.2 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.07em;color:var(--cfo)}.evidence-signal p{font-size:11px;line-height:1.45;color:var(--ink2);margin:8px 0}.evidence-signal small,.macro-cell small{font-size:9px;color:var(--muted)}.evidence-strip a,.macro-strip a{color:var(--ink2);text-decoration:none}.evidence-strip a:hover,.macro-strip a:hover{text-decoration:underline}.evidence-details{margin-top:9px;border-top:1px solid var(--ring);padding-top:8px}.evidence-details summary{cursor:pointer;font:650 10px/1.2 "Inter",sans-serif;color:var(--ink2)}.evidence-details>div{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:8px;font-size:10px}.evidence-empty{display:flex;align-items:center;justify-content:space-between;gap:20px}.evidence-empty p{max-width:700px;font-size:11px;color:var(--muted)}.macro-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--ring);border:1px solid var(--ring);border-radius:12px;overflow:hidden}.macro-cell{display:flex;flex-direction:column;gap:5px;background:var(--page);padding:12px}.macro-cell strong{font:650 20px/1 "Inter Tight",sans-serif}.report-sheet>.evidence-strip{margin:0}.report-sheet>.evidence-strip .evidence-strip-head h2{font-size:16px}.report-sheet>.evidence-strip .evidence-signal p{font-size:10px}
 .planning-assumptions{flex:0 0 auto}
@@ -885,22 +918,26 @@ footer{
 @media(max-width:900px){.home-primary-grid,.home-operating-grid{grid-template-columns:1fr}.planning-spine{grid-template-columns:repeat(3,1fr);row-gap:18px}.planning-spine::before{display:none}.report-card-grid{grid-template-columns:1fr}.report-columns{grid-template-columns:1fr}.report-toolbar .report-print{margin-left:0}.report-sheet{padding:20px}.comparison-state-grid{grid-template-columns:1fr}.evidence-grid{grid-template-columns:1fr}.macro-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.architecture-scroll-hint{display:block}.architecture-flow{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:210px;overflow-x:auto;padding-bottom:6px}.architecture-arrow{display:none}.architecture-rails{grid-template-columns:1fr}.cadence-flow{grid-template-columns:repeat(3,1fr);row-gap:14px}.cadence-flow li:nth-child(4){border-left:0}.decision-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.decision-result{grid-column:1/-1}.decision-kpis{grid-column:1/-1}}
 @media(max-width:600px){#home .home-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.planning-spine{grid-template-columns:repeat(2,1fr)}.report-sheet>header{flex-direction:column}.report-status{text-align:left}.report-table{min-width:620px}.report-sheet section{overflow-x:auto}.evidence-strip-head{flex-direction:column}.evidence-strip-head>span{text-align:left}.evidence-empty{align-items:flex-start;flex-direction:column}.annual-context>summary span{align-items:flex-start;flex-direction:column;gap:3px}.annual-evidence-grid{grid-template-columns:1fr}.annual-context-foot{align-items:flex-start;flex-direction:column}.finance-architecture .home-section-head>span{text-align:left}.architecture-rails>div{grid-template-columns:1fr}.architecture-rails small{grid-column:1}.cadence-flow{grid-template-columns:repeat(2,1fr)}.cadence-flow li:nth-child(odd){border-left:0;padding-left:0}.decision-inputs{grid-template-columns:1fr}.decision-inputs input{font-size:16px}.decision-kpis{grid-template-columns:repeat(2,1fr)}.decision-kpis>div:nth-child(3){border-left:0;border-top:1px solid var(--ring)}.decision-kpis>div:nth-child(4){border-top:1px solid var(--ring)}.decision-sensitivity{grid-template-columns:1fr}}
 @media print{
-  body{display:block;overflow:visible;background:#fff;color:#111}.topbar,.filterbar,#foot,.ai-drawer,.sel-pill,.report-toolbar,.vhead,.sowhat,.note{display:none!important}main,.view{position:static!important;display:block!important;overflow:visible!important;padding:0!important}.view>*:not(.report-sheet){display:none!important}.report-sheet{display:flex!important;width:100%;margin:0;border:0;box-shadow:none;padding:0;color:#111;background:#fff}.report-sheet *{color:#111!important}.report-sheet a{text-decoration:none}.report-callout,.report-facts div{break-inside:avoid}
+  body{display:block;overflow:visible;background:#fff;color:#111}.header,.filterbar,#foot,.ai-drawer,.sel-pill,.report-toolbar,.vhead,.sowhat,.note{display:none!important}main,.view{position:static!important;display:block!important;overflow:visible!important;padding:0!important}.view>*:not(.report-sheet){display:none!important}.report-sheet{display:flex!important;width:100%;margin:0;border:0;box-shadow:none;padding:0;color:#111;background:#fff}.report-sheet *{color:#111!important}.report-sheet a{text-decoration:none}.report-callout,.report-facts div{break-inside:avoid}
 }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">Example Dashboard</div>
-  <nav id="nav" role="tablist"></nav>
-  <span class="nav-chevron" id="navChevron" aria-hidden="true">›</span>
-  <div class="source-tools">
-    <div class="source-picker"><label for="companySelect">Company</label><select id="companySelect" aria-label="Dashboard company"></select></div>
-    <button class="reports-btn" id="reportsBtn" type="button" aria-pressed="false">Reports</button>
+<div class="header">
+  <div class="topbar">
+    <div class="brand">Example Dashboard</div>
+    <div class="source-tools">
+      <div class="source-picker"><label for="companySelect">Company</label><select id="companySelect" aria-label="Dashboard company"></select></div>
+      <button class="reports-btn" id="reportsBtn" type="button" aria-pressed="false">Reports</button>
+    </div>
+    <button class="icon-btn ai-btn" id="aiBtn">✦ Ask AI</button>
+    <button class="icon-btn" id="themeBtn">Dark</button>
   </div>
-  <button class="icon-btn ai-btn" id="aiBtn">✦ Ask AI</button>
-  <button class="icon-btn" id="themeBtn">Dark</button>
+  <div class="navbar">
+    <nav id="nav" role="tablist"></nav>
+    <button type="button" class="nav-chevron" id="navChevron" aria-label="Scroll tabs right">›</button>
+  </div>
 </div>
 <div class="filterbar" id="filterbar" role="group" aria-label="Filters"></div>
 
@@ -911,15 +948,11 @@ footer{
 
 <aside class="ai-drawer" id="aiDrawer" data-open="false" aria-label="Ask AI">
   <div class="ai-head">
-    <b>✦ Ask AI</b><span class="sub" id="aiModeDescription">grounded in this dashboard's sourced data</span>
+    <b>✦ Ask AI</b><span class="sub" id="aiModeDescription">auto-grounded in this dashboard's sourced data</span>
     <button id="aiClose" aria-label="Close">✕</button>
   </div>
-  <div class="ai-mode" role="group" aria-label="AI answer mode">
-    <button type="button" data-ai-mode="dashboard" aria-pressed="true">Dashboard AI</button>
-    <button type="button" data-ai-mode="general" aria-pressed="false">General AI</button>
-  </div>
   <div class="ai-msgs" id="aiMsgs">
-    <div class="ai-msg bot">Use Dashboard AI for sourced company figures and calculations. Switch to General AI for questions outside this dashboard. General mode does not receive dashboard data.</div>
+    <div class="ai-msg bot">Ask about this dashboard's sourced figures, or anything else -- dashboard evidence is attached automatically when your question matches it, and skipped otherwise. Each answer is labeled with which one it used.</div>
   </div>
   <div class="ai-sugg" id="aiSugg"></div>
   <div class="ai-filter-ctx" id="aiFilterCtx"></div>
@@ -983,6 +1016,7 @@ footer{
 let D = null; // loaded from data.json at startup, see loadData() below
 let COMPANY_DATA = null;
 let PUBLIC_CONTEXT = {companies:{},macro:{}};
+let ENV_CONTEXT = {companies:{}};
 let companySlug = "apple";
 const SLOT=["--s1","--s2","--s3","--s4","--s5"];
 
@@ -1071,7 +1105,10 @@ function barChart(svg,{labels,values,colors,fmt=B,sub=null,onClick=null,active=-
   if(ih<40) return;
   const nSlots=values.length+(ghost?1:0);
   const scaleVals = ghost? values.concat([ghost.value]) : values;
-  const max=Math.max(...scaleVals,guide&&guide.value!=null?guide.value:0)*1.15;
+  // "|| 1" guards a company/period whose whole series is 0 (e.g. Intel's suspended dividend) --
+  // without it max is 0, every v/max below divides by zero, and the chart silently renders NaN
+  // into every SVG coordinate instead of a flat, honest zero baseline.
+  const max=Math.max(...scaleVals,guide&&guide.value!=null?guide.value:0)*1.15 || 1;
   const Y=v=>T+ih*(1-v/max);
   for(let g=0;g<=3;g++){ const v=max*g/3,y=Y(v);
     el("line",{x1:L,x2:W-R,y1:y,y2:y,stroke:css("--grid"),"stroke-width":1},svg);
@@ -1130,7 +1167,7 @@ function groupedBar(svg,{cats,seriesA,seriesB,nameA,nameB,fmt=B,onClick=null,mar
   // right-anchored just past its bar (see below) and would otherwise clip against the svg edge.
   const L=54,R=34,T=18+legendH,Bm=34, iw=W-L-R, ih=H-T-Bm;
   if(ih<40) return;
-  const max=Math.max(...seriesA,...seriesB)*1.15;
+  const max=Math.max(...seriesA,...seriesB)*1.15 || 1; // see barChart's identical guard
   const Y=v=>T+ih*(1-v/max);
   for(let g=0;g<=3;g++){ const v=max*g/3,y=Y(v);
     el("line",{x1:L,x2:W-R,y1:y,y2:y,stroke:css("--grid"),"stroke-width":1},svg);
@@ -1204,7 +1241,7 @@ function divergingBar(svg,{names,values,fmt=v=>sgn(v)+"%"}){
   const {W,H}=svgBox(svg);
   const L=Math.min(128,W*0.3),R=46,T=10,Bm=18, iw=W-L-R, ih=H-T-Bm;
   if(ih<30) return;
-  const maxAbs=Math.max(...values.map(Math.abs))*1.25;
+  const maxAbs=Math.max(...values.map(Math.abs))*1.25 || 1; // see barChart's identical zero-series guard
   // A centered zero-line only earns its half-width of empty run-up when the data actually has
   // both signs -- otherwise it just leaves the whole unused half as a gap between the labels and
   // every bar (e.g. a quarter where every working-capital line item happens to move the same
@@ -2136,6 +2173,7 @@ const VIEWS=[
   {id:"variance", name:"Variance Analysis"},
   {id:"plan", name:"Planning & Scenarios"},
   {id:"profit", name:"Profitability & Opex"},
+  {id:"hwcogs", name:"Hardware COGS & Inventory"},
   {id:"balance", name:"Liquidity & Working Capital"},
   {id:"fx", name:"Treasury & Capital"},
   {id:"people", name:"Workforce & Investment"},
@@ -2143,7 +2181,7 @@ const VIEWS=[
   {id:"env", name:"Sustainability"},
   {id:"reports", name:"Reports"}
 ];
-function visibleViews(){ return VIEWS.filter(view=>view.id!=="env"||companySlug==="apple"); }
+function visibleViews(){ return VIEWS; }
 let current="home";
 
 function tile(k,v,d,up){
@@ -2916,6 +2954,60 @@ function csvProfit(){
     ["je_id","posting_date","fiscal_quarter","cost_element","category_or_subelement","cost_center","amount_usd","field_basis"], rows);
 }
 
+/* ---------- tab renderers: Hardware COGS & Inventory (renderHwCogs/csvHwCogs) ---------- */
+function hwcogsSoWhat(){
+  const i=snapQ(), sq=selQ(), lbl=periodLabel(sq), {dio}=cccFor(i);
+  const turns=365/dio, cogsYoy=aggYoYSameQtr(D.is.totalCos,sq);
+  return sowhat(`Inventory is turning about ${turns.toFixed(1)}x/year (~${dio} days on hand) in ${qLabel(i)}. Cost of revenue ${cogsYoy!=null?sgn(cogsYoy)+"% YoY":"n/a"} over ${lbl}.`);
+}
+function renderHwCogs(v){
+  const is=D.is, bs=D.bs, cf=D.cf, sq=selQ(), i=snapQ(), bsIdx=i+1, prevIdx=i, lbl=periodLabel(sq);
+  const {dio}=cccFor(i), turns=365/dio;
+  const capexAgg=aggSum(cf.capex,sq), revAgg=aggSum(is.totalRev,sq);
+  v.innerHTML=`
+  <div class="vhead"><h2>Hardware COGS &amp; Inventory</h2>
+    <span class="sub">${lbl} · $M</span>
+    <span class="vhead-right"><span class="badge">Real · Apple 10-Q/10-K</span><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
+  ${hwcogsSoWhat()}
+  <div class="tiles">
+    ${yoyTile("Cost of revenue · "+lbl,is.totalCos,sq)}
+    ${tile("Inventory",B(bs.inventories[bsIdx]),`${sgn(100*(bs.inventories[bsIdx]-bs.inventories[prevIdx])/bs.inventories[prevIdx])}% vs prior quarter-end (${bs.dates[prevIdx]})`)}
+    ${tile("Inventory turns (annualized)",turns.toFixed(1)+"x",`≈${dio} days on hand, ${qLabel(i)}`)}
+    ${tile("Manufacturing capex · "+lbl,B(capexAgg),`${pct(100*capexAgg/revAgg,1)} of revenue`)}
+    ${tile("Property, plant &amp; equipment",B(bs.ppe[bsIdx]),`${sgn(100*(bs.ppe[bsIdx]-bs.ppe[prevIdx])/bs.ppe[prevIdx])}% vs prior quarter-end`)}
+    ${tile("Accounts payable",B(bs.ap[bsIdx]),"funds part of the inventory cycle")}
+  </div>
+  <div class="body g21">
+    <div class="card"><h3>Cost of revenue by quarter</h3><div class="note">${sq.length} selected quarter${sq.length>1?"s":""}, real reported. Click a bar to focus that quarter.</div>
+      <div class="fill"><svg id="hwCogsChart"></svg></div></div>
+    <div class="card"><h3>Hardware finance commentary</h3><div class="note">Generated from the reported figures.</div>
+      <div class="comm" id="hwCogsComm"></div></div>
+  </div>
+  <div class="body g2" style="flex:0 0 auto; height:26%">
+    <div class="card"><h3>Inventory by quarter</h3><div class="note">Quarter-end balances.</div><div class="fill"><svg id="hwInvChart"></svg></div></div>
+    <div class="card"><h3>Manufacturing capex by quarter</h3><div class="note">Property/tooling investment, from the cash flow statement.</div><div class="fill"><svg id="hwCapexChart"></svg></div></div>
+  </div>
+  ${aiLabsHardwareContext()}`;
+  const act=sq.indexOf(i), qClick=idx=>toggleQuarterFocus(sq[idx]);
+  chartTable(document.getElementById("hwCogsChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>is.totalCos[k]),active:act,onClick:qClick});
+  chartTable(document.getElementById("hwInvChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>bs.inventories[k+1]),active:act,onClick:qClick});
+  chartTable(document.getElementById("hwCapexChart"),"bar",{labels:sq.map(qLabel),values:sq.map(k=>cf.capex[k]),active:act,onClick:qClick});
+  const cogsYoy=aggYoYSameQtr(is.totalCos,sq);
+  document.getElementById("hwCogsComm").innerHTML=`
+    <p><b>Cost of revenue was ${B(aggSum(is.totalCos,sq))}</b> over ${lbl}${cogsYoy!=null?`, ${sgn(cogsYoy)}% year over year`:""}.</p>
+    <p><b>Inventory stands at ${B(bs.inventories[bsIdx])}</b> as of ${bs.dates[bsIdx]}, turning over about ${turns.toFixed(1)}x per year (${dio} days on hand) against ${qLabel(i)}'s cost of revenue.</p>
+    <p><b>Manufacturing capex was ${B(capexAgg)}</b> over ${lbl} (${pct(100*capexAgg/revAgg,1)} of revenue), against a property, plant &amp; equipment base of ${B(bs.ppe[bsIdx])}.</p>`;
+}
+function csvHwCogs(){
+  const qIdxs=selQ();
+  const rows=qIdxs.map(i=>{
+    const bsIdx=i+1;
+    return [qLabel(i),D.meta.quarterEnds[i],D.is.totalCos[i],D.bs.inventories[bsIdx],D.bs.ppe[bsIdx],D.cf.capex[i],D.bs.ap[bsIdx]];
+  });
+  downloadCSV(`apple_hardware_cogs_inventory_${periodFileTag(qIdxs)}.csv`, REAL_LINE,
+    ["fiscal_quarter","period_end","cost_of_revenue_usd_m","inventory_usd_m","ppe_usd_m","capex_usd_m","accounts_payable_usd_m"],rows);
+}
+
 /* ---------- tab renderers: Balance Sheet (renderBalance/csvBalance) ---------- */
 function renderBalance(v){
   const i=snapQ(), sq=selQ(), b=D.bs, cf=D.cf; // i: point-in-time -- balance sheet reads the latest selected quarter's snapshot
@@ -3393,23 +3485,22 @@ function buildNav(){
   nav.addEventListener("scroll",positionNavChevron,{passive:true});
   positionNavChevron();
 }
-// positionNavChevron: mobile-only "more tabs this way" cue, layered over (not inside) the
-// scrollable nav strip so it isn't caught by nav's own edge-fade mask. Shown only while there's
-// unscrolled content to the right; JS-positioned because the topbar wraps to a variable height
-// above the nav row at mobile widths, so a fixed CSS offset can't track it reliably.
+// positionNavChevron: "more tabs this way" cue, layered over (not inside) the scrollable nav strip
+// so it isn't caught by nav's own edge-fade mask. Shown at ANY viewport width whenever there's
+// unscrolled content to the right, hidden once scrolled to the end -- .navbar is a fixed-height row
+// that never wraps, so the chevron's own position (right edge, vertically centered) is plain CSS;
+// this only ever toggles display.
 function positionNavChevron(){
-  const nav=document.getElementById("nav"), chev=document.getElementById("navChevron"), bar=document.querySelector(".topbar");
-  if(!nav||!chev||!bar) return;
-  if(matchMedia("(min-width:1400px)").matches){ chev.style.display="none"; return; }
+  const nav=document.getElementById("nav"), chev=document.getElementById("navChevron");
+  if(!nav||!chev) return;
   const scrollable = nav.scrollWidth > nav.clientWidth+2;
   const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth-2;
-  if(!scrollable || atEnd){ chev.style.display="none"; return; }
-  chev.style.display="flex";
-  const nr=nav.getBoundingClientRect(), br=bar.getBoundingClientRect();
-  chev.style.left=(nr.right-br.left-30)+"px";
-  chev.style.top=(nr.top-br.top+nr.height/2-12)+"px";
+  chev.style.display = (scrollable && !atEnd) ? "flex" : "none";
 }
 addEventListener("resize",positionNavChevron);
+document.getElementById("navChevron").addEventListener("click",()=>{
+  document.getElementById("nav").scrollBy({left:160,behavior:"smooth"});
+});
 /* ---------- ONE Filters hub: period + category + geography, one glass panel, always all 3 sections
    (state is global -- category/geography selections persist across tabs even though only Revenue
    and Profitability read them). Built ONCE (buildFiltersBar); every toggle after that mutates the
@@ -3586,9 +3677,9 @@ function syncThemeBtn(){
   btn.textContent=dark?"Light":"Dark";
 }
 const RENDER={home:renderHome,company:renderCompany,glass:renderGlass,revenue:renderRevenue,plan:renderPlan,profit:renderProfit,
-  variance:renderVariance,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv,reports:renderReports};
+  variance:renderVariance,hwcogs:renderHwCogs,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv,reports:renderReports};
 const CSV_FN={home:csvHome,company:csvCompany,glass:csvGlass,revenue:csvRevenue,plan:csvPlan,profit:csvProfit,
-  variance:csvVariance,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv,reports:csvReports};
+  variance:csvVariance,hwcogs:csvHwCogs,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv,reports:csvReports};
 // relocateFiltersUnit: the Filters button+panel+summary is ONE node (#filtersUnit), built once
 // in buildFiltersBar(). Home keeps it on the dedicated line under the header (#filterbar,
 // visible); every other tab instead hosts it inline in that tab's own .vhead-right cluster,
@@ -3655,16 +3746,12 @@ let rt; addEventListener("resize",()=>{ clearTimeout(rt); rt=setTimeout(render,1
 const drawer=document.getElementById("aiDrawer"), msgs=document.getElementById("aiMsgs"),
       aiInput=document.getElementById("aiInput"), aiSend=document.getElementById("aiSend"),
       selPill=document.getElementById("selPill");
-let pendingSelection=null, aiMode="dashboard";
+let pendingSelection=null;
 // buildSuggestions/renderAISugg run AFTER D loads (called from loadData()) -- two of the five
 // suggestion chips cite figures straight from D (gross margin %, Scope 3 share) rather than
-// hardcoding them, so they can never drift from the dataset.
+// hardcoding them, so they can never drift from the dataset. There's no separate "general" chip
+// set anymore -- one assistant, dashboard evidence attached automatically when it's relevant.
 function buildSuggestions(){
-  if(aiMode==="general") return [
-    "Explain free cash flow in simple terms.",
-    "What is CSRD and why does it matter?",
-    "How should I interpret gross margin?"
-  ];
   const company=COMPANY_DATA.companies[companySlug], name=company.name;
   const byTab={
     home:[`Summarize ${name}'s selected period.`,`What are the biggest financial changes for ${name}?`,`What should an FP&A leader watch next for ${name}?`],
@@ -3686,38 +3773,21 @@ function buildSuggestions(){
 function renderAISugg(){
   document.getElementById("aiSugg").innerHTML=buildSuggestions().map(s=>`<button type="button">${escapeHtml(s)}</button>`).join("");
   document.querySelectorAll("#aiSugg button").forEach(b=>b.addEventListener("click",()=>{aiInput.value=b.textContent; askAI();}));
-  if(aiMode==="dashboard") aiInput.placeholder=`Ask about ${COMPANY_DATA.companies[companySlug].name}, ${periodLabel()}`;
+  aiInput.placeholder=`Ask about ${COMPANY_DATA.companies[companySlug].name}, ${periodLabel()}, or anything else`;
 }
-function setAIMode(mode){
-  aiMode=mode==="general"?"general":"dashboard";
-  document.querySelectorAll("[data-ai-mode]").forEach(button=>button.setAttribute("aria-pressed",String(button.dataset.aiMode===aiMode)));
-  document.getElementById("aiModeDescription").textContent=aiMode==="dashboard"
-    ? "grounded in this dashboard's sourced data"
-    : "general knowledge, no dashboard data sent";
-  aiInput.placeholder=aiMode==="dashboard"
-    ? `Ask about ${COMPANY_DATA.companies[companySlug].name}, ${periodLabel()}`
-    : "Ask a general question";
-  if(aiMode==="general") pendingSelection=null;
-  renderAISugg();
-  updateAICtx();
-}
-function openAI(mode){
+function openAI(){
   hideTT();
-  if(mode==="dashboard"||mode==="general") setAIMode(mode);
   drawer.setAttribute("data-open","true"); aiInput.focus(); updateAICtx();
 }
 function closeAI(){ hideTT(); drawer.setAttribute("data-open","false"); }
 function updateAICtx(){
   const el=document.getElementById("aiFilterCtx");
   if(!el||!D) return;
-  el.textContent=aiMode==="dashboard"
-    ? `Source: ${COMPANY_DATA.companies[companySlug].name}. Tab: ${VIEWS.find(view=>view.id===current)?.name||current}. Period: ${periodLabel()}.${current==="plan"?` Scenario: ${planningState.scenario}. Decision case: modeled.`:""} Only matching evidence is sent.`
-    : "No dashboard figures or filters are sent in General AI mode.";
+  el.textContent=`Source: ${COMPANY_DATA.companies[companySlug].name}. Tab: ${VIEWS.find(view=>view.id===current)?.name||current}. Period: ${periodLabel()}.${current==="plan"?` Scenario: ${planningState.scenario}. Decision case: modeled.`:""} Sent only when your question actually matches it -- otherwise you get a plain general-knowledge answer, in the same reply.`;
 }
 function aiFiltersPayload(){
   return {quarterIndexes:[...state.q].sort((a,b)=>a-b), quarterLabels:selQ().map(qLabel), categories:companySlug==="apple"?[...state.cat]:[], geographies:companySlug==="apple"?[...state.geo]:[], scenario:current==="plan"?{...planningState,decision:{...ensureDecisionState()}}:null};
 }
-document.querySelectorAll("[data-ai-mode]").forEach(button=>button.addEventListener("click",()=>setAIMode(button.dataset.aiMode)));
 document.getElementById("aiBtn").addEventListener("click",()=>openAI());
 document.getElementById("aiClose").addEventListener("click",closeAI);
 // single Escape handler, explicit priority: drill overlay > open dropdown > AI drawer
@@ -3743,9 +3813,13 @@ function mdToHtml(text){
   const flushList=()=>{ if(list.length){ html+=`<${listType}>`+list.map(l=>"<li>"+l+"</li>").join("")+`</${listType}>`; } list=[]; listType=null; };
   for(const raw of esc.split("\n")){
     const line=raw.trim();
+    const heading=/^#{1,6}\s+(.*)$/.exec(line);
+    const rule=/^(-{3,}|\*{3,})$/.exec(line);
     const bullet=/^[-*]\s+(.*)$/.exec(line);
     const numbered=/^\d+[.)]\s+(.*)$/.exec(line);
-    if(bullet){
+    if(heading){ flushPara(); flushList(); html+="<h4>"+heading[1]+"</h4>"; }
+    else if(rule){ flushPara(); flushList(); html+="<hr>"; }
+    else if(bullet){
       if(listType==="ol") flushList();
       flushPara(); listType="ul"; list.push(bullet[1]);
     } else if(numbered){
@@ -3757,33 +3831,109 @@ function mdToHtml(text){
   flushPara(); flushList();
   return html.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
 }
+// parseFollowups: every answer ends with a "NEXT:: a | b | c" line (see STYLE_RULES in api/ask.js)
+// -- pull it off the raw text before markdown rendering so it never appears in the visible answer,
+// and turn it into the clickable follow-up chips instead.
+function parseFollowups(text){
+  const m=/\n?NEXT::\s*(.+?)\s*$/i.exec(text.replace(/\s+$/,""));
+  if(!m) return {body:text, followups:[]};
+  const followups=m[1].split("|").map(s=>s.trim()).filter(Boolean).slice(0,3);
+  return {body:text.slice(0,m.index).replace(/\s+$/,""), followups};
+}
 function addMsg(cls,text){
   const d=document.createElement("div"); d.className="ai-msg "+cls;
   if(cls==="bot") d.innerHTML=mdToHtml(text); else d.textContent=text;
   msgs.appendChild(d); msgs.scrollTop=msgs.scrollHeight; return d;
 }
+function attachFollowups(container,questions){
+  if(!questions.length) return;
+  const wrap=document.createElement("div"); wrap.className="ai-followups";
+  questions.forEach(question=>{
+    const b=document.createElement("button"); b.type="button"; b.textContent=question;
+    b.addEventListener("click",()=>{ aiInput.value=question; askAI(); });
+    wrap.appendChild(b);
+  });
+  container.appendChild(wrap);
+}
+// askAI: one unified assistant -- always sends the current dashboard context, and the backend
+// decides (server-side, from the question itself) whether it's actually relevant. The response is
+// streamed NDJSON (see writeLine() in api/ask.js): a "status" line reporting real pipeline stages
+// (evidence lookup, then the model call -- never a fabricated "searching..." animation), "delta"
+// lines with the answer text as Claude generates it, and a final "done" line with metadata.
 async function askAI(){
   const q=aiInput.value.trim(); if(!q) return;
   addMsg("user", pendingSelection? `“${pendingSelection.slice(0,140)}”: ${q}` : q);
   aiInput.value=""; aiSend.disabled=true;
-  const thinking=addMsg("bot","Thinking…");
+
+  const statusEl=document.createElement("div"); statusEl.className="ai-msg status";
+  statusEl.innerHTML=`<span class="dot"></span><span class="statusText">Thinking…</span>`;
+  msgs.appendChild(statusEl); msgs.scrollTop=msgs.scrollHeight;
+
+  const selectedTextToSend=pendingSelection; pendingSelection=null;
+  let botEl=null, buffer="";
+  const botMsg=()=>{
+    if(botEl) return botEl;
+    statusEl.remove();
+    botEl=document.createElement("div"); botEl.className="ai-msg bot";
+    botEl.innerHTML=`<span class="streamText"></span><span class="ai-cursor"></span>`;
+    msgs.appendChild(botEl); msgs.scrollTop=msgs.scrollHeight;
+    return botEl;
+  };
+  const fail=(text)=>{
+    const target=botEl||statusEl;
+    target.className="ai-msg sys"; target.textContent=text;
+  };
+  let gotAnyEvent=false, finalized=false;
+  const finalize=(meta)=>{
+    finalized=true;
+    const el=botMsg();
+    const {body,followups}=parseFollowups(buffer);
+    const mode=meta?.mode==="dashboard"?"dashboard":"general";
+    el.innerHTML=`<span class="ai-badge${mode==="dashboard"?" dashboard":""}">${mode==="dashboard"?"◆ Dashboard-grounded":"◇ General knowledge"}</span>`+mdToHtml(body||"(empty reply)");
+    attachFollowups(el,followups);
+    msgs.scrollTop=msgs.scrollHeight;
+  };
+  const handleEvent=(ev)=>{
+    gotAnyEvent=true;
+    if(ev.type==="status"){
+      statusEl.querySelector(".statusText").textContent=ev.detail;
+    } else if(ev.type==="delta"){
+      buffer+=ev.text;
+      botMsg().querySelector(".streamText").textContent=buffer;
+      msgs.scrollTop=msgs.scrollHeight;
+    } else if(ev.type==="done"){
+      finalize(ev.meta);
+    } else if(ev.type==="error"){
+      fail(ev.error==="no_key"
+        ? "The Claude API key isn't configured yet. Owner: add ANTHROPIC_API_KEY in Vercel → Project → Settings → Environment Variables, then redeploy."
+        : "The AI backend returned an error ("+(ev.detail||ev.error||"unknown")+"). Try again in a moment.");
+      finalized=true; // an error line is a terminal event too -- don't let the fallback below overwrite it
+    }
+  };
   try{
     const r=await fetch("/api/ask",{method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({question:q, mode:aiMode, selectedText:aiMode==="dashboard"?pendingSelection:null,
-        filters:aiMode==="dashboard"?aiFiltersPayload():undefined, tab:current, company:companySlug})});
-    const j=await r.json();
-    if(j.answer){
-      thinking.innerHTML=mdToHtml(j.answer);
-      if(j.meta){ thinking.dataset.route=j.meta.route||""; thinking.dataset.mode=j.meta.mode||aiMode; }
+      body:JSON.stringify({question:q, selectedText:selectedTextToSend, filters:aiFiltersPayload(), tab:current, company:companySlug})});
+    if(!r.ok || !r.body) throw new Error("http "+r.status);
+    const reader=r.body.getReader(), decoder=new TextDecoder();
+    let lineBuf="";
+    for(;;){
+      const {done,value}=await reader.read();
+      if(done) break;
+      lineBuf+=decoder.decode(value,{stream:true});
+      const lines=lineBuf.split("\n"); lineBuf=lines.pop();
+      for(const line of lines){ if(!line) continue; try{ handleEvent(JSON.parse(line)); }catch{ /* ignore a malformed frame */ } }
     }
-    else if(j.error==="no_key") { thinking.className="ai-msg sys";
-      thinking.textContent="The Claude API key isn't configured yet. Owner: add ANTHROPIC_API_KEY in Vercel → Project → Settings → Environment Variables, then redeploy."; }
-    else { thinking.className="ai-msg sys"; thinking.textContent="The AI backend returned an error ("+(j.detail||j.error||"unknown")+"). Try again in a moment."; }
+    if(lineBuf.trim()){ try{ handleEvent(JSON.parse(lineBuf)); }catch{ /* ignore */ } }
+    if(!gotAnyEvent) throw new Error("empty stream");
+    // Stream ended (server closed the connection) without ever sending "done" or "error" -- a
+    // dropped connection mid-answer, not a clean finish. Finalize with whatever text arrived
+    // instead of leaving a blinking cursor next to a reply that will never complete.
+    if(!finalized && buffer) finalize(null);
+    else if(!finalized) throw new Error("connection dropped before any text arrived");
   }catch(err){
-    thinking.className="ai-msg sys";
-    thinking.textContent="Couldn't reach the AI backend. This works on the deployed site (Vercel), not when the file is opened locally.";
+    fail("Couldn't reach the AI backend. This works on the deployed site (Vercel), not when the file is opened locally.");
   }
-  pendingSelection=null; aiSend.disabled=false;
+  aiSend.disabled=false;
 }
 document.getElementById("aiForm").addEventListener("submit",e=>{e.preventDefault(); askAI();});
 aiInput.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); askAI(); }});
@@ -3804,7 +3954,7 @@ selPill.addEventListener("mousedown",e=>{
   e.preventDefault();
   pendingSelection=selPill.dataset.text||null;
   selPill.style.display="none";
-  openAI("dashboard");
+  openAI();
   aiInput.value="Explain this figure and what's driving it.";
 });
 // variance-analysis basis toggle (Revenue/Profitability "vs prior period" / "vs prior year"):
@@ -3827,10 +3977,14 @@ async function loadData(){
     const contextPromise=fetch("./company-context.json")
       .then(response=>response.ok?response.json():Promise.reject(new Error("Public context unavailable")))
       .catch(()=>({companies:{},macro:{}}));
-    const [dataResponse,companyResponse,publicContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise]);
+    const envContextPromise=fetch("./environment-context.json")
+      .then(response=>response.ok?response.json():Promise.reject(new Error("Environment context unavailable")))
+      .catch(()=>({companies:{}}));
+    const [dataResponse,companyResponse,publicContext,envContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise,envContextPromise]);
     D = await dataResponse.json();
     COMPANY_DATA = await companyResponse.json();
     PUBLIC_CONTEXT = publicContext;
+    ENV_CONTEXT = envContext;
   }catch(e){
     document.getElementById("main").innerHTML =
       '<p style="padding:40px;color:var(--muted)">Couldn\'t load data.json. This dashboard needs to be served over http(s) (not opened as a bare file://), and data.json must sit next to index.html.</p>';
@@ -3838,13 +3992,11 @@ async function loadData(){
   }
   initFilters();
   let restoredTab=parseHashState(); // may mutate state.q/cat/geo/pgeo; returns a tab id or null
-  if(restoredTab==="env"&&companySlug!=="apple") restoredTab="home";
   const companySelect=document.getElementById("companySelect");
   companySelect.innerHTML=Object.entries(COMPANY_DATA.companies).map(([slug,company])=>`<option value="${slug}">${escapeHtml(company.name)} · ${escapeHtml(company.ticker)}</option>`).join("");
   companySelect.value=companySlug;
   companySelect.addEventListener("change",()=>{
     companySlug=companySelect.value;
-    if(current==="env"&&companySlug!=="apple") current="home";
     state.q=new Set(currentFiscalYtdIndexes());
     prevQSelection=null;
     planningState={scenario:"base",...PLANNING_PRESETS.base};
