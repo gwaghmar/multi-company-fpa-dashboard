@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-09T14:38:56.135993+00:00",
+  "generatedAt": "2026-09-10T14:29:26.062977+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-09-08",
-      "threeMonth": "3.94",
-      "twoYear": "4.39",
-      "tenYear": "4.80",
-      "thirtyYear": "5.25",
+      "date": "2026-09-09",
+      "threeMonth": "3.95",
+      "twoYear": "4.43",
+      "tenYear": "4.83",
+      "thirtyYear": "5.28",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-09-09",
+      "asOf": "2026-09-10",
       "ratesPerEuro": {
-        "CNY": 7.8159,
-        "GBP": 0.85898,
-        "JPY": 178.59,
-        "USD": 1.1652
+        "CNY": 7.79,
+        "GBP": 0.85915,
+        "JPY": 179.09,
+        "USD": 1.1616
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -870,6 +870,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001018724.json",
       "recentFilings": [
         {
+          "form": "8-K",
+          "filed": "2026-09-09",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000036/amzn-20260908.htm"
+        },
+        {
           "form": "10-Q",
           "filed": "2026-07-31",
           "description": "10-Q",
@@ -910,12 +916,6 @@
           "filed": "2026-04-30",
           "description": "10-Q",
           "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-29",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000012/amzn-20260429.htm"
         }
       ],
       "documents": [
@@ -1512,6 +1512,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001730168.json",
       "recentFilings": [
         {
+          "form": "10-Q",
+          "filed": "2026-09-10",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
+        },
+        {
           "form": "8-K",
           "filed": "2026-09-02",
           "description": "8-K",
@@ -1552,12 +1558,6 @@
           "filed": "2026-04-21",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000039/avgo-20260420.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-06",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526144028/d87999d8k.htm"
         }
       ],
       "documents": [
@@ -1570,8 +1570,8 @@
         {
           "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-06-09",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
         }
       ],
       "managementSignals": [
@@ -1612,16 +1612,16 @@
           "text": "Shared expenses are primarily allocated based on revenue and headcount.",
           "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-06-09",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "Due to the inherent uncertainty with respect to the timing of future cash outflows associated with our unrecognized tax benefits as of May 3,\u2026",
+          "text": "Due to the inherent uncertainty with respect to the timing of future cash outflows associated with our unrecognized tax benefits as of August 2,\u2026",
           "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-06-09",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000054/avgo-20260503.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000080/avgo-20260802.htm"
         }
       ],
       "annualReport": {
