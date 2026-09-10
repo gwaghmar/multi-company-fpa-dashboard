@@ -255,18 +255,21 @@ function companyContextNote(text){
 // REPORTED (leaked to press / disclosed only to investors, not a public company statement) so nothing
 // here gets mistaken for the same sourcing tier as the rest of this dashboard.
 function aiLabsHardwareContext(){
-  return `<div class="body" style="flex:0 0 auto; height:340px; grid-template-columns:1fr 1fr">
+  return `<div class="body" style="flex:0 0 auto; height:500px; grid-template-columns:1fr 1fr">
     <div class="card"><h3>OpenAI</h3><div class="note">Private company -- no SEC filings exist. Curated one-off, not part of the standardized SEC pipeline.</div>
       <div class="comm scrollbox">
         <p><b>$852B post-money valuation</b> after a $122B raise closed Mar 31, 2026 (Amazon $50B, Nvidia $30B, SoftBank $30B among investors). <b>REAL</b> -- OpenAI's own announcement.</p>
         <p>Annualized revenue "surpassed $20B in 2025, up from $6B in 2024" -- CFO Sarah Friar, official OpenAI blog, Jan 19, 2026. <b>REAL.</b> A newer ~$40B figure (Jul 2026) surfaced from a closed-door investor meeting and was reported by press, not stated publicly by OpenAI -- <b>REPORTED</b>, not verified as REAL.</p>
-        <p><b>Hardware:</b> acquired Jony Ive's io for ~$6.5B (2025); developing a screenless, voice-first device with manufacturing partner Foxconn, initial production target 40-50M units -- now delayed to 2027. Acquisition is <b>REAL</b>; device specifics and timeline are <b>REPORTED</b> via press, not company-confirmed detail.</p>
+        <p><b>Hardware acquisition:</b> bought Jony Ive's io in an all-stock deal valued at $6.4B when announced (May 2025) and ~$6.5B when it closed (Jul 2025) -- the gap is OpenAI's own stock value moving between the two dates, not two different deals. <b>REAL</b> -- confirmed by OpenAI, reported consistently across outlets.</p>
+        <p><b>Device reporting (all REPORTED, not OpenAI-confirmed, and inconsistent across sources):</b> screenless, voice-first, rumored on-device Qualcomm chip plus cloud inference. Manufacturing partner named as Foxconn in some reports, Luxshare and Goertek (both Apple assemblers) in others -- OpenAI has confirmed none of them. Production targets have ranged from 40-50M units in earlier reports to 100M in later ones; debut timing has moved from a hoped-for 2026 launch to a reported 2027 delay.</p>
+        <p><b>Assumptions &amp; open questions:</b> no bill-of-materials cost, retail price, gross margin target, unit count, or firm ship date has been disclosed by OpenAI itself. The spread in the reported numbers above (2x on volume, a full year on timing, three different assembly partners) is a sign of how unsettled this still is -- treat any single figure you see elsewhere as a snapshot of one report, not a company commitment.</p>
       </div></div>
     <div class="card"><h3>Anthropic</h3><div class="note">Private company -- no SEC filings exist (a confidential S-1 has been filed, see below). Curated one-off, not part of the standardized SEC pipeline.</div>
       <div class="comm scrollbox">
         <p><b>$965B post-money valuation</b> after a $65B Series H announced May 28, 2026. <b>REAL</b> -- Anthropic's own announcement.</p>
         <p>Run-rate revenue "crossed $47B" -- Anthropic's own statement, May 2026. <b>REAL.</b> A newer ~$65B figure and Q2 revenue over $11.5B (Jul 2026) were disclosed privately to investors and reported by press; Anthropic declined to comment -- <b>REPORTED</b>, not REAL.</p>
         <p>Filed a <b>confidential S-1</b> with the SEC in June 2026, targeting a Nasdaq IPO around October 2026. <b>REAL</b> -- the fact of the filing is public, though its contents are not.</p>
+        <p><b>Assumptions &amp; open questions:</b> because the S-1 is confidential, none of the numbers inside it (revenue, margins, share count, offering price) are public. No hardware ambitions comparable to OpenAI's have been confirmed for Anthropic -- it is included here as the direct peer-scale comparison, not because it has a hardware line.</p>
       </div></div>
   </div>`;
 }
@@ -992,7 +995,7 @@ function renderReports(v){
   document.getElementById("reportPrint").addEventListener("click",()=>window.print());
   document.getElementById("reportAi").addEventListener("click",()=>{
     aiInput.value=`Draft the ${definition.label} narrative for ${company.name} using only the selected dashboard evidence. Separate filed results, modeled outputs, and unavailable information.`;
-    openAI("dashboard");
+    openAI();
   });
 }
 

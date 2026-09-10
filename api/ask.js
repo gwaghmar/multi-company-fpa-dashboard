@@ -293,26 +293,39 @@ function buildDashboardEvidence(question, selectedText, tab, rawFilters) {
   };
 }
 
+// STYLE_RULES: shared across every system prompt (dashboard, company, general) so the model reads
+// the same voice regardless of which evidence it was given. Two things at once: cut the generic
+// "AI assistant" padding, and actively permit real markdown structure (## headings, **bold**,
+// bullets) for answers that are genuinely multi-part -- the old per-prompt rule banning headings
+// entirely just pushed the model into either flattening structured answers into a wall of text, or
+// (in practice) using headings anyway and having the client's markdown renderer fail to render them.
+// Also standardizes the trailing NEXT:: line the client parses into follow-up suggestion chips.
+const STYLE_RULES = [
+  "Lead with the answer, then support it. No filler openers (\"Great question\", \"I'd be happy to help\", \"Certainly!\"), no hedging you don't mean, no em dashes.",
+  "Plain, direct language, like a sharp analyst briefing a colleague, not a customer-service bot.",
+  "Markdown is fine and often better: use ## headings and **bold** for a genuinely multi-part answer, plain paragraphs for a simple one. Don't force structure onto a one-fact answer.",
+  "End your reply with one line, exactly: NEXT:: <question 1> | <question 2> | <question 3> -- 2 to 3 short, specific follow-up questions grounded in what you just said, not generic. This line is parsed out and never shown verbatim, so always include it, on its own line, nothing after it.",
+];
+
 function dashboardSystemPrompt(evidence) {
   return [
     "You are Dashboard AI in an Apple FP&A and CSRD dashboard.",
     "Answer only from the EVIDENCE JSON below. Never invent a number or silently use general knowledge.",
     "The backend already applied the active filters and calculated selected-period totals. Use calculateKpi results for totals instead of adding values yourself.",
     "EPS rule: use dilutedEpsFiledForExactSelection only. Never sum quarterly EPS. If it is null, say Apple did not file EPS for that exact selection.",
-    "Lead with the answer. Default to 2 to 4 sentences. Use a short list only when it improves a comparison.",
-    "Bold only key numbers. Do not use headings, tables, nested lists, or em dashes.",
-    "Briefly name the supporting filing or report from evidence.sources. If evidence does not cover the question, say so and suggest General AI.",
+    "Briefly name the supporting filing or report from evidence.sources. If evidence does not cover the question, say so plainly -- you can still answer the general-knowledge part of the question, just be clear about which part isn't backed by this dashboard's data.",
     "If evidence.publicContext is present, its management signals are dated official-source excerpts, not verified causal conclusions. Macro values are external planning context, never company guidance.",
+    ...STYLE_RULES,
     "EVIDENCE:", JSON.stringify(evidence),
   ].join("\n");
 }
 
 function generalSystemPrompt() {
   return [
-    "You are General AI embedded in a public-company finance dashboard.",
-    "No private dashboard data or active filters were provided. Answer from general knowledge only and never imply that the answer came from the dashboard.",
-    "Lead with the answer and stay concise by default. If the question requires live or current information you cannot verify, state that limitation plainly.",
-    "Use plain English. Do not use headings, tables, nested lists, or em dashes unless the user explicitly requests a structured format.",
+    "You are the AI assistant embedded in a public-company finance dashboard, currently answering a question outside that dashboard's connected data.",
+    "No private dashboard data or active filters were provided for this question. Answer from general knowledge and never imply that the answer came from the dashboard's sourced data.",
+    "If the question requires live or current information you cannot verify, state that limitation plainly.",
+    ...STYLE_RULES,
   ].join("\n");
 }
 
@@ -486,12 +499,18 @@ function companySystemPrompt(evidence) {
     "If evidence.context.scenario is present, treat it as a user-visible modeled FP&A scenario. evidence.planningModel contains the same deterministic model displayed in the UI. Use its basePeriod, actual values, assumptions, and modeledNextQuarter outputs. Always label outputs modeled, and never present them as company guidance, consensus, or an internal budget.",
     "When evidence.investmentDecisionModel is present, use its deterministic NPV, IRR, payback, ROI, and hurdle result. State that it is an illustrative pre-tax unlevered model and identify missing approval inputs such as tax, depreciation, working capital, timing, ownership, and implementation risk.",
     "Separate what the figures show from causal explanations. If the evidence does not establish a cause, say that operational or management commentary is needed.",
-    "Lead with the answer, use plain English, and stay concise.",
+    ...STYLE_RULES,
     `Evidence: ${JSON.stringify(evidence)}`,
   ].join("\n");
 }
 
-export const __test = { buildDashboardEvidence, companyEvidence, companySystemPrompt, dashboardSystemPrompt, isDashboardQuestion, normalizeFilters, publicContextForCompany, searchFiling };
+export const __test = { buildDashboardEvidence, companyEvidence, companySystemPrompt, dashboardSystemPrompt, generalSystemPrompt, isDashboardQuestion, normalizeFilters, publicContextForCompany, searchFiling };
+
+// writeLine: one NDJSON (newline-delimited JSON) frame per event. The client reads the response
+// body as a stream and JSON.parses each line -- see askAI()/streamAskAI() in index.html. Plain
+// newline-delimited JSON over a normal streamed HTTP response, not SSE, since there's exactly one
+// consumer (this app's own client) and no need for SSE's reconnect/event-id machinery.
+function writeLine(res, obj) { res.write(JSON.stringify(obj) + "\n"); }
 
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -502,32 +521,46 @@ export default async function handler(req, res) {
   const { question: rawQuestion, selectedText: rawSelectedText, tab, filters } = req.body || {};
   const question = cleanText(rawQuestion);
   const selectedText = cleanText(rawSelectedText, 600);
-  const mode = req.body?.mode === "general" ? "general" : "dashboard";
   const selectedCompany = cleanText(req.body?.company, 40) || "apple";
   const selectedCompanyEvidence = selectedCompany !== "apple" || tab === "company" || tab === "plan" || tab === "reports"
     ? companyEvidence(selectedCompany, filters, tab)
     : null;
   if (!question) { res.status(400).json({ error: "missing_question" }); return; }
 
-  if (mode === "dashboard" && !selectedCompanyEvidence && !isDashboardQuestion(question, selectedText)) {
-    res.status(200).json({
-      answer: "That question is outside the Apple dashboard data. Switch to General AI to ask it without sending any dashboard context.",
-      meta: { mode, route: "local_scope", systemChars: 0, usage: { input_tokens: 0, output_tokens: 0 } },
-    });
-    return;
-  }
+  // One unified assistant, not a manual Dashboard/General toggle: dashboard evidence is attached
+  // whenever the question (or the active tab/company context) is actually dashboard-relevant, and
+  // skipped otherwise -- the model still answers, just from general knowledge, instead of the old
+  // behavior of rejecting the question locally and telling the user to go flip a switch.
+  const dashboardRelevant = Boolean(selectedCompanyEvidence) || isDashboardQuestion(question, selectedText);
+  const mode = dashboardRelevant ? "dashboard" : "general";
+  const route = selectedCompanyEvidence ? "company_source" : dashboardRelevant ? "dashboard_tools" : "general";
 
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) { res.status(200).json({ error: "no_key" }); return; }
 
-  const evidence = mode === "dashboard"
+  const evidence = dashboardRelevant
     ? (selectedCompanyEvidence || { ...buildDashboardEvidence(question, selectedText, tab, filters), publicContext: publicContextForCompany(selectedCompany, tab) })
     : null;
-  const system = mode === "dashboard" ? (selectedCompanyEvidence ? companySystemPrompt(evidence) : dashboardSystemPrompt(evidence)) : generalSystemPrompt();
+  const system = dashboardRelevant ? (selectedCompanyEvidence ? companySystemPrompt(evidence) : dashboardSystemPrompt(evidence)) : generalSystemPrompt();
   const userMessage = selectedText ? `Selected dashboard text: ${selectedText}\n\nQuestion: ${question}` : question;
 
+  res.writeHead(200, {
+    "Content-Type": "application/x-ndjson; charset=utf-8",
+    "Cache-Control": "no-cache, no-transform",
+    "X-Accel-Buffering": "no",
+  });
+  // This status line reports real work already done above (evidence assembly), not a fake
+  // "searching..." animation -- there is no live search or tool loop in this pipeline, so the
+  // client only ever shows activity that actually happened.
+  writeLine(res, {
+    type: "status", stage: "evidence", mode,
+    detail: selectedCompanyEvidence ? `Reading ${selectedCompanyEvidence.company.name}'s filed evidence...`
+      : dashboardRelevant ? "Matching evidence in the connected dashboard data..."
+      : "No dashboard match -- answering from general knowledge...",
+  });
+
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const upstream = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "content-type": "application/json", "x-api-key": key, "anthropic-version": "2023-06-01",
@@ -535,19 +568,56 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "claude-haiku-4-5",
-        max_tokens: mode === "dashboard" ? 320 : 420,
+        max_tokens: dashboardRelevant ? 560 : 620,
         system,
         messages: [{ role: "user", content: userMessage }],
+        stream: true,
       }),
     });
-    const payload = await response.json();
-    if (!response.ok) { res.status(200).json({ error: "api_error", detail: payload?.error?.message || response.status }); return; }
-    const answer = (payload.content || []).filter(block => block.type === "text").map(block => block.text).join("\n");
-    if (!answer) { res.status(200).json({ error: "api_error", detail: "empty answer, try again" }); return; }
-    res.status(200).json({ answer, meta: {
-      mode, route: mode === "dashboard" ? (selectedCompanyEvidence ? "company_source" : "dashboard_tools") : "general", systemChars: system.length, usage: payload.usage || null,
-    } });
+    if (!upstream.ok || !upstream.body) {
+      let detail = String(upstream.status);
+      try { detail = (await upstream.json())?.error?.message || detail; } catch { /* body wasn't JSON */ }
+      writeLine(res, { type: "error", error: "api_error", detail });
+      res.end();
+      return;
+    }
+    writeLine(res, { type: "status", stage: "model", mode, detail: "Asking Claude..." });
+
+    const reader = upstream.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let fullText = "";
+    const usage = { input_tokens: null, output_tokens: null };
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop(); // last element may be a partial line -- keep it for the next chunk
+      for (const line of lines) {
+        if (!line.startsWith("data:")) continue;
+        const dataStr = line.slice(5).trim();
+        if (!dataStr || dataStr === "[DONE]") continue;
+        let event;
+        try { event = JSON.parse(dataStr); } catch { continue; }
+        if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
+          fullText += event.delta.text;
+          writeLine(res, { type: "delta", text: event.delta.text });
+        } else if (event.type === "message_start" && event.message?.usage) {
+          usage.input_tokens = event.message.usage.input_tokens ?? usage.input_tokens;
+        } else if (event.type === "message_delta" && event.usage) {
+          usage.output_tokens = event.usage.output_tokens ?? usage.output_tokens;
+        }
+      }
+    }
+    if (!fullText) {
+      writeLine(res, { type: "error", error: "api_error", detail: "empty answer, try again" });
+    } else {
+      writeLine(res, { type: "done", meta: { mode, route, systemChars: system.length, usage } });
+    }
+    res.end();
   } catch (error) {
-    res.status(200).json({ error: "network_error", detail: String(error).slice(0, 200) });
+    writeLine(res, { type: "error", error: "network_error", detail: String(error).slice(0, 200) });
+    res.end();
   }
 }
