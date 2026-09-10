@@ -236,8 +236,9 @@ function companyDownloadButton(){
   return `<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button>`;
 }
 
-function companyHeader(title,subtitle){
-  return `<div class="vhead"><h2>${escapeHtml(title)}</h2><span class="sub">${escapeHtml(subtitle||periodSub("$M"))}</span><span class="vhead-right">${companySourceBadge()}${companyDownloadButton()}</span></div>`;
+function companyHeader(title,subtitle,opts){
+  const download=opts?.download!==false;
+  return `<div class="vhead"><h2>${escapeHtml(title)}</h2><span class="sub">${escapeHtml(subtitle||periodSub("$M"))}</span><span class="vhead-right">${companySourceBadge()}${download?companyDownloadButton():""}</span></div>`;
 }
 
 function companyContextNote(text){
@@ -610,7 +611,7 @@ function renderPeerOutlook(v){
 
 function renderPeerEnvironment(v){
   const company=selectedCompany(), latest=selectedCompanyIndexes().slice(-1)[0];
-  v.innerHTML=`${companyHeader(`${company.name} environment`,`${qLabel(latest)} · source availability`)}
+  v.innerHTML=`${companyHeader(`${company.name} environment`,`${qLabel(latest)} · source availability`,{download:false})}
     ${companyContextNote("Environmental figures require a separately governed sustainability-report source. They are not part of the standardized SEC financial dataset.")}
     ${sowhat(`${company.name} environmental metrics are not available in this dashboard's current standardized source. No carbon, Scope 1–3, or target figure is being inferred.`)}
     <div class="tiles">

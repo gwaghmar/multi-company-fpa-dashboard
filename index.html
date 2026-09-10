@@ -2164,7 +2164,7 @@ const VIEWS=[
   {id:"env", name:"Sustainability"},
   {id:"reports", name:"Reports"}
 ];
-function visibleViews(){ return VIEWS.filter(view=>view.id!=="env"||companySlug==="apple"); }
+function visibleViews(){ return VIEWS; }
 let current="home";
 
 function tile(k,v,d,up){
@@ -3858,13 +3858,11 @@ async function loadData(){
   }
   initFilters();
   let restoredTab=parseHashState(); // may mutate state.q/cat/geo/pgeo; returns a tab id or null
-  if(restoredTab==="env"&&companySlug!=="apple") restoredTab="home";
   const companySelect=document.getElementById("companySelect");
   companySelect.innerHTML=Object.entries(COMPANY_DATA.companies).map(([slug,company])=>`<option value="${slug}">${escapeHtml(company.name)} · ${escapeHtml(company.ticker)}</option>`).join("");
   companySelect.value=companySlug;
   companySelect.addEventListener("change",()=>{
     companySlug=companySelect.value;
-    if(current==="env"&&companySlug!=="apple") current="home";
     state.q=new Set(currentFiscalYtdIndexes());
     prevQSelection=null;
     planningState={scenario:"base",...PLANNING_PRESETS.base};
