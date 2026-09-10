@@ -58,26 +58,51 @@ body{
   -webkit-font-smoothing:antialiased;
   display:flex; flex-direction:column; overflow:hidden;
 }
-/* thin persistent header */
+/* thin persistent header: brand/company row + its own slim tab-strip row underneath, both pinned
+   together as one sticky block so the wrapper -- not either row individually -- owns position:sticky.
+   That lets .topbar wrap to two lines on narrow phones without the tab row's sticky offset going stale. */
+.header{flex:0 0 auto; position:sticky; top:0; z-index:20; background:var(--page)}
 .topbar{
-  flex:0 0 auto; display:flex; align-items:center; gap:11px;
+  display:flex; align-items:center; gap:11px;
   padding:0 20px; height:38px; background:var(--page);
-  border-bottom:1px solid var(--ink); position:sticky; top:0; z-index:20;
+  border-bottom:1px solid var(--ink);
 }
 .brand{font:650 14px/1 "Inter Tight",Inter,sans-serif; letter-spacing:-.01em; white-space:nowrap;flex:0 0 auto}
 .brand span{color:var(--muted); font-weight:500}
-nav{display:flex; gap:2px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex:1; scrollbar-width:none}
+/* navbar: a dedicated slim strip for the tab strip, always its own row (not squeezed into .topbar
+   alongside the company picker/buttons). Previously nav only got its own row below ~1400px wide --
+   above that it shared .topbar and could silently overflow with zero visible cue that later tabs
+   (e.g. Outlook, Sustainability) existed off-screen. Giving it a permanent, always-full-width row
+   plus an always-on edge-fade and hint chevron below fixes that at every viewport size. */
+.navbar{
+  flex:0 0 auto; position:relative; display:flex; align-items:center;
+  height:32px; padding:0 20px; background:var(--page); border-bottom:1px solid var(--ring);
+}
+nav{
+  display:flex; gap:2px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex:1; min-width:0; scrollbar-width:none;
+  mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
+}
 nav::-webkit-scrollbar{display:none}
-/* nav-chevron: mobile-only "more tabs this way" affordance, layered over the scrollable nav strip
-   (not inside it, so it isn't caught by nav's own edge-fade mask) and JS-positioned in
-   positionNavChevron() since the topbar wraps to a variable height above the nav row on mobile.
-   Hidden on desktop and hidden once scrolled to the end -- see positionNavChevron(). */
+/* nav-chevron: "more tabs this way" affordance, pinned to the navbar's right edge (not inside nav,
+   so it isn't caught by nav's own edge-fade mask). display is toggled in positionNavChevron() based
+   on actual scroll state -- shown whenever there's unscrolled content to the right, at any viewport
+   width, and hidden once scrolled to the end. It nudges gently on a loop so an overflowing tab strip
+   reads as scrollable/clickable on sight rather than needing an accidental swipe to discover. */
 .nav-chevron{
-  display:none; position:absolute; z-index:5; pointer-events:none;
-  align-items:center; justify-content:center; width:24px; height:24px; border-radius:99px;
+  display:none; position:absolute; right:6px; top:50%; z-index:5; cursor:pointer; appearance:none;
+  align-items:center; justify-content:center; width:24px; height:24px; border-radius:99px; padding:0;
   background:var(--surface); border:1px solid var(--axis); color:var(--ink2); font:600 14px/1 "Inter",sans-serif;
   box-shadow:0 1px 5px rgba(0,0,0,.18);
+  animation:navChevronNudge 1.6s ease-in-out infinite;
 }
+.nav-chevron:hover{color:var(--ink); border-color:var(--ink)}
+.nav-chevron:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+@keyframes navChevronNudge{
+  0%,100%{ transform:translateY(-50%) translateX(0); opacity:.75 }
+  50%{ transform:translateY(-50%) translateX(4px); opacity:1 }
+}
+@media (prefers-reduced-motion:reduce){ .nav-chevron{ animation:none } }
 .tab{
   border:0; background:transparent; color:var(--ink2); cursor:pointer; flex:0 0 auto;
   font:500 11.5px/1 "Inter",sans-serif; padding:6px 10px; border-radius:99px; white-space:nowrap;
@@ -657,14 +682,11 @@ footer{
   font:600 11.5px/1 "Inter",sans-serif; box-shadow:0 6px 20px var(--glass-shadow);
   backdrop-filter:blur(18px) saturate(1.7); -webkit-backdrop-filter:blur(18px) saturate(1.7);
 }
-/* The expanded finance navigation no longer fits on one row at common laptop widths. Keep the
-   desktop dashboard layout, but give the tabs their own scrollable header row with a visible cue. */
+/* The expanded finance navigation no longer fits on one row at common laptop widths. .navbar
+   already gives the tabs their own always-scrollable row at every width (see base rules above) --
+   this breakpoint just tightens spacing/tap targets and lets .topbar wrap if it ever needs to. */
 @media (min-width:1100px) and (max-width:1399px){
   .topbar{height:auto;flex-wrap:wrap;padding:7px 20px;gap:7px 10px}
-  nav{order:3;flex:1 1 100%;width:100%;
-    mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent)}
-  .nav-chevron{display:flex}
   .tab{min-height:32px;display:inline-flex;align-items:center}
   .source-tools{margin-left:auto}
 }
@@ -695,15 +717,10 @@ footer{
   .badge{margin-left:0}
   .brand{flex:1 1 auto; padding-top:5px}
   .icon-btn{flex:0 0 auto}
-  /* nav: horizontally scrollable tab strip, edge-fade hint so it reads as swipeable, active tab
-     kept in view (see go()'s scrollIntoView). No hamburger -- same tabs, just scrollable. */
-  nav{
-    order:3; flex:1 1 100%; width:100%; margin-top:2px;
-    -webkit-overflow-scrolling:touch;
-    mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
-  }
-  .nav-chevron{display:flex}
+  /* nav: already its own always-scrollable row via .navbar (base rules above), active tab kept in
+     view (see go()'s scrollIntoView). No hamburger -- same tabs, just scrollable. Just tighten the
+     side padding to match .topbar's mobile padding and give tabs a bigger touch target. */
+  .navbar{padding:0 14px}
   .tab{min-height:40px; display:inline-flex; align-items:center}
   .filterbar{padding:4px 14px}
   .vhead-right{margin-left:0; width:100%}
@@ -885,22 +902,26 @@ footer{
 @media(max-width:900px){.home-primary-grid,.home-operating-grid{grid-template-columns:1fr}.planning-spine{grid-template-columns:repeat(3,1fr);row-gap:18px}.planning-spine::before{display:none}.report-card-grid{grid-template-columns:1fr}.report-columns{grid-template-columns:1fr}.report-toolbar .report-print{margin-left:0}.report-sheet{padding:20px}.comparison-state-grid{grid-template-columns:1fr}.evidence-grid{grid-template-columns:1fr}.macro-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.architecture-scroll-hint{display:block}.architecture-flow{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:210px;overflow-x:auto;padding-bottom:6px}.architecture-arrow{display:none}.architecture-rails{grid-template-columns:1fr}.cadence-flow{grid-template-columns:repeat(3,1fr);row-gap:14px}.cadence-flow li:nth-child(4){border-left:0}.decision-inputs{grid-template-columns:repeat(2,minmax(0,1fr))}.decision-result{grid-column:1/-1}.decision-kpis{grid-column:1/-1}}
 @media(max-width:600px){#home .home-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.planning-spine{grid-template-columns:repeat(2,1fr)}.report-sheet>header{flex-direction:column}.report-status{text-align:left}.report-table{min-width:620px}.report-sheet section{overflow-x:auto}.evidence-strip-head{flex-direction:column}.evidence-strip-head>span{text-align:left}.evidence-empty{align-items:flex-start;flex-direction:column}.annual-context>summary span{align-items:flex-start;flex-direction:column;gap:3px}.annual-evidence-grid{grid-template-columns:1fr}.annual-context-foot{align-items:flex-start;flex-direction:column}.finance-architecture .home-section-head>span{text-align:left}.architecture-rails>div{grid-template-columns:1fr}.architecture-rails small{grid-column:1}.cadence-flow{grid-template-columns:repeat(2,1fr)}.cadence-flow li:nth-child(odd){border-left:0;padding-left:0}.decision-inputs{grid-template-columns:1fr}.decision-inputs input{font-size:16px}.decision-kpis{grid-template-columns:repeat(2,1fr)}.decision-kpis>div:nth-child(3){border-left:0;border-top:1px solid var(--ring)}.decision-kpis>div:nth-child(4){border-top:1px solid var(--ring)}.decision-sensitivity{grid-template-columns:1fr}}
 @media print{
-  body{display:block;overflow:visible;background:#fff;color:#111}.topbar,.filterbar,#foot,.ai-drawer,.sel-pill,.report-toolbar,.vhead,.sowhat,.note{display:none!important}main,.view{position:static!important;display:block!important;overflow:visible!important;padding:0!important}.view>*:not(.report-sheet){display:none!important}.report-sheet{display:flex!important;width:100%;margin:0;border:0;box-shadow:none;padding:0;color:#111;background:#fff}.report-sheet *{color:#111!important}.report-sheet a{text-decoration:none}.report-callout,.report-facts div{break-inside:avoid}
+  body{display:block;overflow:visible;background:#fff;color:#111}.header,.filterbar,#foot,.ai-drawer,.sel-pill,.report-toolbar,.vhead,.sowhat,.note{display:none!important}main,.view{position:static!important;display:block!important;overflow:visible!important;padding:0!important}.view>*:not(.report-sheet){display:none!important}.report-sheet{display:flex!important;width:100%;margin:0;border:0;box-shadow:none;padding:0;color:#111;background:#fff}.report-sheet *{color:#111!important}.report-sheet a{text-decoration:none}.report-callout,.report-facts div{break-inside:avoid}
 }
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">Example Dashboard</div>
-  <nav id="nav" role="tablist"></nav>
-  <span class="nav-chevron" id="navChevron" aria-hidden="true">›</span>
-  <div class="source-tools">
-    <div class="source-picker"><label for="companySelect">Company</label><select id="companySelect" aria-label="Dashboard company"></select></div>
-    <button class="reports-btn" id="reportsBtn" type="button" aria-pressed="false">Reports</button>
+<div class="header">
+  <div class="topbar">
+    <div class="brand">Example Dashboard</div>
+    <div class="source-tools">
+      <div class="source-picker"><label for="companySelect">Company</label><select id="companySelect" aria-label="Dashboard company"></select></div>
+      <button class="reports-btn" id="reportsBtn" type="button" aria-pressed="false">Reports</button>
+    </div>
+    <button class="icon-btn ai-btn" id="aiBtn">✦ Ask AI</button>
+    <button class="icon-btn" id="themeBtn">Dark</button>
   </div>
-  <button class="icon-btn ai-btn" id="aiBtn">✦ Ask AI</button>
-  <button class="icon-btn" id="themeBtn">Dark</button>
+  <div class="navbar">
+    <nav id="nav" role="tablist"></nav>
+    <button type="button" class="nav-chevron" id="navChevron" aria-label="Scroll tabs right">›</button>
+  </div>
 </div>
 <div class="filterbar" id="filterbar" role="group" aria-label="Filters"></div>
 
@@ -3393,23 +3414,22 @@ function buildNav(){
   nav.addEventListener("scroll",positionNavChevron,{passive:true});
   positionNavChevron();
 }
-// positionNavChevron: mobile-only "more tabs this way" cue, layered over (not inside) the
-// scrollable nav strip so it isn't caught by nav's own edge-fade mask. Shown only while there's
-// unscrolled content to the right; JS-positioned because the topbar wraps to a variable height
-// above the nav row at mobile widths, so a fixed CSS offset can't track it reliably.
+// positionNavChevron: "more tabs this way" cue, layered over (not inside) the scrollable nav strip
+// so it isn't caught by nav's own edge-fade mask. Shown at ANY viewport width whenever there's
+// unscrolled content to the right, hidden once scrolled to the end -- .navbar is a fixed-height row
+// that never wraps, so the chevron's own position (right edge, vertically centered) is plain CSS;
+// this only ever toggles display.
 function positionNavChevron(){
-  const nav=document.getElementById("nav"), chev=document.getElementById("navChevron"), bar=document.querySelector(".topbar");
-  if(!nav||!chev||!bar) return;
-  if(matchMedia("(min-width:1400px)").matches){ chev.style.display="none"; return; }
+  const nav=document.getElementById("nav"), chev=document.getElementById("navChevron");
+  if(!nav||!chev) return;
   const scrollable = nav.scrollWidth > nav.clientWidth+2;
   const atEnd = nav.scrollLeft + nav.clientWidth >= nav.scrollWidth-2;
-  if(!scrollable || atEnd){ chev.style.display="none"; return; }
-  chev.style.display="flex";
-  const nr=nav.getBoundingClientRect(), br=bar.getBoundingClientRect();
-  chev.style.left=(nr.right-br.left-30)+"px";
-  chev.style.top=(nr.top-br.top+nr.height/2-12)+"px";
+  chev.style.display = (scrollable && !atEnd) ? "flex" : "none";
 }
 addEventListener("resize",positionNavChevron);
+document.getElementById("navChevron").addEventListener("click",()=>{
+  document.getElementById("nav").scrollBy({left:160,behavior:"smooth"});
+});
 /* ---------- ONE Filters hub: period + category + geography, one glass panel, always all 3 sections
    (state is global -- category/geography selections persist across tabs even though only Revenue
    and Profitability read them). Built ONCE (buildFiltersBar); every toggle after that mutates the
