@@ -255,22 +255,58 @@ function companyContextNote(text){
 // REPORTED (leaked to press / disclosed only to investors, not a public company statement) so nothing
 // here gets mistaken for the same sourcing tier as the rest of this dashboard.
 function aiLabsHardwareContext(){
-  return `<div class="body" style="flex:0 0 auto; height:500px; grid-template-columns:1fr 1fr">
+  return `<div class="body" style="flex:0 0 auto; height:330px; grid-template-columns:1fr 1fr">
     <div class="card"><h3>OpenAI</h3><div class="note">Private company -- no SEC filings exist. Curated one-off, not part of the standardized SEC pipeline.</div>
       <div class="comm scrollbox">
         <p><b>$852B post-money valuation</b> after a $122B raise closed Mar 31, 2026 (Amazon $50B, Nvidia $30B, SoftBank $30B among investors). <b>REAL</b> -- OpenAI's own announcement.</p>
-        <p>Annualized revenue "surpassed $20B in 2025, up from $6B in 2024" -- CFO Sarah Friar, official OpenAI blog, Jan 19, 2026. <b>REAL.</b> A newer ~$40B figure (Jul 2026) surfaced from a closed-door investor meeting and was reported by press, not stated publicly by OpenAI -- <b>REPORTED</b>, not verified as REAL.</p>
-        <p><b>Hardware acquisition:</b> bought Jony Ive's io in an all-stock deal valued at $6.4B when announced (May 2025) and ~$6.5B when it closed (Jul 2025) -- the gap is OpenAI's own stock value moving between the two dates, not two different deals. <b>REAL</b> -- confirmed by OpenAI, reported consistently across outlets.</p>
-        <p><b>Device reporting (all REPORTED, not OpenAI-confirmed, and inconsistent across sources):</b> screenless, voice-first, rumored on-device Qualcomm chip plus cloud inference. Manufacturing partner named as Foxconn in some reports, Luxshare and Goertek (both Apple assemblers) in others -- OpenAI has confirmed none of them. Production targets have ranged from 40-50M units in earlier reports to 100M in later ones; debut timing has moved from a hoped-for 2026 launch to a reported 2027 delay.</p>
-        <p><b>Assumptions &amp; open questions:</b> no bill-of-materials cost, retail price, gross margin target, unit count, or firm ship date has been disclosed by OpenAI itself. The spread in the reported numbers above (2x on volume, a full year on timing, three different assembly partners) is a sign of how unsettled this still is -- treat any single figure you see elsewhere as a snapshot of one report, not a company commitment.</p>
+        <p>Annualized revenue "surpassed $20B in 2025, up from $6B in 2024" -- CFO Sarah Friar, official OpenAI blog, Jan 19, 2026. <b>REAL.</b> A newer ~$40B figure (Jul 2026) surfaced from a closed-door investor meeting, reported by press, not stated publicly by OpenAI -- <b>REPORTED</b>, not verified as REAL.</p>
+        <p>Hardware, deal mechanics, manufacturing, and the capital backdrop it all sits inside are broken out in the sections below -- there's enough real, sourced detail here that it doesn't fit in one card.</p>
       </div></div>
     <div class="card"><h3>Anthropic</h3><div class="note">Private company -- no SEC filings exist (a confidential S-1 has been filed, see below). Curated one-off, not part of the standardized SEC pipeline.</div>
       <div class="comm scrollbox">
         <p><b>$965B post-money valuation</b> after a $65B Series H announced May 28, 2026. <b>REAL</b> -- Anthropic's own announcement.</p>
         <p>Run-rate revenue "crossed $47B" -- Anthropic's own statement, May 2026. <b>REAL.</b> A newer ~$65B figure and Q2 revenue over $11.5B (Jul 2026) were disclosed privately to investors and reported by press; Anthropic declined to comment -- <b>REPORTED</b>, not REAL.</p>
-        <p>Filed a <b>confidential S-1</b> with the SEC in June 2026, targeting a Nasdaq IPO around October 2026. <b>REAL</b> -- the fact of the filing is public, though its contents are not.</p>
-        <p><b>Assumptions &amp; open questions:</b> because the S-1 is confidential, none of the numbers inside it (revenue, margins, share count, offering price) are public. No hardware ambitions comparable to OpenAI's have been confirmed for Anthropic -- it is included here as the direct peer-scale comparison, not because it has a hardware line.</p>
+        <p>Filed a <b>confidential S-1</b> with the SEC in June 2026, targeting a Nasdaq IPO around October 2026. <b>REAL</b> -- the fact of the filing is public, though its contents are not. Because the S-1 is confidential, none of the numbers inside it (revenue, margins, share count, offering price) are public. No hardware ambitions comparable to OpenAI's have been confirmed for Anthropic -- it's included here as the direct peer-scale comparison, not because it has a hardware line.</p>
       </div></div>
+  </div>
+  <div class="card" style="flex:0 0 auto; height:260px; margin-top:9px">
+    <h3>Comparable device economics -- the actual benchmarks a hardware finance model would use</h3>
+    <div class="note">OpenAI's own device has zero public BOM, price, or margin data. These are the closest real, named-source comparables.</div>
+    <div class="scrollbox" style="flex:1 1 auto">
+    <table class="report-table hw-bench-table">
+      <thead><tr><th>Device</th><th>Retail price</th><th>Cost estimate</th><th>Source / confidence</th><th>What happened</th></tr></thead>
+      <tbody>
+        <tr><td>Apple Vision Pro</td><td>$3,499</td><td>$1,542 BOM (~56% BOM-basis margin, not true gross margin)</td><td><b>Omdia</b> teardown, Feb 2024; display cost (~$456) cross-checked by <b>Fomalhaut Techno Solutions</b>/Nikkei</td><td>Shipped, premium/low-volume positioning</td></tr>
+        <tr><td>Humane AI Pin</td><td>$699 → cut to $499 (Oct 2024)</td><td>No named-source $ figure exists -- the "lost money on every unit" claim is widely repeated but untraceable to a report</td><td>Price/discontinuation: Bloomberg, TechCrunch (REAL). Cost gap: unverified, excluded</td><td>~10K sold, returns outpaced sales by mid-2024; HP bought the IP/patents only for <b>$116M</b> (Feb 2025) -- the device itself was discontinued, not acquired</td></tr>
+        <tr><td>Rabbit R1</td><td>$199</td><td>~$100 (a single independent blogger's model, not a teardown firm -- low confidence)</td><td>Price, 130K sold: CEO statement, Forbes (REAL). Cost: media-report-unverified</td><td>130K sold (CEO, Jun 2024) but only ~5K daily active users -- large sales-vs-engagement gap</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <div class="body g2" style="flex:0 0 auto; height:460px; margin-top:9px">
+    <div class="card"><h3>The io acquisition -- deal mechanics</h3>
+      <div class="comm scrollbox">
+        <p>All-stock, ~<b>$6.5B</b> total. OpenAI already held a <b>23% stake</b> in io from a Q4 2024 investment; the acquisition paid <b>~$5B in OpenAI equity</b> for the remaining 77%. No cash component reported. <b>REPORTED</b>, consistent across outlets -- no primary deal document exists since OpenAI is private.</p>
+        <p>~<b>55 people</b> joined (hardware engineers, industrial designers, manufacturing specialists). Entity acquired: <b>io Products, Inc.</b> (named via Cooley's and Wilson Sonsini's own deal-counsel releases). <b>LoveFrom, Jony Ive's separate design studio, was not acquired</b> and remains independent, reportedly now working for OpenAI on a contract basis as effectively its primary client. <b>REAL</b> (OpenAI's own announcement) on Ive's non-employee status; team size and LoveFrom's contract terms are <b>REPORTED</b>.</p>
+        <p>Other named ex-Apple co-founders who joined: <b>Evans Hankey</b> (took over Ive's own design-leadership role at Apple after he left), <b>Tang Tan</b> (led iPhone design), <b>Scott Cannon</b> (led Mac/iPad design). <b>REPORTED</b>, consistent naming across outlets and deal-counsel releases.</p>
+        <p><b>Risk flag:</b> Apple has since sued OpenAI in a matter reportedly involving Tang Tan over alleged trade-secret issues (2026) -- a live legal/IP risk directly tied to this hires-via-acquisition structure. <b>REPORTED.</b></p>
+        <p>Announced May 21, 2025; closed Jul 9, 2025. The ~7-week gap is cited only as "pending regulatory approval" in Cooley's release -- no source confirms which regulator or why. Prior io funding: <b>$225M raised in 2024</b> (Sutter Hill, Emerson Collective, SV Angel, Maverick, Thrive), Ive personally ~11% stake -- note a separate "~$500M" figure floating in early reporting was tied to pre-deal acquisition-price rumors, not a funding round; don't conflate the two.</p>
+      </div></div>
+    <div class="card"><h3>Manufacturing partners -- real financials, an evolving story</h3>
+      <div class="comm scrollbox">
+        <p><b>Luxshare (Shenzhen: 002475):</b> FY2025 revenue RMB 332.3B (+23.6% YoY), net profit RMB 16.6B, ~416,000 employees, ~$65-75B market cap. Apple was ~70.7% of 2024 revenue (down from 75.2% in 2023). <b>REAL</b> -- Luxshare's own annual report.</p>
+        <p><b>Goertek (Shenzhen: 002241):</b> FY2025 revenue RMB 96.6B (-4.4% YoY, AirPods product-cycle gap), net profit RMB 3.9B (+47.9%), ~112,000 employees, ~$11-12B market cap -- an order of magnitude smaller than Luxshare. Goertek is reported as Meta and Pico's core VR contract manufacturer. <b>REAL</b> -- Goertek's own annual report.</p>
+        <p><b>OpenAI angle, in sequence:</b> Sept 2025, The Information reported Luxshare signed on for device assembly and Goertek for components (e.g. speaker modules) -- Luxshare's stock jumped ~10% on the news. <b>REPORTED.</b> By Jan 2026, TrendForce reported OpenAI had <b>shifted the order away from Luxshare to Foxconn</b>, citing supply-chain diversification away from mainland China, with assembly now expected in Vietnam or the US. Luxshare itself downplayed the rumors. Goertek's status wasn't addressed in that follow-up. <b>REPORTED, and still moving</b> -- the safest read is that no manufacturing partner is confirmed by OpenAI, and the reported partner has already changed once.</p>
+      </div></div>
+  </div>
+  <div class="card" style="flex:0 0 auto; height:340px; margin-top:9px">
+    <h3>The capital backdrop a hardware P&amp;L would sit inside</h3>
+    <div class="comm scrollbox">
+      <p>Altman: OpenAI has "~<b>$1.4 trillion</b>" in infrastructure commitments "over the next 8 years" (X post, Nov 6, 2025). <b>REAL</b> statement, but his own rounded estimate, not an audited disclosure. By Feb 2026, CNBC reported OpenAI had privately reset investor expectations toward <b>~$600B through 2030</b> after the $1.4T figure drew scrutiny -- <b>REPORTED</b>. The two aren't strictly contradictory (different end years), but the walk-back itself, within three months, is the more telling data point.</p>
+      <p><b>Named deals</b> (amount / REAL if company-confirmed, REPORTED if press-estimated): Stargate (Oracle/SoftBank/MGX) <b>$500B</b>, REAL, OpenAI's own blog. Microsoft +$250B in Azure purchases alongside a 27% OpenAI Group PBC equity stake (~$135B), REAL, joint press release. Oracle's own earnings disclosed <b>$317B</b> in new bookings largely attributed to OpenAI -- REAL (Oracle's own disclosure). Nvidia's LOI for up to $100B was downgraded by Nvidia's own Nov 2025 earnings call to "an opportunity to invest," reportedly stalled by early 2026. AMD (~6GW, warrant for up to 160M AMD shares) and Broadcom (10GW custom accelerators) partnerships are REAL; their dollar values are not disclosed -- Broadcom's CEO cited $10B on an earnings call, while one aggregator's unverified $350B figure could not be corroborated anywhere else and should be treated as unreliable.</p>
+      <p><b>Revenue and losses:</b> $20B+ ARR by end of 2025 (REAL, CFO Friar's own blog), compute scaling 0.2GW (2023) → 0.6GW (2024) → ~1.9GW (2025). FY2025 net loss has been reported as anywhere from <b>$21B to $38.5B</b> across outlets, with no audited public filing to settle it (OpenAI is private) -- the spread itself, not any single number, is the honest takeaway. Projected cumulative cash burn through 2029 has been reported at ~$115B.</p>
+      <p><b>So what, for a hardware finance model:</b> CFO Sarah Friar has framed the device as the "next interface" -- a demand/interaction-layer play, not yet a disclosed revenue line. Hardware is currently reported as compute-constrained by the much larger training/inference buildout -- i.e. <b>the hardware business is a claimant on compute capacity right now, not a funder of it</b>, which is the opposite of how a typical hardware P&amp;L would want to sit inside a capital plan.</p>
+    </div>
   </div>`;
 }
 
