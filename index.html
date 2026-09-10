@@ -1004,6 +1004,7 @@ footer{
 let D = null; // loaded from data.json at startup, see loadData() below
 let COMPANY_DATA = null;
 let PUBLIC_CONTEXT = {companies:{},macro:{}};
+let ENV_CONTEXT = {companies:{}};
 let companySlug = "apple";
 const SLOT=["--s1","--s2","--s3","--s4","--s5"];
 
@@ -3847,10 +3848,14 @@ async function loadData(){
     const contextPromise=fetch("./company-context.json")
       .then(response=>response.ok?response.json():Promise.reject(new Error("Public context unavailable")))
       .catch(()=>({companies:{},macro:{}}));
-    const [dataResponse,companyResponse,publicContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise]);
+    const envContextPromise=fetch("./environment-context.json")
+      .then(response=>response.ok?response.json():Promise.reject(new Error("Environment context unavailable")))
+      .catch(()=>({companies:{}}));
+    const [dataResponse,companyResponse,publicContext,envContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise,envContextPromise]);
     D = await dataResponse.json();
     COMPANY_DATA = await companyResponse.json();
     PUBLIC_CONTEXT = publicContext;
+    ENV_CONTEXT = envContext;
   }catch(e){
     document.getElementById("main").innerHTML =
       '<p style="padding:40px;color:var(--muted)">Couldn\'t load data.json. This dashboard needs to be served over http(s) (not opened as a bare file://), and data.json must sit next to index.html.</p>';

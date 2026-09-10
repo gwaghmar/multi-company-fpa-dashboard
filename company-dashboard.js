@@ -609,21 +609,68 @@ function renderPeerOutlook(v){
   chartTable(document.getElementById("peerOutlookRevenue"),"bar",{labels:periods.map(companyChartLabel),values:periods.map(period=>period.metrics.revenue),active:latest,fmt:B});
 }
 
+// ENV_ORDER / envMetricLabel / envValueText: shared between the peer Environment tab renderer and
+// its CSV export, so the tile list and the CSV rows can never drift out of sync with each other.
+const ENV_ORDER=["scope1","scope2MarketBased","scope2LocationBased","scope3","scope3Category1","scope3Category6",
+  "totalFootprint","totalFootprintLocationBased","scope3ShareOfTotal","renewableEnergyPct"];
+function envMetricLabel(key){
+  return {
+    scope1:"Scope 1 (direct)", scope2MarketBased:"Scope 2 (market-based)", scope2LocationBased:"Scope 2 (location-based)",
+    scope3:"Scope 3 (value chain)", scope3Category1:"Scope 3 – Purchased goods & services", scope3Category6:"Scope 3 – Business travel",
+    totalFootprint:"Total footprint", totalFootprintLocationBased:"Total footprint (location-based)",
+    scope3ShareOfTotal:"Scope 3 share of total", renewableEnergyPct:"Renewable / carbon-free energy"
+  }[key]||key;
+}
+function envValueText(field){
+  if(field.unit==="%") return pct(field.value,1);
+  const v=field.value;
+  return (Math.abs(v)>=1e6?(v/1e6).toFixed(2)+"M":v.toLocaleString("en-US"))+UNIT_TCO2E;
+}
+
 function renderPeerEnvironment(v){
   const company=selectedCompany(), latest=selectedCompanyIndexes().slice(-1)[0];
-  v.innerHTML=`${companyHeader(`${company.name} environment`,`${qLabel(latest)} · source availability`,{download:false})}
-    ${companyContextNote("Environmental figures require a separately governed sustainability-report source. They are not part of the standardized SEC financial dataset.")}
-    ${sowhat(`${company.name} environmental metrics are not available in this dashboard's current standardized source. No carbon, Scope 1–3, or target figure is being inferred.`)}
-    <div class="tiles">
-      ${tile("Scope 1","n/a","sustainability source not connected")}
-      ${tile("Scope 2","n/a","sustainability source not connected")}
-      ${tile("Scope 3","n/a","sustainability source not connected")}
-      ${tile("Reduction target","n/a","sustainability source not connected")}
+  const env=(ENV_CONTEXT.companies||{})[companySlug];
+  if(!env){
+    v.innerHTML=`${companyHeader(`${company.name} environment`,`${qLabel(latest)} · source availability`,{download:false})}
+      ${companyContextNote("Environmental figures require a separately governed sustainability-report source. They are not part of the standardized SEC financial dataset.")}
+      ${sowhat(`${company.name} environmental metrics are not available in this dashboard's current standardized source. No carbon, Scope 1–3, or target figure is being inferred.`)}
+      <div class="tiles">
+        ${tile("Scope 1","n/a","sustainability source not connected")}
+        ${tile("Scope 2","n/a","sustainability source not connected")}
+        ${tile("Scope 3","n/a","sustainability source not connected")}
+        ${tile("Reduction target","n/a","sustainability source not connected")}
+      </div>
+      <div class="body g2" style="height:44%">
+        ${companyUnavailable("What is needed","A company-specific sustainability report, publication date, reporting boundary, units, and calculation methodology must be ingested and cited before this tab can display figures.")}
+        ${companyUnavailable("What Ask AI can do","Ask AI can explain why the data is unavailable and summarize the connected SEC financial evidence. It cannot fill this tab with unsourced environmental estimates.")}
+      </div>`;
+    return;
+  }
+  const tilesHTML=ENV_ORDER.filter(k=>env[k]).map(k=>{
+    const f=env[k];
+    const detail=[f.basis,f.note||(f.dominantCategory?`largest: ${f.dominantCategory}${f.dominantCategoryShare?` (${f.dominantCategoryShare}%)`:""}`:"")].filter(Boolean).join(" · ");
+    return tile(envMetricLabel(k),envValueText(f),detail);
+  }).join("");
+  v.innerHTML=`${companyHeader(`${company.name} environment`,`${env.periodLabel} · company-published sustainability report`)}
+    ${companyContextNote(`Sourced from ${company.name}'s ${env.reportTitle}${env.publishDate?` (published ${env.publishDate})`:""}. Curated by hand -- not part of the automated daily SEC refresh, since sustainability reports are published annually by each company, not continuously. REAL = directly stated by the company; DERIVED = simple arithmetic on REAL figures.`)}
+    <div class="tiles">${tilesHTML}</div>
+    <div class="body g2" style="flex:0 0 auto; height:150px">
+      <div class="card"><h3>Reduction / net-zero target</h3><div class="note">${escapeHtml(env.target?.text||"Not stated in the company's report.")}</div></div>
+      <div class="card"><h3>Source</h3><div class="note"><a href="${escapeHtml(env.reportUrl)}" target="_blank" rel="noopener">${escapeHtml(env.reportTitle)}</a>${env.publishDate?`, published ${escapeHtml(env.publishDate)}`:""}. Covers ${escapeHtml(env.periodLabel)}.</div></div>
     </div>
-    <div class="body g2" style="height:44%">
-      ${companyUnavailable("What is needed","A company-specific sustainability report, publication date, reporting boundary, units, and calculation methodology must be ingested and cited before this tab can display figures.")}
-      ${companyUnavailable("What Ask AI can do","Ask AI can explain why the data is unavailable and summarize the connected SEC financial evidence. It cannot fill this tab with unsourced environmental estimates.")}
-    </div>`;
+    ${env.unavailableNote?`<div class="body" style="flex:0 0 auto; height:150px; grid-template-columns:1fr">${companyUnavailable("What's not shown",env.unavailableNote)}</div>`:""}`;
+}
+function csvPeerEnv(){
+  const company=selectedCompany(), env=(ENV_CONTEXT.companies||{})[companySlug];
+  if(!env) return;
+  const rows=ENV_ORDER.filter(k=>env[k]).map(k=>{
+    const f=env[k];
+    return [company.name,envMetricLabel(k),f.value,f.unit,f.basis,env.periodLabel,env.reportTitle,env.reportUrl];
+  });
+  if(env.target) rows.push([company.name,"Reduction/net-zero target",env.target.text,"",env.target.basis,env.periodLabel,env.reportTitle,env.reportUrl]);
+  downloadCSV(`${companySlug}_environment_${env.periodLabel.replace(/[^A-Za-z0-9]+/g,"_")}.csv`,
+    `Manually curated from ${company.name}'s own official sustainability report. Not part of the automated SEC refresh -- see environment-context.json and DATA_PROVENANCE.md.`,
+    ["company","metric","value","unit","field_basis","period","source_report","source_url"],rows);
 }
 
 var planningState={scenario:"base",revenueGrowth:8,grossMarginDelta:0,opexGrowth:8};
@@ -920,6 +967,7 @@ function peerMetricKeysForTab(tab){
 }
 
 function csvPeerTab(tab){
+  if(tab==="env") return csvPeerEnv();
   const company=selectedCompany(), keys=peerMetricKeysForTab(tab), indexes=selectedCompanyIndexes();
   const rows=indexes.map(index=>{
     const period=companyPeriodAt(index);
