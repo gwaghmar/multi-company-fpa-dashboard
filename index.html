@@ -921,6 +921,29 @@ footer{
   body{display:block;overflow:visible;background:#fff;color:#111}.header,.filterbar,#foot,.ai-drawer,.sel-pill,.report-toolbar,.vhead,.sowhat,.note{display:none!important}main,.view{position:static!important;display:block!important;overflow:visible!important;padding:0!important}.view>*:not(.report-sheet){display:none!important}.report-sheet{display:flex!important;width:100%;margin:0;border:0;box-shadow:none;padding:0;color:#111;background:#fff}.report-sheet *{color:#111!important}.report-sheet a{text-decoration:none}.report-callout,.report-facts div{break-inside:avoid}
 }
 </style>
+<!-- Vercel Web Analytics: visitor/pageview counts, top tabs, referrers, countries, devices.
+     Served automatically at /_vercel/insights/script.js once Web Analytics is switched on for
+     this project (Vercel dashboard -> project -> Analytics tab -> Enable). This is a single-page
+     app, so automatic pageview tracking alone can't tell tabs apart -- go() below fires a manual
+     "tab_view" event {tab, company} on every real navigation so you can see what people are
+     actually looking at, not just that they loaded the page once. -->
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<!-- Microsoft Clarity: free heatmaps, scroll-depth, and session recordings -- shows where people
+     actually stop scrolling/reading and where they rage-click, which pageview counts alone can't.
+     No-ops until you paste a real project ID below (create one free at clarity.microsoft.com,
+     ~2 minutes, no card needed) -- then this activates with no further code changes. -->
+<script>
+(function(){
+  var CLARITY_ID="CLARITY_PROJECT_ID";
+  if(CLARITY_ID==="CLARITY_PROJECT_ID") return;
+  (function(c,l,a,r,i,t,y){
+    c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+    t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+    y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+  })(window,document,"clarity","script",CLARITY_ID);
+})();
+</script>
 </head>
 <body>
 
@@ -3672,6 +3695,7 @@ function go(id){
   }
   syncThemeBtn();
   render();
+  window.va("event",{name:"tab_view",data:{tab:id,company:companySlug}});
 }
 function syncThemeBtn(){
   const btn=document.getElementById("themeBtn");
