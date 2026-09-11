@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-10T14:29:26.062977+00:00",
+  "generatedAt": "2026-09-11T14:28:36.349747+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-09-09",
-      "threeMonth": "3.95",
-      "twoYear": "4.43",
-      "tenYear": "4.83",
-      "thirtyYear": "5.28",
+      "date": "2026-09-10",
+      "threeMonth": "4.00",
+      "twoYear": "4.56",
+      "tenYear": "4.95",
+      "thirtyYear": "5.37",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -16,9 +16,9 @@
     "labor": {
       "status": "connected",
       "cpi": {
-        "period": "2026-07",
-        "index": 333.918,
-        "yearOverYearPct": 3.36
+        "period": "2026-08",
+        "index": 334.98,
+        "yearOverYearPct": 3.4
       },
       "unemployment": {
         "period": "2026-08",
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-09-10",
+      "asOf": "2026-09-11",
       "ratesPerEuro": {
-        "CNY": 7.79,
-        "GBP": 0.85915,
-        "JPY": 179.09,
-        "USD": 1.1616
+        "CNY": 7.7762,
+        "GBP": 0.85815,
+        "JPY": 178.56,
+        "USD": 1.1592
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -1722,6 +1722,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001341439.json",
       "recentFilings": [
         {
+          "form": "8-K",
+          "filed": "2026-09-10",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-20260910.htm"
+        },
+        {
           "form": "10-K",
           "filed": "2026-06-22",
           "description": "10-K",
@@ -1762,20 +1768,14 @@
           "filed": "2026-02-05",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526039344/d63638d8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-02-04",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526037840/d23732d8k.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-10",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
         },
         {
           "title": "Latest 10-K narrative",
@@ -1787,43 +1787,43 @@
       "managementSignals": [
         {
           "category": "Guidance",
-          "text": "Oracle is providing the following forward-looking guidance for Q1 FY 2027.",
+          "text": "Oracle is providing the following forward-looking guidance for Q2 FY 2027.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-10",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
         },
         {
           "category": "Demand and revenue",
-          "text": "\u2022 Record Q4 Total Revenues $19.2 billion, up 21% USD, and up 20% constant currency.",
+          "text": "Oracle Announces Q1 Results Driven by Triple Digit Growth in Cloud Infrastructure Revenues.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-10",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "Improvements in patient care are expected to yield much better patient outcomes, while dramatically lowering the cost of healthcare throughout the world.",
+          "text": "Movements in international currencies relative to the United States dollar during the three months ended August 31, 2026 compared with the corresponding prior year\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-10",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
         },
         {
           "category": "Investment",
-          "text": "Oracle Announces Record Q4 and FY 2026 Results Driven by Cloud Infrastructure & Cloud Applications.",
+          "text": "Oracle Announces Q1 Results Driven by Triple Digit Growth in Cloud Infrastructure Revenues.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-10",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "We use third-party manufacturing partners to produce most of our cloud infrastructure assets and in some cases supply them with components purchased directly from\u2026",
+          "text": "Customer demand for AI Cloud Training and Inferencing Services continues to grow faster than supply.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-06-10",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-ex99_1.htm"
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
         },
         {
           "category": "Workforce",
