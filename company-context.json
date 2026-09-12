@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-11T14:28:36.349747+00:00",
+  "generatedAt": "2026-09-12T13:37:43.510133+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-09-10",
-      "threeMonth": "4.00",
-      "twoYear": "4.56",
-      "tenYear": "4.95",
-      "thirtyYear": "5.37",
+      "date": "2026-09-11",
+      "threeMonth": "4.07",
+      "twoYear": "4.63",
+      "tenYear": "4.96",
+      "thirtyYear": "5.35",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -1722,6 +1722,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001341439.json",
       "recentFilings": [
         {
+          "form": "10-Q",
+          "filed": "2026-09-11",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/orcl-20260831.htm"
+        },
+        {
           "form": "8-K",
           "filed": "2026-09-10",
           "description": "8-K",
@@ -1762,12 +1768,6 @@
           "filed": "2026-03-10",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/orcl-20260310.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-02-05",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526039344/d63638d8k.htm"
         }
       ],
       "documents": [
@@ -1778,10 +1778,10 @@
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
         },
         {
-          "title": "Latest 10-K narrative",
+          "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-06-22",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+          "filed": "2026-09-11",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/orcl-20260831.htm"
         }
       ],
       "managementSignals": [
@@ -1824,14 +1824,6 @@
           "sourceType": "SEC 8-K exhibit",
           "filed": "2026-09-10",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
-        },
-        {
-          "category": "Workforce",
-          "text": "\u2022 Oracle Fusion Cloud Human Capital Management (HCM), which is designed to help organizations find, develop and retain their talent, enable collaboration, provide workforce\u2026",
-          "sourceTitle": "Latest 10-K narrative",
-          "sourceType": "SEC filing narrative",
-          "filed": "2026-06-22",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
         }
       ],
       "annualReport": {
