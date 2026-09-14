@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-13T14:26:38.643819+00:00",
+  "generatedAt": "2026-09-14T16:23:24.900703+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-09-11",
+      "asOf": "2026-09-14",
       "ratesPerEuro": {
-        "CNY": 7.7762,
-        "GBP": 0.85815,
-        "JPY": 178.56,
-        "USD": 1.1592
+        "CNY": 7.7489,
+        "GBP": 0.85598,
+        "JPY": 178.52,
+        "USD": 1.1551
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -1722,6 +1722,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001341439.json",
       "recentFilings": [
         {
+          "form": "8-K",
+          "filed": "2026-09-14",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389753/d20034d8k.htm"
+        },
+        {
           "form": "10-Q",
           "filed": "2026-09-11",
           "description": "10-Q",
@@ -1762,12 +1768,6 @@
           "filed": "2026-03-11",
           "description": "10-Q",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/orcl-20260228.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-03-10",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/orcl-20260310.htm"
         }
       ],
       "documents": [
