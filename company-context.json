@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-14T16:23:24.900703+00:00",
+  "generatedAt": "2026-09-15T15:03:24.262399+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-09-11",
-      "threeMonth": "4.07",
-      "twoYear": "4.63",
-      "tenYear": "4.96",
-      "thirtyYear": "5.35",
+      "date": "2026-09-14",
+      "threeMonth": "4.11",
+      "twoYear": "4.65",
+      "tenYear": "4.97",
+      "thirtyYear": "5.34",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-09-14",
+      "asOf": "2026-09-15",
       "ratesPerEuro": {
-        "CNY": 7.7489,
-        "GBP": 0.85598,
-        "JPY": 178.52,
-        "USD": 1.1551
+        "CNY": 7.7444,
+        "GBP": 0.8558,
+        "JPY": 178.86,
+        "USD": 1.1539
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -871,6 +871,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-09-14",
+          "description": "FORM 8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926107526/tm2624614d5_8k.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-09-09",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000036/amzn-20260908.htm"
@@ -910,12 +916,6 @@
           "filed": "2026-05-22",
           "description": "FORM 8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926065717/tm2614288d1_8k.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-04-30",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000014/amzn-20260331.htm"
         }
       ],
       "documents": [
