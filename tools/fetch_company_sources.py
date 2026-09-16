@@ -37,7 +37,7 @@ CONCEPTS = {
     "costOfRevenue": ["CostOfRevenue", "CostOfGoodsAndServicesSold"],
     "grossProfit": ["GrossProfit"],
     "operatingIncome": ["OperatingIncomeLoss"],
-    "netIncome": ["NetIncomeLossAvailableToCommonStockholdersBasic", "NetIncomeLoss", "ProfitLoss"],
+    "netIncome": ["NetIncomeLoss", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"],
     "rd": ["ResearchAndDevelopmentExpense"],
     "operatingCashFlow": ["NetCashProvidedByUsedInOperatingActivities"],
     "capex": ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets"],
@@ -147,7 +147,32 @@ def instant_value(items: list[dict], period_end: str) -> float | None:
     return value_millions(latest([item for item in items if item["end"] == period_end]))
 
 
+def fiscal_year_end_month(revenue_facts: list[dict]) -> int:
+    """Month in which the issuer's fiscal year ends, taken from its latest filed annual span."""
+    annual = [item for item in revenue_facts if item.get("fp") == "FY" and 330 <= duration(item) <= 380]
+    if not annual:
+        return 12
+    return day(max(annual, key=lambda item: item["end"])["end"]).month
+
+
+def fiscal_label(period_end: str, fy_end_month: int) -> tuple[int, int]:
+    """Return (fiscal year, fiscal quarter) for a period end date.
+
+    Derived from the calendar date and the issuer's fiscal year-end month, NOT from
+    the SEC Company Facts `fy`/`fp` fields. Those fields describe the filing, not the
+    period, and are wrong for some issuers: Oracle's quarter ended 2026-08-31 is
+    tagged fy=2026 although Oracle calls it Q1 FY2027, and Salesforce's 10-K for the
+    year ended 2026-01-31 is tagged fy=2025 although Salesforce calls it FY2026.
+    Convention: the fiscal year is named for the calendar year in which it ends.
+    """
+    end = day(period_end)
+    fy = end.year if end.month <= fy_end_month else end.year + 1
+    quarter = ((end.month - fy_end_month - 1) % 12) // 3 + 1
+    return fy, quarter
+
+
 def build_periods(revenue_facts: list[dict]) -> list[dict]:
+    fy_end_month = fiscal_year_end_month(revenue_facts)
     by_span = defaultdict(list)
     for item in revenue_facts:
         by_span[(item["start"], item["end"])].append(item)
@@ -155,22 +180,26 @@ def build_periods(revenue_facts: list[dict]) -> list[dict]:
     periods = []
     for (start, end), items in by_span.items():
         first = earliest(items)
-        if 70 <= duration(first) <= 110 and first.get("fp") in {"Q1", "Q2", "Q3"}:
+        if 70 <= duration(first) <= 110:
+            fy, quarter = fiscal_label(end, fy_end_month)
+            if quarter == 4:
+                # Issuers do not file a standalone Q4 three-month fact; anything that looks
+                # like one is a comparative artefact, so Q4 is always derived below.
+                continue
             current = latest(items)
             periods.append({
-                "start": start, "end": end, "quarter": int(first["fp"][1]),
-                "fy": int(first["fy"]), "derived": False, "revenueFact": current,
+                "start": start, "end": end, "quarter": quarter,
+                "fy": fy, "derived": False, "revenueFact": current,
                 "fiscalStart": None,
             })
 
     annual_by_span = defaultdict(list)
     for item in revenue_facts:
-        if item.get("fp") == "FY" and 330 <= duration(item) <= 380:
+        if 330 <= duration(item) <= 380:
             annual_by_span[(item["start"], item["end"])].append(item)
 
     for (start, end), items in annual_by_span.items():
-        first = earliest(items)
-        fy = int(first["fy"])
+        fy, _ = fiscal_label(end, fy_end_month)
         q123 = sorted(
             [period for period in periods if period["fy"] == fy and start <= period["start"] and period["end"] < end],
             key=lambda period: period["end"],

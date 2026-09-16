@@ -4,7 +4,7 @@ Single-page public-company finance dashboard with global company switching,
 deterministic calculations, FP&A scenarios, sourced Ask AI, and explicit data
 availability boundaries.
 
-Live: https://apple-dashboard-eta.vercel.app
+Live: https://findashboard.vercel.app
 
 The company selector covers Apple, Alphabet, NVIDIA, Microsoft, Amazon, Meta,
 AMD, Broadcom, Oracle, Salesforce, and Intel. Every company includes seven

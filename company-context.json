@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-16T15:00:20.037410+00:00",
+  "generatedAt": "2026-09-16T19:32:11.214061+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
@@ -128,14 +128,6 @@
           "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
         },
         {
-          "category": "Risk and supply",
-          "text": "More information on these risks and other potential factors that could affect the Company\u2019s business, reputation, results of operations, financial condition, and stock price\u2026",
-          "sourceTitle": "Earnings release exhibit",
-          "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
-        },
-        {
           "category": "Investment",
           "text": "The following tables show the Company\u2019s cash, cash equivalents and marketable securities by significant investment category as of June 27, 2026 and September 27,\u2026",
           "sourceTitle": "Latest 10-Q narrative",
@@ -146,6 +138,14 @@
         {
           "category": "Workforce",
           "text": "Research and development (\u201cR&D\u201d) expense increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
+          "sourceType": "SEC filing narrative",
+          "filed": "2026-07-31",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+        },
+        {
+          "category": "Risk and supply",
+          "text": "The Company may use derivative instruments to partially offset its business exposure to foreign exchange and interest rate risk.",
           "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
           "filed": "2026-07-31",

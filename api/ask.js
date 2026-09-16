@@ -49,7 +49,7 @@ const STOP_WORDS = new Set([
 ]);
 
 const SUM_FIELDS = {
-  is: ["totalRev", "productsRev", "servicesRev", "totalCos", "productsCos", "servicesCos", "grossMargin", "rd", "sga", "totalOpex", "opIncome", "otherIncome", "pretax", "tax", "netIncome"],
+  is: ["totalRev", "totalRevPY", "productsRev", "servicesRev", "totalCos", "productsCos", "servicesCos", "grossMargin", "rd", "sga", "totalOpex", "opIncome", "otherIncome", "pretax", "tax", "netIncome"],
   q: ["revenue", "opIncome"],
   cf: ["opCash", "depAmort", "sbc", "capex", "buybacks", "dividends"],
 };
@@ -202,6 +202,7 @@ function calculateKpi(section, filters) {
   if (section === "is") {
     totals.dilutedEpsFiledForExactSelection = filedDilutedEps(indexes);
     totals.dilutedEpsNote = "Never sum quarterly EPS. Null means Apple did not file EPS for this exact selection.";
+    if (totals.totalRevPY !== undefined) totals.totalRevPYNote = "totalRevPY is total net sales for the same quarters one fiscal year earlier, as filed. Use it for every prior-year revenue comparison instead of recalling a figure.";
     if (totals.totalRev) {
       totals.grossMarginPct = Math.round((1000 * totals.grossMargin) / totals.totalRev) / 10;
       totals.operatingMarginPct = Math.round((1000 * totals.opIncome) / totals.totalRev) / 10;
@@ -301,7 +302,8 @@ function buildDashboardEvidence(question, selectedText, tab, rawFilters) {
 // (in practice) using headings anyway and having the client's markdown renderer fail to render them.
 // Also standardizes the trailing NEXT:: line the client parses into follow-up suggestion chips.
 const STYLE_RULES = [
-  "Lead with the answer, then support it. No filler openers (\"Great question\", \"I'd be happy to help\", \"Certainly!\"), no hedging you don't mean, no em dashes.",
+  "Lead with the answer, then support it. No filler openers (\"Great question\", \"I'd be happy to help\", \"Certainly!\"), no hedging you don't mean, no em dashes or en dashes (write \"Q1 to Q3\" or \"Q1-Q3\" with a plain hyphen).",
+  "Every figure you state must be copied exactly from the evidence as given (same rounding, same units). Never restate, re-round, recompute, or recall a filed number from memory. If a comparison figure is not in the evidence, say it is not in the connected data rather than supplying one.",
   "Plain, direct language, like a sharp analyst briefing a colleague, not a customer-service bot.",
   "Markdown is fine and often better: use ## headings and **bold** for a genuinely multi-part answer, plain paragraphs for a simple one. Don't force structure onto a one-fact answer.",
   "End your reply with one line, exactly: NEXT:: <question 1> | <question 2> | <question 3> -- 2 to 3 short, specific follow-up questions grounded in what you just said, not generic. This line is parsed out and never shown verbatim, so always include it, on its own line, nothing after it.",

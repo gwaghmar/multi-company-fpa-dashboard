@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import handler, { __test } from "./ask.js";
+import handler, { __test } from "../api/ask.js";
 
 const filters = {
   quarterIndexes: [4, 5, 6],

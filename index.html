@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Example Dashboard</title>
+<title>Multi-Company FP&amp;A Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&family=Inter+Tight:wght@500;600;650;700&display=swap" rel="stylesheet">
@@ -949,7 +949,7 @@ footer{
 
 <div class="header">
   <div class="topbar">
-    <div class="brand">Example Dashboard</div>
+    <div class="brand">FP&amp;A Dashboard</div>
     <div class="source-tools">
       <div class="source-picker"><label for="companySelect">Company</label><select id="companySelect" aria-label="Dashboard company"></select></div>
       <button class="reports-btn" id="reportsBtn" type="button" aria-pressed="false">Reports</button>
@@ -986,7 +986,7 @@ footer{
 </aside>
 <button class="sel-pill" id="selPill">✦ Ask AI</button>
 
-<script src="./company-dashboard.js?v=20260910b"></script>
+<script src="./company-dashboard.js?v=20260917"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -1133,7 +1133,9 @@ function barChart(svg,{labels,values,colors,fmt=B,sub=null,onClick=null,active=-
   // "|| 1" guards a company/period whose whole series is 0 (e.g. Intel's suspended dividend) --
   // without it max is 0, every v/max below divides by zero, and the chart silently renders NaN
   // into every SVG coordinate instead of a flat, honest zero baseline.
-  const max=Math.max(...scaleVals,guide&&guide.value!=null?guide.value:0)*1.15 || 1;
+  // null = UNAVAILABLE (e.g. a metric the issuer did not file for that quarter). It must never
+  // be drawn as a $0 bar: exclude it from the scale and render an "n/a" marker at the baseline.
+  const max=Math.max(...scaleVals.filter(v=>v!=null),guide&&guide.value!=null?guide.value:0)*1.15 || 1;
   const Y=v=>T+ih*(1-v/max);
   for(let g=0;g<=3;g++){ const v=max*g/3,y=Y(v);
     el("line",{x1:L,x2:W-R,y1:y,y2:y,stroke:css("--grid"),"stroke-width":1},svg);
@@ -1143,7 +1145,13 @@ function barChart(svg,{labels,values,colors,fmt=B,sub=null,onClick=null,active=-
   const step=iw/nSlots, bw=Math.min(74,step*0.56);
   const guideY = (guide && guide.value!=null) ? Y(guide.value) : null;
   values.forEach((v,i)=>{
-    const x=L+step*i+(step-bw)/2, y=Y(v);
+    const x=L+step*i+(step-bw)/2;
+    if(v==null){
+      el("text",{x:x+bw/2,y:T+ih-6,"text-anchor":"middle",class:"dl",style:"fill:var(--muted);font-weight:500"},svg).textContent="n/a";
+      el("text",{x:x+bw/2,y:H-(sub?22:8),"text-anchor":"middle"},svg).textContent=labels[i];
+      return;
+    }
+    const y=Y(v);
     const c=colors? col(colors[i]) : (active<0||active===i? css("--s1") : css("--axis"));
     const bar=el("rect",{x,y,width:bw,height:Math.max(T+ih-y,1),rx:3,fill:c},svg);
     // A bar shorter than the guide value naturally places its label right where the dashed
@@ -1447,7 +1455,7 @@ function buildChartTableHTML(kind,opts,caption){
     const fmt=opts.fmt||B;
     const hasSub=!!opts.sub;
     return `<table>${cap}<tr><th>Label</th><th>Value</th>${hasSub?"<th>YoY</th>":""}</tr>${
-      opts.labels.map((l,i)=>`<tr><td>${escapeHtml(String(l))}</td><td>${escapeHtml(fmt(opts.values[i]))}</td>${
+      opts.labels.map((l,i)=>`<tr><td>${escapeHtml(String(l))}</td><td>${opts.values[i]==null?"n/a":escapeHtml(fmt(opts.values[i]))}</td>${
         hasSub? `<td>${opts.sub[i]==null?"n/a":sgn(opts.sub[i])+"%"}</td>`:""}</tr>`).join("")
     }${opts.ghost?`<tr><td>${escapeHtml(opts.ghost.label)}</td><td>${escapeHtml(fmt(opts.ghost.value))}</td>${hasSub?"<td>estimate</td>":""}</tr>`:""}</table>`;
   }
@@ -2671,7 +2679,7 @@ function renderGlass(v){
       <h3>Recent activity · real filing events</h3>
       <div class="gfeed">
         <div class="ev"><span class="when">Jul 30 '26</span><span class="what">Q4 guide: revenue ${revG?`+${revG.lo}–${revG.hi}%`:f.revGuide}, GM ~${f.gmGuide}</span><span class="amt" style="color:var(--down)">FX ${isNaN(fxHeadwindNum)?f.fxHeadwind:"−"+fxHeadwindNum+"pt"}</span></div>
-        <div class="ev"><span class="when">Q3 FY26</span><span class="what">Common stock repurchased</span><span class="amt">${B(c.buybackQ3)}</span></div>
+        <div class="ev"><span class="when">Q3 FY26</span><span class="what">Common stock repurchased (10-Q text; cash flow statement shows ${B(D.cf.buybacks[6])} cash paid)</span><span class="amt">${B(c.buybackQ3)}</span></div>
         <div class="ev"><span class="when">Q3 FY26</span><span class="what">Dividend declared per share</span><span class="amt">$${c.dpsQ3.toFixed(2)}</span></div>
         <div class="ev"><span class="when">Apr 30 '26</span><span class="what">New buyback program announced</span><span class="amt" style="color:var(--up)">${B(c.newProgram)}</span></div>
         <div class="ev"><span class="when">Apr 20 '26</span><span class="what">John Ternus named CEO, eff. Sep 1</span><span class="amt">·</span></div>

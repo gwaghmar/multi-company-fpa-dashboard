@@ -108,6 +108,9 @@ BOILERPLATE = [
     "segment reporting (topic 280)",
     "improvements to reportable segment disclosures",
     "included elsewhere in this annual report",
+    "more information on these risks",
+    "other potential factors that could affect",
+    "could affect the company's business, reputation",
 ]
 
 
