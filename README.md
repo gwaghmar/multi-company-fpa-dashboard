@@ -65,18 +65,18 @@ To enable it on any deployment:
 1. In the Vercel project → Settings → Environment Variables, add `ANTHROPIC_API_KEY` with a real Anthropic API key.
 2. Redeploy. Without the key, the UI degrades gracefully with a message telling the visitor it isn't configured yet.
 
-## Running locally / redeploying from your Mac
+## Running locally / deploying
 ```bash
 # from the repo root
-cd applications/apple-demo/dashboard-v2
-
-# serve the files over HTTP so data.json and companies.json can load
 python3 -m http.server 4173
 # then open http://localhost:4173/ (Ask AI still needs the Vercel function)
-
-# to deploy your own copy via Vercel CLI
-npx vercel link   # connect this folder to the existing "apple-dashboard" project
-npx vercel --prod
 ```
+
+Deploys are automatic: the Vercel project `apple-dashboard` is Git-integrated with
+this repository, so every push to `main` builds and promotes to
+https://findashboard.vercel.app (alias: apple-dashboard-eta.vercel.app). There is no
+separate `vercel --prod` step. `.github/workflows/refresh-company-data.yml` reruns the
+SEC fetchers daily, runs `npm test`, and commits refreshed `companies.json` /
+`company-context.json`, which triggers the same deploy.
 
 Opening Claude Code in this repo directory (`claude` in your terminal) gives it full context on this dashboard — you can ask it to keep iterating on layout, data, or the Ask AI logic directly.

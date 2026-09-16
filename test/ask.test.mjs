@@ -297,3 +297,22 @@ test("browser UI is one unified assistant (no manual mode toggle) and sends stru
   assert.match(companyUi, /Open FY/);
   assert.doesNotMatch(html, /selectionPayload/);
 });
+
+test("companies.json periods are contiguous, uniquely labeled fiscal quarters with filed revenue", () => {
+  const companies = JSON.parse(readFileSync(new URL("../companies.json", import.meta.url), "utf8")).companies;
+  const parse = label => { const m = /^Q([1-4]) FY(\d{2})$/.exec(label); assert.ok(m, `bad label ${label}`); return { q: Number(m[1]), fy: Number(m[2]) }; };
+  for (const [slug, company] of Object.entries(companies)) {
+    const labels = company.periods.map(period => period.label);
+    assert.equal(labels.length, 7, `${slug}: expected 7 periods`);
+    assert.equal(new Set(labels).size, 7, `${slug}: duplicate labels ${labels}`);
+    for (let i = 1; i < labels.length; i++) {
+      const prev = parse(labels[i - 1]), next = parse(labels[i]);
+      const expected = prev.q === 4 ? { q: 1, fy: prev.fy + 1 } : { q: prev.q + 1, fy: prev.fy };
+      assert.deepEqual(next, expected, `${slug}: ${labels[i - 1]} -> ${labels[i]} is not the next fiscal quarter`);
+    }
+    for (const period of company.periods) {
+      assert.ok(Number.isFinite(period.metrics.revenue), `${slug} ${period.label}: revenue is null`);
+      assert.ok(period.periodEnd > (company.periods[company.periods.indexOf(period) - 1]?.periodEnd || ""), `${slug}: periodEnd not increasing`);
+    }
+  }
+});

@@ -164,6 +164,11 @@ def fiscal_label(period_end: str, fy_end_month: int) -> tuple[int, int]:
     tagged fy=2026 although Oracle calls it Q1 FY2027, and Salesforce's 10-K for the
     year ended 2026-01-31 is tagged fy=2025 although Salesforce calls it FY2026.
     Convention: the fiscal year is named for the calendar year in which it ends.
+
+    Known edge: 52/53-week issuers whose year-end straddles a month boundary
+    (Broadcom ends on the Sunday nearest Oct 31, so late-October and early-November
+    year-ends both occur) could mislabel a quarter if the window mixes both. Not the
+    case in any current window; the companies.json contiguity test would flag it.
     """
     end = day(period_end)
     fy = end.year if end.month <= fy_end_month else end.year + 1
