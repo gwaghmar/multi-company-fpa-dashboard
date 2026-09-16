@@ -609,7 +609,9 @@ export default async function handler(req, res) {
         try { event = JSON.parse(dataStr); } catch { continue; }
         if (event.type === "content_block_delta" && event.delta?.type === "text_delta") {
           fullText += event.delta.text;
-          writeLine(res, { type: "delta", text: event.delta.text });
+          // House style bans em and en dashes; the model still emits them in headings and ranges,
+          // so normalize deterministically here instead of relying on the prompt alone.
+          writeLine(res, { type: "delta", text: event.delta.text.replace(/\s*[\u2014\u2013]\s*/g, " - ") });
         } else if (event.type === "message_start" && event.message?.usage) {
           usage.input_tokens = event.message.usage.input_tokens ?? usage.input_tokens;
         } else if (event.type === "message_delta" && event.usage) {
