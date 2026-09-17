@@ -59,7 +59,7 @@ be started manually. It rebuilds `companies.json` from official SEC Company Fact
 refreshes `company-context.json` from SEC filings, U.S. Treasury, BLS, and ECB,
 runs the AI evidence tests, commits the verified datasets, and deploys the clean
 repository contents to the existing Vercel project. The repository must contain a
-`VERCEL_TOKEN` Actions secret with deploy access to `apple-dashboard`.
+`VERCEL_TOKEN` Actions secret with deploy access to `findashboard`.
 
 To enable it on any deployment:
 1. In the Vercel project → Settings → Environment Variables, add `ANTHROPIC_API_KEY` with a real Anthropic API key.
@@ -72,7 +72,7 @@ python3 -m http.server 4173
 # then open http://localhost:4173/ (Ask AI still needs the Vercel function)
 ```
 
-Deploys are automatic: the Vercel project `apple-dashboard` is Git-integrated with
+Deploys are automatic: the Vercel project `findashboard` is Git-integrated with
 this repository, so every push to `main` builds and promotes to
 https://findashboard.vercel.app (alias: apple-dashboard-eta.vercel.app). There is no
 separate `vercel --prod` step. `.github/workflows/refresh-company-data.yml` reruns the
