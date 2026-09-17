@@ -29,6 +29,7 @@ function responseRecorder() {
     end() { return this; },
   };
 }
+const SAME_ORIGIN = { origin: "https://findashboard.vercel.app" };
 function findEvent(res, type) { return res.lines.find(line => line.type === type); }
 
 // Builds a fake Anthropic streaming (SSE) response body good enough for reader.read()/getReader()
@@ -101,7 +102,7 @@ test("out-of-scope questions are answered from general knowledge, not rejected l
   let called = false;
   globalThis.fetch = async () => { called = true; return fakeAnthropicStream("Boil water, add pasta."); };
   const res = responseRecorder();
-  await handler({ method: "POST", body: { question: "How do I cook pasta?" } }, res);
+  await handler({ method: "POST", headers: SAME_ORIGIN, body: { question: "How do I cook pasta?" } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   assert.equal(called, true);
@@ -119,7 +120,7 @@ test("questions unrelated to the dashboard send no evidence or filters", async (
     return fakeAnthropicStream("Answer", { input_tokens: 50, output_tokens: 2 });
   };
   const res = responseRecorder();
-  await handler({ method: "POST", body: { question: "How do I cook pasta?", filters } }, res);
+  await handler({ method: "POST", headers: SAME_ORIGIN, body: { question: "How do I cook pasta?", filters } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   assert.equal(requestBody.max_tokens, 620);
@@ -144,7 +145,7 @@ test("company mode sends only the selected SEC company source", async () => {
     return fakeAnthropicStream("Answer");
   };
   const res = responseRecorder();
-  await handler({ method: "POST", body: { tab: "company", company: "alphabet", question: "Summarize the latest quarter." } }, res);
+  await handler({ method: "POST", headers: SAME_ORIGIN, body: { tab: "company", company: "alphabet", question: "Summarize the latest quarter." } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   if (priorWorkspace === undefined) delete process.env.ANTHROPIC_WORKSPACE_ID; else process.env.ANTHROPIC_WORKSPACE_ID = priorWorkspace;
@@ -164,7 +165,7 @@ test("selected peer company follows every dashboard tab into AI evidence", async
     return fakeAnthropicStream("Answer");
   };
   const res = responseRecorder();
-  await handler({ method: "POST", body: { tab: "revenue", company: "nvidia", filters: { quarterIndexes: [5, 6] }, question: "Summarize selected revenue." } }, res);
+  await handler({ method: "POST", headers: SAME_ORIGIN, body: { tab: "revenue", company: "nvidia", filters: { quarterIndexes: [5, 6] }, question: "Summarize selected revenue." } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   assert.equal(findEvent(res, "done").meta.route, "company_source");
@@ -212,7 +213,7 @@ test("planning AI receives the visible modeled scenario and labels it modeled", 
     return fakeAnthropicStream("Answer");
   };
   const res = responseRecorder();
-  await handler({ method: "POST", body: { tab: "plan", company: "apple", filters: { quarterIndexes: [4, 5, 6], scenario: { scenario: "downside", revenueGrowth: 0, grossMarginDelta: -2, opexGrowth: 5, decision: { initialInvestment: 1000, annualBenefit: 400, annualRunCost: 100, years: 5, discountRate: 10 } } }, question: "Explain this scenario and investment case." } }, res);
+  await handler({ method: "POST", headers: SAME_ORIGIN, body: { tab: "plan", company: "apple", filters: { quarterIndexes: [4, 5, 6], scenario: { scenario: "downside", revenueGrowth: 0, grossMarginDelta: -2, opexGrowth: 5, decision: { initialInvestment: 1000, annualBenefit: 400, annualRunCost: 100, years: 5, discountRate: 10 } } }, question: "Explain this scenario and investment case." } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   assert.equal(findEvent(res, "done").meta.route, "company_source");
@@ -237,7 +238,7 @@ test("standardized reports use selected company evidence, including Apple", asyn
     return fakeAnthropicStream("Answer");
   };
   const res = responseRecorder();
-  await handler({ method: "POST", body: { tab: "reports", company: "apple", filters: { quarterIndexes: [4, 5, 6] }, question: "Draft the FP&A performance report." } }, res);
+  await handler({ method: "POST", headers: SAME_ORIGIN, body: { tab: "reports", company: "apple", filters: { quarterIndexes: [4, 5, 6] }, question: "Draft the FP&A performance report." } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   assert.equal(findEvent(res, "done").meta.route, "company_source");
@@ -315,4 +316,23 @@ test("companies.json periods are contiguous, uniquely labeled fiscal quarters wi
       assert.ok(period.periodEnd > (company.periods[company.periods.indexOf(period) - 1]?.periodEnd || ""), `${slug}: periodEnd not increasing`);
     }
   }
+});
+
+test("handler rejects calls that do not come from this app's own pages", async () => {
+  for (const headers of [undefined, {}, { origin: "https://evil.example" }, { referer: "https://findashboard.vercel.app.evil.example/" }]) {
+    const res = responseRecorder();
+    await handler({ method: "POST", headers, body: { question: "hi" } }, res);
+    assert.equal(res.code, 403);
+  }
+  const preview = responseRecorder();
+  await handler({ method: "POST", headers: { origin: "https://apple-dashboard-abc123-govindwaghmare93-3021s-projects.vercel.app" }, body: {} }, preview);
+  assert.equal(preview.code, 400); // passed the origin guard, stopped at missing_question
+});
+
+test("handler rate limits a single IP", async () => {
+  const headers = { ...SAME_ORIGIN, "x-vercel-forwarded-for": "203.0.113.9" };
+  let last;
+  for (let i = 0; i < 21; i += 1) { last = responseRecorder(); await handler({ method: "POST", headers, body: {} }, last); }
+  assert.equal(last.code, 429);
+  assert.equal(last.headers["Retry-After"], "60");
 });

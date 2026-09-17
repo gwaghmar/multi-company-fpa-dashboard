@@ -514,11 +514,40 @@ export const __test = { buildDashboardEvidence, companyEvidence, companySystemPr
 // consumer (this app's own client) and no need for SSE's reconnect/event-id machinery.
 function writeLine(res, obj) { res.write(JSON.stringify(obj) + "\n"); }
 
+// Abuse guards: this endpoint spends the Anthropic key, so only this app's own pages may call it
+// (production domains, this project's preview deployments, localhost) and each IP gets a small
+// budget. The bucket map is per serverless instance -- a speed bump, not a hard quota.
+const ALLOWED_HOSTS = new Set(["findashboard.vercel.app", "apple-dashboard-eta.vercel.app", "localhost", "127.0.0.1"]);
+const PREVIEW_HOST = /^apple-dashboard-[a-z0-9-]+-govindwaghmare93-3021s-projects\.vercel\.app$/;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_MAX = 20;
+const rateBuckets = new Map();
+
+function allowedOrigin(req) {
+  const source = req.headers?.origin || req.headers?.referer;
+  if (!source) return false;
+  try {
+    const { hostname } = new URL(source);
+    return ALLOWED_HOSTS.has(hostname) || PREVIEW_HOST.test(hostname);
+  } catch { return false; }
+}
+
+function withinLimit(req) {
+  const ip = String(req.headers?.["x-vercel-forwarded-for"] || req.headers?.["x-real-ip"] || "unknown").split(",")[0].trim();
+  const now = Date.now();
+  if (rateBuckets.size > 5000) for (const [key, bucket] of rateBuckets) if (bucket.resetAt < now) rateBuckets.delete(key);
+  const current = rateBuckets.get(ip);
+  if (!current || current.resetAt < now) { rateBuckets.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS }); return true; }
+  if (current.count >= RATE_MAX) return false;
+  current.count += 1;
+  return true;
+}
+
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") { res.status(204).end(); return; }
   if (req.method !== "POST") { res.status(405).json({ error: "method_not_allowed" }); return; }
+  if (!allowedOrigin(req)) { res.status(403).json({ error: "forbidden" }); return; }
+  if (!withinLimit(req)) { res.setHeader("Retry-After", "60"); res.status(429).json({ error: "rate_limited" }); return; }
 
   const { question: rawQuestion, selectedText: rawSelectedText, tab, filters } = req.body || {};
   const question = cleanText(rawQuestion);
