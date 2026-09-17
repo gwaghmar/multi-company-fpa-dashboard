@@ -518,7 +518,7 @@ function writeLine(res, obj) { res.write(JSON.stringify(obj) + "\n"); }
 // (production domains, this project's preview deployments, localhost) and each IP gets a small
 // budget. The bucket map is per serverless instance -- a speed bump, not a hard quota.
 const ALLOWED_HOSTS = new Set(["findashboard.vercel.app", "apple-dashboard-eta.vercel.app", "localhost", "127.0.0.1"]);
-const PREVIEW_HOST = /^apple-dashboard-[a-z0-9-]+-govindwaghmare93-3021s-projects\.vercel\.app$/;
+const PREVIEW_HOST = /^(?:findashboard|apple-dashboard)-[a-z0-9-]+-govindwaghmare93-3021s-projects\.vercel\.app$/;
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_MAX = 20;
 const rateBuckets = new Map();

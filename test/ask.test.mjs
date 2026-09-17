@@ -327,6 +327,9 @@ test("handler rejects calls that do not come from this app's own pages", async (
   const preview = responseRecorder();
   await handler({ method: "POST", headers: { origin: "https://apple-dashboard-abc123-govindwaghmare93-3021s-projects.vercel.app" }, body: {} }, preview);
   assert.equal(preview.code, 400); // passed the origin guard, stopped at missing_question
+  const renamed = responseRecorder();
+  await handler({ method: "POST", headers: { origin: "https://findashboard-abc123-govindwaghmare93-3021s-projects.vercel.app" }, body: {} }, renamed);
+  assert.equal(renamed.code, 400);
 });
 
 test("handler rate limits a single IP", async () => {
