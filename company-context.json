@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-09-28T18:10:58.714014+00:00",
+  "generatedAt": "2026-09-29T16:32:06.699275+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-09-25",
-      "threeMonth": "4.24",
-      "twoYear": "4.81",
-      "tenYear": "5.17",
-      "thirtyYear": "5.49",
+      "date": "2026-09-28",
+      "threeMonth": "4.28",
+      "twoYear": "4.92",
+      "tenYear": "5.24",
+      "thirtyYear": "5.56",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-09-28",
+      "asOf": "2026-09-29",
       "ratesPerEuro": {
-        "CNY": 7.6352,
-        "GBP": 0.85785,
-        "JPY": 178.5,
-        "USD": 1.1378
+        "CNY": 7.6117,
+        "GBP": 0.85718,
+        "JPY": 178.41,
+        "USD": 1.1355
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -1297,6 +1297,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-09-28",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000182/amd-20260926.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-08-19",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000163/amd-20260817.htm"
@@ -1336,12 +1342,6 @@
           "filed": "2026-05-06",
           "description": "10-Q",
           "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000076/amd-20260328.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-05",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000072/amd-20260505.htm"
         }
       ],
       "documents": [
