@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-09T17:01:02.786052+00:00",
+  "generatedAt": "2026-10-10T15:53:12.953676+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-08",
-      "threeMonth": "4.23",
-      "twoYear": "4.75",
-      "tenYear": "5.22",
+      "date": "2026-10-09",
+      "threeMonth": "4.25",
+      "twoYear": "4.80",
+      "tenYear": "5.24",
       "thirtyYear": "5.60",
       "unit": "%",
       "source": "U.S. Treasury",
