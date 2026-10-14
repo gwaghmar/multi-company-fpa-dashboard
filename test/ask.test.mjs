@@ -247,14 +247,96 @@ test("standardized reports use selected company evidence, including Apple", asyn
   assert.match(requestBody.system, /fiscalYtdMetrics/);
 });
 
+test("company AI evidence carries filed fiscal YTD values only for a true fiscal YTD selection", () => {
+  // Window-independent on purpose: the daily refresh slides the seven-quarter window, so this
+  // test finds its periods by label instead of assuming which quarter sits at which index.
+  const companies = JSON.parse(readFileSync(new URL("../companies.json", import.meta.url), "utf8")).companies;
+  const quarterOf = label => Number(label[1]);
+  const yearOf = label => label.slice(3);
+  let checkedSingleQuarter = 0, checkedYtd = 0;
+  for (const [slug, company] of Object.entries(companies)) {
+    const periods = company.periods;
+    const labels = periods.map(period => period.label);
+
+    // No selection at all means every period: never a fiscal YTD span.
+    const everything = __test.companyEvidence(slug, {}, "revenue");
+    assert.equal(everything.periods.length, periods.length);
+    assert.equal(everything.context.selectionIsFiscalYtd, false);
+    assert.ok(everything.periods.every(period => period.fiscalYtdMetrics === null));
+
+    periods.forEach((period, index) => {
+      // A single quarter is fiscal YTD only when it is fiscal Q1.
+      const single = __test.companyEvidence(slug, { quarterIndexes: [index] }, "revenue");
+      const isQ1 = quarterOf(period.label) === 1;
+      assert.equal(single.context.selectionIsFiscalYtd, isQ1, `${slug} ${period.label}`);
+      assert.equal(single.periods[0].metrics.revenue, period.metrics.revenue);
+      const prompt = __test.companySystemPrompt(single);
+      if (isQ1) {
+        assert.deepEqual(single.periods[0].fiscalYtdMetrics, period.fiscalYtdMetrics);
+        assert.match(prompt, /prefer the exact filed span values/);
+      } else {
+        assert.equal(single.periods[0].fiscalYtdMetrics, null, `${slug} ${period.label} leaked fiscal YTD values`);
+        assert.match(prompt, /selectionIsFiscalYtd is false/);
+        assert.doesNotMatch(prompt, /prefer the exact filed span values/);
+        const ytdRevenue = period.fiscalYtdMetrics.revenue;
+        if (ytdRevenue !== null && ytdRevenue !== period.metrics.revenue) {
+          // The Alphabet Q4 FY24 case: 96,469 for the quarter, not the full-year 350,018.
+          assert.ok(ytdRevenue > period.metrics.revenue);
+          assert.equal(prompt.includes(`"revenue":${ytdRevenue}`), false, `${slug} ${period.label} sent the YTD revenue for a single quarter`);
+          assert.ok(prompt.includes(`"revenue":${period.metrics.revenue}`));
+          checkedSingleQuarter += 1;
+        }
+      }
+
+      // Fiscal Q1..Qn of this period's fiscal year, when all of them are in the window.
+      const sameYear = labels.map((label, i) => ({ label, i })).filter(item => yearOf(item.label) === yearOf(period.label) && quarterOf(item.label) <= quarterOf(period.label));
+      if (sameYear.length === quarterOf(period.label) && sameYear.length > 1) {
+        const indexes = sameYear.map(item => item.i);
+        for (const quarterIndexes of [indexes, [...indexes].reverse()]) {
+          const ytd = __test.companyEvidence(slug, { quarterIndexes }, "revenue");
+          assert.equal(ytd.context.selectionIsFiscalYtd, true, `${slug} ${sameYear.map(item => item.label)}`);
+          for (const selected of ytd.periods) {
+            if (selected.label === period.label) assert.deepEqual(selected.fiscalYtdMetrics, period.fiscalYtdMetrics);
+            else assert.equal(selected.fiscalYtdMetrics, null);
+          }
+          assert.match(__test.companySystemPrompt(ytd), /prefer the exact filed span values/);
+        }
+        // Dropping fiscal Q1 (the selection no longer starts the fiscal year) is not YTD.
+        const withoutQ1 = __test.companyEvidence(slug, { quarterIndexes: indexes.slice(1) }, "revenue");
+        assert.equal(withoutQ1.context.selectionIsFiscalYtd, false);
+        assert.ok(withoutQ1.periods.every(selected => selected.fiscalYtdMetrics === null));
+        // Adding the quarter before fiscal Q1 crosses a fiscal year: not YTD.
+        if (indexes[0] > 0) {
+          const crossYear = __test.companyEvidence(slug, { quarterIndexes: [indexes[0] - 1, ...indexes] }, "revenue");
+          assert.equal(crossYear.context.selectionIsFiscalYtd, false);
+          assert.ok(crossYear.periods.every(selected => selected.fiscalYtdMetrics === null));
+        }
+        // A gap (Q1 and Q3 without Q2) is not YTD.
+        if (indexes.length >= 3) {
+          const gap = __test.companyEvidence(slug, { quarterIndexes: [indexes[0], indexes[2]] }, "revenue");
+          assert.equal(gap.context.selectionIsFiscalYtd, false);
+          assert.ok(gap.periods.every(selected => selected.fiscalYtdMetrics === null));
+        }
+        checkedYtd += 1;
+      }
+    });
+    // The filter works on copies: the loaded source data still holds its YTD values.
+    assert.ok(__test.companyEvidence(slug, { quarterIndexes: [0] }, "revenue") && company.periods.every(period => period.fiscalYtdMetrics));
+  }
+  assert.ok(checkedSingleQuarter > 20 && checkedYtd > 10, "the fixture exercised too few cases");
+});
+
 test("NVIDIA exact filed fiscal YTD values reconcile to the six-month filing", () => {
   const companies = JSON.parse(readFileSync(new URL("../companies.json", import.meta.url), "utf8"));
-  const latest = companies.companies.nvidia.periods.at(-1);
-  assert.equal(latest.label, "Q2 FY27");
-  assert.equal(latest.fiscalYtdMetrics.revenue, 177837);
-  assert.equal(latest.fiscalYtdMetrics.netIncome, 118010);
-  assert.equal(latest.fiscalYtdMetrics.grossProfit, 133299);
-  assert.equal(latest.fiscalYtdMetrics.operatingIncome, 117270);
+  // The window slides with the daily refresh, so the label comes from the data: NVIDIA's latest second
+  // fiscal quarter. The filed six-month values below belong to Q2 FY27; a newer Q2 needs its own entry.
+  const latest = companies.companies.nvidia.periods.filter(period => period.label.startsWith("Q2 ")).at(-1);
+  assert.ok(latest, "no second-quarter period in the NVIDIA window");
+  const filed = {
+    "Q2 FY27": { revenue: 177837, netIncome: 118010, grossProfit: 133299, operatingIncome: 117270 }
+  };
+  assert.ok(filed[latest.label], `add the filed six-month values for ${latest.label}`);
+  for (const [metric, value] of Object.entries(filed[latest.label])) assert.equal(latest.fiscalYtdMetrics[metric], value, metric);
 });
 
 test("official public context is auditable and bounded", () => {

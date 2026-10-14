@@ -230,6 +230,112 @@ liabilities, and debt where a comparable US-GAAP fact is filed. Every period car
 the filing form, filing date, accession, and SEC source URL. Derived values are
 listed in each period's `derivedMetrics` array.
 
+### Rules `tools/fetch_company_sources.py` applies (set 2026-10-13)
+
+**1. One XBRL tag per metric per company.** Each metric has a short list of
+candidate US-GAAP tags. The candidates are never pooled. For each company the
+script picks the one tag that carries the filed fiscal year-to-date series (the
+tag with a filed fiscal-year-start to period-end fact for the most periods in the
+seven-quarter window; ties go to the first tag in the list). Every quarter, every
+`fiscalYtdMetrics` value, and every Q4 derivation for that metric then uses that
+tag only. The chosen tag for every metric is written to `metricTags` on each
+company in `companies.json`. Why: sibling tags are different numbers. Meta files
+both `DepreciationDepletionAndAmortization` (cash-flow statement) and `Depreciation`
+(a rounded note figure); Alphabet and Meta file both `ShareBasedCompensation`
+(cash-flow statement) and a rounded `AllocatedShareBasedCompensationExpense`.
+Mixing them inside one series produced quarters that did not add up to the filed
+annual figure.
+
+A tag that is filed only for full fiscal years (no first-quarter, six-month, or
+nine-month fact in the window) does not carry the series and is not used. The
+metric is then null for that company in both `metrics` and `fiscalYtdMetrics`.
+Example: AMD files `Depreciation` once a year (PP&E depreciation only, 521 for
+FY25), so AMD `depreciationAmortization` is null, not a partial figure.
+
+**2. As originally filed.** When the same fact was filed more than once (a later
+10-Q or 10-K repeats or restates a prior period in its comparative column), the
+earliest filing wins. This applies to the whole file: quarters, YTD values, and
+balance-sheet values. Why: a cash-flow quarter is a subtraction of two YTD facts,
+and both ends must come from the same vintage. Alphabet restated its six-month
+2025 repurchases from 28,706 to 28,306 in the 10-Q filed 2026-07-23, but no
+restated nine-month figure exists yet, so "latest restated" cannot be applied to
+both ends. As originally filed gives Q2 FY25 13,638 and Q3 FY25 11,504, which sum
+with Q1 to the originally filed nine-month 40,210. Side effects to know about:
+
+- A prior period that an issuer later reclassified keeps its original value. AMD's
+  accounts payable at 2024-12-28 is 1,990 as filed in the FY24 10-K; the FY25 10-K
+  re-presents it as 2,466. AMD FY24 SG&A is 2,783 as filed (later 2,735).
+- When an issuer renames a tag, the older periods under the new tag exist only in
+  later comparative columns, so the earliest filing of the chosen tag is used.
+  Alphabet moved revenue from `RevenueFromContractWithCustomerExcludingAssessedTax`
+  to `Revenues` in its Q2 2025 10-Q. The values are identical in both tags.
+
+**3. How a quarter is built.**
+
+- Income-statement metrics (revenue, cost of revenue, gross profit, operating
+  income, net income, R&D, SG&A, interest expense, income tax): the filed
+  three-month fact. Fallback: the difference between two filed fiscal YTD facts.
+- Cash-flow metrics (operating cash flow, capex, repurchases, dividends,
+  share-based compensation, depreciation and amortization, acquisitions): the
+  difference between consecutive filed fiscal YTD facts, because the cash-flow
+  statement is filed cumulatively. A three-month cash-flow fact is used only when
+  no YTD pair exists, because such facts are often rounded narrative figures
+  (NVIDIA tagged a rounded 6,000 for Q2 FY27 dividends; the statement difference is
+  6,290 minus 243 = 6,047). Cash-flow quarters therefore always sum exactly to the
+  filed YTD value.
+- Fiscal Q4 is never filed on its own. It is the filed annual fact minus the
+  first three quarters (income statement) or minus the filed nine-month fact (cash
+  flow). It is listed in `derivedMetrics`.
+- Gross profit is revenue minus cost of revenue when the issuer files no
+  `GrossProfit` tag. Free cash flow is operating cash flow minus capex.
+
+**4. Debt is balance-sheet carrying value.** `totalDebt` = `debtCurrent` +
+`debtNoncurrent`, each read at the period end:
+
+- `debtCurrent` = `DebtCurrent` when filed. Otherwise the sum of the filed current
+  pieces: `LongTermDebtCurrent`, `CommercialPaper`, `ShortTermBorrowings`,
+  `NotesPayableCurrent`. The pieces are never added to `DebtCurrent`, which already
+  contains them. Two pieces with the identical filed amount are one balance-sheet
+  line tagged twice and count once (AMD tagged its 874 current portion as both
+  `LongTermDebtCurrent` and `ShortTermBorrowings` in the FY25 10-K; the balance
+  sheet has one line).
+- `debtNoncurrent` = the first filed of `LongTermDebtNoncurrent`,
+  `LongTermDebtAndCapitalLeaseObligations`, `LongTermNotesPayable`,
+  `LongTermNotesAndLoans`. These are alternative names for one line, never added.
+- If the noncurrent piece is not filed, `totalDebt` is null. A current-only figure
+  is never shown as total debt. If no current tag is filed, the issuer reported no
+  current debt line and `totalDebt` equals the noncurrent piece (Meta; NVIDIA and
+  AMD in some quarters).
+- `LongTermDebt` and `DebtLongtermAndShorttermCombinedAmount` are NOT used. They are
+  note-table figures and are often principal or rounded, not carrying value: Apple's
+  `LongTermDebt` is rounded to the nearest 100 and excludes commercial paper,
+  Amazon's is face value (58,000 against a carrying 57,791 at 2024-12-31), and
+  Broadcom's combined amount is principal (68,757 against carrying 66,579 at
+  2025-02-02). Where the combined amount is carrying value it matches the sum
+  exactly (Oracle 92,568 and 129,541 at its fiscal year ends; AMD except the
+  quarter with commercial paper).
+- Finance-lease liabilities are not included, except where an issuer's own
+  balance-sheet debt line includes them (Broadcom).
+
+**5. Source attribution.** Each period's `source` is the filing that first reported
+that period: the 10-Q for the quarter, or the 10-K for a fiscal Q4. A later filing
+that repeats the period as a comparative column is never cited. `source.filed` and
+`source.firstFiled` hold the same date.
+
+**Known limits.**
+
+- Alphabet, Microsoft, Broadcom, Oracle, and Intel file no single total D&A tag.
+  Their `depreciationAmortization` is the `Depreciation` tag from the cash-flow
+  statement and excludes amortization of intangibles (large for Broadcom).
+  `metricTags` shows which tag was used.
+- Alphabet moved dividends from `PaymentsOfDividends` to
+  `PaymentsOfOrdinaryDividends` in its Q2 2026 10-Q. Under the one-tag rule Q2 FY26
+  dividends are null until the new tag carries the series.
+- Fiscal YTD values in `fiscalYtdMetrics` are valid only for a selection that is
+  exactly fiscal quarters 1 to n of one fiscal year. `api/ask.js` nulls them for any
+  other selection so a single quarter is never answered with a YTD or full-year
+  figure.
+
 The selected company is global application state. It controls the fiscal-quarter
 labels, period presets, every tab, CSV output, source note, Ask AI suggestions, and
 the evidence sent to Dashboard AI. Period defaults are semantic: current fiscal YTD

@@ -358,13 +358,37 @@ function investmentIrr(initialInvestment, annualNetBenefit, years) {
   return ((low + high) / 2) * 100;
 }
 
+// A selection is a fiscal year-to-date span only when it is exactly fiscal quarters 1..n of ONE
+// fiscal year, with n being the last selected quarter. Anything else (a single Q3, Q2 to Q4, a
+// span that crosses a fiscal year, a selection with a gap) is not YTD, and the filed YTD figure
+// of its last quarter would overstate it: Alphabet Q4 FY24 alone is 96,469 of revenue, while the
+// fiscalYtdMetrics on that period hold the full-year 350,018.
+function isFiscalYtdSelection(periods) {
+  if (!periods.length) return false;
+  const parsed = periods.map(period => /^Q([1-4]) FY(\d{2})$/.exec(period?.label || ""));
+  if (parsed.some(match => !match)) return false;
+  if (new Set(parsed.map(match => match[2])).size !== 1) return false;
+  const quarters = parsed.map(match => Number(match[1])).sort((a, b) => a - b);
+  return quarters.every((quarter, position) => quarter === position + 1);
+}
+
 function companyEvidence(companySlug, filters = {}, tab = "company") {
   const company = COMPANY_DATA.companies?.[companySlug];
   if (!company) return null;
-  const requestedIndexes = Array.isArray(filters?.quarterIndexes) ? filters.quarterIndexes.filter(Number.isInteger) : [];
-  const selectedPeriods = requestedIndexes.length
-    ? requestedIndexes.map(index => company.periods[index]).filter(Boolean)
+  const requestedIndexes = Array.isArray(filters?.quarterIndexes)
+    ? [...new Set(filters.quarterIndexes.filter(index => Number.isInteger(index) && company.periods[index]))]
+    : [];
+  const sourcePeriods = requestedIndexes.length
+    ? requestedIndexes.map(index => company.periods[index])
     : company.periods;
+  // Filed fiscal YTD values go to the model only for a true fiscal YTD selection, and only on
+  // its last quarter. Everywhere else they are nulled (on copies: COMPANY_DATA is never mutated).
+  const selectionIsFiscalYtd = isFiscalYtdSelection(sourcePeriods);
+  const latestPeriodEnd = sourcePeriods.reduce((latest, period) => (period.periodEnd > latest ? period.periodEnd : latest), "");
+  const selectedPeriods = sourcePeriods.map(period => ({
+    ...period,
+    fiscalYtdMetrics: selectionIsFiscalYtd && period.periodEnd === latestPeriodEnd ? period.fiscalYtdMetrics : null,
+  }));
   const rawScenario = tab === "plan" && filters?.scenario ? filters.scenario : null;
   let planningModel = null;
   let investmentDecisionModel = null;
@@ -422,6 +446,7 @@ function companyEvidence(companySlug, filters = {}, tab = "company") {
     context: {
       tab,
       selectedPeriodLabels: selectedPeriods.map(period => period.label),
+      selectionIsFiscalYtd,
       scenario: rawScenario,
     },
     units: COMPANY_DATA.units,
@@ -496,7 +521,9 @@ function companySystemPrompt(evidence) {
     "evidence.publicContext contains dated official-source excerpts and macro observations. Treat managementSignals as source excerpts, not verified causal explanations. Paraphrase carefully and name the source document and filing date.",
     "evidence.publicContext.annualReport contains tab-scoped excerpts from the latest 10-K. Use them for annual business, strategy, risk, liquidity, workforce, and market-risk context. Name the fiscal year and filing date, and do not treat annual-report context as current-quarter guidance.",
     "Macro observations provide external planning context only. Never present Treasury, BLS, or ECB values as company guidance or as proof of a company-specific cause.",
-    "When fiscalYtdMetrics are present for the latest selected period and the selected periods form that fiscal YTD, prefer those exact filed span values over adding rounded quarter values.",
+    evidence.context?.selectionIsFiscalYtd
+      ? "evidence.context.selectionIsFiscalYtd is true: the selected periods are exactly fiscal quarters 1 to n of one fiscal year. For totals over the whole selection, prefer the exact filed span values in fiscalYtdMetrics on the latest selected period over adding quarter values. For a single quarter, use that period's metrics."
+      : "evidence.context.selectionIsFiscalYtd is false: the selected periods are not a fiscal year-to-date span, so fiscalYtdMetrics is null on every period. Use each period's metrics, and add them when a total over the selection is needed. Never present a fiscal year-to-date or full-year figure as the value of a single quarter.",
     "Respect the active tab and selected periods in evidence.context. If a requested product, geography, guidance, headcount, FX, or environmental fact is absent, say it is unavailable in the connected source.",
     "If evidence.context.scenario is present, treat it as a user-visible modeled FP&A scenario. evidence.planningModel contains the same deterministic model displayed in the UI. Use its basePeriod, actual values, assumptions, and modeledNextQuarter outputs. Always label outputs modeled, and never present them as company guidance, consensus, or an internal budget.",
     "When evidence.investmentDecisionModel is present, use its deterministic NPV, IRR, payback, ROI, and hurdle result. State that it is an illustrative pre-tax unlevered model and identify missing approval inputs such as tax, depreciation, working capital, timing, ownership, and implementation risk.",

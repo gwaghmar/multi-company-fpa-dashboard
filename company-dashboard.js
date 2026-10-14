@@ -87,6 +87,10 @@ function selectedIndexesAreFiscalYtd(indexes){
   const expected=periods.map((period,index)=>({index,parsed:parseCompanyPeriodLabel(period.label)}))
     .filter(item=>item.parsed?.fy===last.fy && item.parsed.quarter<=last.quarter)
     .map(item=>item.index);
+  // Fiscal YTD means exactly fiscal Q1..Qn of one fiscal year, n = the last selected quarter's number.
+  // A window that starts mid-year (its first loaded quarter is not Q1) must never match, or a single
+  // quarter would be replaced by the filed annual/YTD fact.
+  if(expected.length!==last.quarter) return false;
   return sameIndexes(new Set(selected),expected);
 }
 
@@ -163,6 +167,17 @@ function publicContextLink(url,label){
   return url?`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(label)} <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>`:"";
 }
 
+// cleanExcerpt: source excerpts sometimes start with a bare bullet glyph or an opening quote whose
+// closing quote was cut off. Clean that at render time only (the data file is never edited).
+function cleanExcerpt(text){
+  let t=String(text==null?"":text).trim().replace(/^(?:[\s•▪·●◦*]|[-–—]\s)+/,"");
+  const count=(re)=>(t.match(re)||[]).length;
+  if(t[0]==="“" && count(/“/g)>count(/”/g)) t=t.slice(1).trim();
+  else if(t[0]==='"' && count(/"/g)%2===1) t=t.slice(1).trim();
+  if(t.endsWith("”") && count(/”/g)>count(/“/g)) t=t.slice(0,-1).trim();
+  return t;
+}
+
 function managementSignalsHTML(options={}){
   const context=selectedPublicContext();
   const categories=new Set(options.categories||[]);
@@ -171,7 +186,7 @@ function managementSignalsHTML(options={}){
   const links=[...(context?.documents||[]).slice(0,2).map(document=>publicContextLink(document.url,`${document.sourceType} · ${publicContextDate(document.filed)}`)),publicContextLink(context?.irUrl,`${selectedCompany().name} investor relations`)].filter(Boolean);
   return `<section class="evidence-strip" aria-label="Official source context">
     <div class="evidence-strip-head"><div><span class="section-kicker">Official source context</span><h2>${escapeHtml(options.title||"Latest management signals")}</h2></div><span>Source excerpts, not causal conclusions</span></div>
-    <div class="evidence-grid">${signals.map(signal=>`<article class="evidence-signal"><span>${escapeHtml(signal.category)}</span><p>${escapeHtml(signal.text)}</p><small>${publicContextLink(signal.url,`${signal.sourceType} · ${publicContextDate(signal.filed)}`)}</small></article>`).join("")}</div>
+    <div class="evidence-grid">${signals.map(signal=>`<article class="evidence-signal"><span>${escapeHtml(signal.category)}</span><p>${escapeHtml(cleanExcerpt(signal.text))}</p><small>${publicContextLink(signal.url,`${signal.sourceType} · ${publicContextDate(signal.filed)}`)}</small></article>`).join("")}</div>
     <details class="evidence-details"><summary>View evidence</summary><div>${links.join("")}</div></details>
   </section>`;
 }
@@ -239,7 +254,7 @@ function companyDownloadButton(){
 
 function companyHeader(title,subtitle,opts){
   const download=opts?.download!==false;
-  return `<div class="vhead"><h2>${escapeHtml(title)}</h2><span class="sub">${escapeHtml(subtitle||periodSub("$M"))}</span><span class="vhead-right">${companySourceBadge()}${download?companyDownloadButton():""}</span></div>`;
+  return `<div class="vhead"><h2>${escapeHtml(title)}</h2><span class="sub">${escapeHtml(subtitle||periodSub())}</span><span class="vhead-right">${companySourceBadge()}${download?companyDownloadButton():""}</span></div>`;
 }
 
 function companyContextNote(text){
@@ -375,7 +390,7 @@ function companySourceCoverage(){
     ["Guidance and management commentary",commentary?"Connected":"Not available",commentary?"Official SEC-filed earnings materials":"No relevant excerpt found in connected SEC documents",commentary?"connected":"missing"],
     ["Workforce narrative",workforce?"Partial":"Not available",workforce?"Short official-source excerpt; no internal workforce plan":"No comparable workforce excerpt found",workforce?"partial":"missing"],
     ["Sustainability",companySlug==="apple"?"Connected":"Not connected",companySlug==="apple"?"Environmental Progress Report":"Requires a governed sustainability report",companySlug==="apple"?"connected":"missing"],
-    ["Market performance","Not connected","Requires a licensed price and benchmark feed","missing"]
+    ["Market performance","Out of scope","Not included: SEC filings only, no market price feed","scope"]
   ];
 }
 
@@ -467,6 +482,15 @@ function wireCompanyHomeSections(){
   }));
 }
 
+// DERIVED_MARK: the "*" after a derived figure. A real superscript with a tooltip, not the shrunken
+// .unit span that read as a stray dash next to the number.
+const DERIVED_MARK='<sup class="derived-mark" title="Derived from filed annual or YTD facts">*</sup>';
+function hasDerivedValues(keys,indexes){
+  return (indexes||selectedCompanyIndexes()).some(index=>{
+    const period=companyPeriodAt(index);
+    return keys.some(key=>(period.derivedMetrics||[]).includes(key) && period.metrics?.[key]!=null);
+  });
+}
 function companyPeriodTable(metricKeys,indexes){
   const keys=metricKeys||["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"];
   const labels={revenue:"Revenue",grossProfit:"Gross profit",operatingIncome:"Operating income",netIncome:"Net income",rd:"R&D",operatingCashFlow:"Operating cash",capex:"Capex",freeCashFlow:"FCF",cash:"Cash",shortTermInvestments:"Short-term investments",accountsReceivable:"Receivables",accountsPayable:"Payables",currentAssets:"Current assets",currentLiabilities:"Current liabilities",totalAssets:"Total assets",totalLiabilities:"Total liabilities",totalDebt:"Debt",repurchases:"Repurchases",dividends:"Dividends",shareBasedCompensation:"Stock compensation",costOfRevenue:"Cost of revenue",inventory:"Inventory",propertyPlantEquipment:"PP&E"};
@@ -475,10 +499,10 @@ function companyPeriodTable(metricKeys,indexes){
     return `<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.periodEnd)}</td>${keys.map(key=>{
       const value=period.metrics?.[key];
       const derived=(period.derivedMetrics||[]).includes(key);
-      return `<td>${value==null?"n/a":M(value)}${derived?'<span class="unit">*</span>':""}</td>`;
+      return `<td>${value==null?"n/a":M(value)}${derived&&value!=null?DERIVED_MARK:""}</td>`;
     }).join("")}<td><a href="${period.source.url}" target="_blank" rel="noopener">${escapeHtml(period.source.form)}</a></td></tr>`;
   }).join("");
-  return `<div class="scrollbox"><table><tr><th>Period</th><th>End</th>${keys.map(key=>`<th>${escapeHtml(labels[key]||key)}</th>`).join("")}<th>Source</th></tr>${rows}</table></div>`;
+  return `<div class="scrollbox"><table><tr><th>Period · $M</th><th>End</th>${keys.map(key=>`<th>${escapeHtml(labels[key]||key)}</th>`).join("")}<th>Source</th></tr>${rows}</table></div>${hasDerivedValues(keys,indexes)?'<div class="subnote">* derived from filed annual or YTD facts</div>':""}`;
 }
 
 function companyExecutiveOverview(){
@@ -499,25 +523,26 @@ function companyExecutiveOverview(){
     <div class="executive-overview-head"><div><span class="section-kicker">Management pulse</span><h2 id="executiveOverviewHeading">Executive overview</h2></div><span>${escapeHtml(company.ticker)}</span></div>
     <div class="overview-signal-list">${observed.map(([name,value])=>`<div><span>${escapeHtml(name)}</span><strong>${escapeHtml(value)}</strong></div>`).join("")}</div>
     <div class="overview-watch"><span>Watch next</span>${watch.map(item=>`<p>${escapeHtml(item)}</p>`).join("")}</div>
-    <div class="market-context"><span><i class="ph ph-chart-line-up"></i> Market context</span><strong>Not connected</strong><small>Add a licensed stock and benchmark feed before showing return performance.</small></div>
+    <div class="market-context"><span><i class="ph ph-chart-line-up"></i> Market context</span><strong>Out of scope</strong><small>Not included: this dashboard uses SEC filings only, no market price feed.</small></div>
   </aside>`;
 }
 
 function renderPeerHome(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
   const revenue=companyMetricTotal("revenue",indexes), gross=companyMetricTotal("grossProfit",indexes), op=companyMetricTotal("operatingIncome",indexes), fcf=companyMetricTotal("freeCashFlow",indexes);
-  const revenueChange=companyMetricChange("revenue",indexes), gm=companyRatio("grossProfit","revenue",indexes), om=companyRatio("operatingIncome","revenue",indexes);
-  v.innerHTML=`${companyHeader(`${company.name} overview`,periodSub("$M"))}
+  const revenueChange=companyMetricChange("revenue",indexes), fcfChange=companyMetricChange("freeCashFlow",indexes), gm=companyRatio("grossProfit","revenue",indexes), om=companyRatio("operatingIncome","revenue",indexes);
+  v.innerHTML=`${companyHeader(`${company.name} overview`,periodSub())}
     ${companyContextNote()}
     ${sowhat(`${company.name} generated ${companyMoney(revenue)} of revenue in ${periodLabel(indexes)}${revenueChange.delta==null?"":`, ${sgn(revenueChange.delta)}% versus the ${revenueChange.comparison.label}`}. Operating margin was ${companyPercent(om)}.`)}
     <div class="tiles">
       ${tile("Revenue",companyMoney(revenue),revenueChange.delta==null?periodLabel(indexes):`${sgn(revenueChange.delta)}% vs ${revenueChange.comparison.label}`,revenueChange.delta==null?undefined:revenueChange.delta>=0)}
       ${tile("Gross margin",companyPercent(gm),periodLabel(indexes),"neutral")}
       ${tile("Operating income",companyMoney(op),companyPercent(om)+" margin",op==null?undefined:op>=0)}
-      ${tile("Free cash flow",companyMoney(fcf),"operating cash less capex",fcf==null?undefined:fcf>=0)}
+      ${tile("Free cash flow",companyMoney(fcf),fcfChange.delta==null?"operating cash less capex":`${sgn(fcfChange.delta)}% vs ${fcfChange.comparison.label}`,fcf==null?undefined:fcf>=0)}
     </div>
+    ${homeLedgerStrip()}
     <div class="home-primary-grid">
-      <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $M</span></h3><div class="fill"><svg id="peerHomeRevenue"></svg></div></div>
+      <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $B</span></h3><div class="fill"><svg id="peerHomeRevenue"></svg></div></div>
       ${companyExecutiveOverview()}
     </div>
     ${managementSignalsHTML({limit:3})}
@@ -531,14 +556,14 @@ function renderPeerGlass(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes();
   const revenue=companyMetricChange("revenue",indexes), op=companyMetricChange("operatingIncome",indexes), rd=companyMetricChange("rd",indexes);
   const gm=companyRatio("grossProfit","revenue",indexes), om=companyRatio("operatingIncome","revenue",indexes), fcf=companyMetricTotal("freeCashFlow",indexes);
-  v.innerHTML=`${companyHeader(`${company.name} executive review`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} executive review`,periodSub())}
     ${companyContextNote("Decision view built from comparable filed financial facts. Product mix, geography, guidance, and environmental detail appear only when the issuer files a comparable source.")}
     ${sowhat(`${company.name} revenue was ${companyMoney(revenue.currentValue)} and operating income was ${companyMoney(op.currentValue)} in ${periodLabel(indexes)}. Gross margin was ${companyPercent(gm)}.`)}
     <div class="tiles">
       ${tile("Revenue",companyMoney(revenue.currentValue),revenue.delta==null?null:`${sgn(revenue.delta)}% vs ${revenue.comparison.label}`,revenue.delta==null?undefined:revenue.delta>=0)}
       ${tile("Gross margin",companyPercent(gm),"filed / derived from filed facts","neutral")}
       ${tile("Operating margin",companyPercent(om),op.delta==null?null:`operating income ${sgn(op.delta)}%`,op.delta==null?undefined:op.delta>=0)}
-      ${tile("R&D",companyMoney(rd.currentValue),rd.delta==null?"comparable change unavailable":`${sgn(rd.delta)}% vs ${rd.comparison.label}`,rd.delta==null?undefined:rd.delta<=0)}
+      ${tile("R&D",companyMoney(rd.currentValue),rd.delta==null?"comparable change unavailable":`${sgn(rd.delta)}% vs ${rd.comparison.label}`,rd.delta==null?undefined:"cost")}
       ${tile("Free cash flow",companyMoney(fcf),"operating cash less capex",fcf==null?undefined:fcf>=0)}
     </div>
     ${managementSignalsHTML({title:"Management context for executive review",limit:3})}
@@ -551,7 +576,7 @@ function renderPeerGlass(v){
 function renderPeerRevenue(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), change=companyMetricChange("revenue",indexes);
   const periods=companyPeriods();
-  v.innerHTML=`${companyHeader(`${company.name} revenue`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} revenue`,periodSub())}
     ${companyContextNote("Standardized total revenue from SEC filings. Product and geographic splits are unavailable unless they can be mapped consistently across issuers.")}
     ${sowhat(`${periodLabel(indexes)} revenue was ${companyMoney(change.currentValue)}${change.delta==null?"":`, ${sgn(change.delta)}% versus the ${change.comparison.label}`}.`)}
     <div class="tiles">
@@ -586,7 +611,7 @@ function renderPeerVariance(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), comparison=companyComparison(indexes), rows=companyVarianceData(indexes);
   const chartRows=rows.filter(row=>Number.isFinite(row.delta));
   const movers=[...chartRows].sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta)).slice(0,3);
-  v.innerHTML=`${companyHeader(`${company.name} variance analysis`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} variance analysis`,periodSub())}
     ${companyContextNote("Filed financial variance analysis. Prior-year actuals are connected. Approved plan and latest forecast remain unavailable until a governed planning source is connected.")}
     ${sowhat(comparison?`${periodLabel(indexes)} is compared with the ${comparison.label}. ${chartRows.length} comparable financial lines are available.`:"A comparable prior period is not available for this selection.")}
     <div class="comparison-state-grid">
@@ -597,9 +622,9 @@ function renderPeerVariance(v){
     ${managementSignalsHTML({title:"Signals to test against the variance",limit:3,categories:["Demand and revenue","Margin and cost","Investment","Risk and supply"]})}
     <div class="body g21" style="height:52%">
       <div class="card"><h3>Variance by financial line</h3>${chartRows.length?'<div class="fill"><svg id="peerVarianceChart"></svg></div>':emptyState("No comparable filed metrics for this selection.")}</div>
-      <div class="card management-followup"><h3>Management follow-up</h3>${movers.length?`<ol>${movers.map(row=>`<li><span>${escapeHtml(row.label)}</span><strong>${sgn(row.delta)}%</strong><small>${row.expense?"Validate investment level, timing and return.":"Confirm operating driver, sustainability and forecast impact."}</small></li>`).join("")}</ol>`:emptyState("No comparable movement is available.")}<div class="action-boundary">Owners, actions and status remain unavailable until a workflow source is connected.</div></div>
+      <div class="card management-followup"><h3>Management follow-up</h3>${movers.length?`<ol>${movers.map(row=>`<li><span>${escapeHtml(row.label)}</span><strong class="${row.expense?"fu-flat":row.delta>=0?"fu-up":"fu-down"}">${sgn(row.delta)}%</strong><small>${row.expense?"Validate investment level, timing and return.":"Confirm operating driver, sustainability and forecast impact."}</small></li>`).join("")}</ol>`:emptyState("No comparable movement is available.")}<div class="action-boundary">Owners, actions and status remain unavailable until a workflow source is connected.</div></div>
     </div>
-    <details class="variance-detail"><summary>View detailed variance table</summary><div class="scrollbox"><table><tr><th>Line item</th><th>Current</th><th>${comparison?escapeHtml(comparison.label):"Comparison"}</th><th>Δ %</th></tr>
+    <details class="variance-detail"><summary>View detailed variance table</summary><div class="scrollbox"><table><tr><th>Line item · $M</th><th>Current</th><th>${comparison?escapeHtml(comparison.label):"Comparison"}</th><th>Δ %</th></tr>
       ${rows.map(row=>`<tr><td>${escapeHtml(row.label)}</td><td>${row.currentValue==null?"n/a":M(row.currentValue)}</td><td>${row.comparisonValue==null?"n/a":M(row.comparisonValue)}</td><td>${row.delta==null?"n/a":sgn(row.delta)+"%"}</td></tr>`).join("")}</table></div></details>`;
   if(chartRows.length) chartTable(document.getElementById("peerVarianceChart"),"diverging",{names:chartRows.map(row=>row.label),values:chartRows.map(row=>row.delta),fmt:value=>sgn(value)+"%"});
 }
@@ -608,18 +633,18 @@ function renderPeerProfit(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), periods=companyPeriods();
   const revenue=companyMetricTotal("revenue",indexes), gross=companyMetricTotal("grossProfit",indexes), op=companyMetricTotal("operatingIncome",indexes), net=companyMetricTotal("netIncome",indexes), rd=companyMetricTotal("rd",indexes);
   const gm=companyRatio("grossProfit","revenue",indexes), om=companyRatio("operatingIncome","revenue",indexes), nm=companyRatio("netIncome","revenue",indexes), rdPct=companyRatio("rd","revenue",indexes);
-  v.innerHTML=`${companyHeader(`${company.name} profitability & opex`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} profitability & opex`,periodSub())}
     ${companyContextNote("Comparable profitability and R&D facts from SEC filings. SG&A is not shown when it cannot be mapped consistently.")}
-    ${sowhat(`${periodLabel(indexes)} gross margin was ${companyPercent(gm)}, operating margin was ${companyPercent(om)}, and R&D was ${companyMoney(rd)}.`)}
+    ${sowhat(`${periodLabel(indexes)} gross margin was ${companyPercent(gm)}, operating margin was ${companyPercent(om)}, and ${rd==null?"R&D is not separately filed":`R&D was ${companyMoney(rd)}`}.`)}
     <div class="tiles">
       ${tile("Gross profit",companyMoney(gross),companyPercent(gm)+" margin",gross==null?undefined:gross>=0)}
       ${tile("Operating income",companyMoney(op),companyPercent(om)+" margin",op==null?undefined:op>=0)}
       ${tile("Net income",companyMoney(net),companyPercent(nm)+" margin",net==null?undefined:net>=0)}
-      ${tile("R&D",companyMoney(rd),companyPercent(rdPct)+" of revenue","neutral")}
+      ${tile("R&D",companyMoney(rd),rd==null?"not separately filed":companyPercent(rdPct)+" of revenue","neutral")}
     </div>
-    <div class="body g2" style="height:48%">
+    <div class="body g2" style="${periods.some(period=>Number.isFinite(period.metrics.rd))?"height:48%":"flex:0 0 auto; height:auto; min-height:230px"}">
       <div class="card"><h3>Operating and net income</h3><div class="fill"><svg id="peerProfitIncome"></svg></div></div>
-      <div class="card"><h3>R&D trend</h3><div class="fill"><svg id="peerProfitRd"></svg></div></div>
+      <div class="card"><h3>R&D trend</h3>${periods.some(period=>Number.isFinite(period.metrics.rd))?'<div class="fill"><svg id="peerProfitRd"></svg></div>':emptyState("R&D is not separately filed by this issuer.")}</div>
     </div>`;
   chartTable(document.getElementById("peerProfitIncome"),"grouped",{cats:periods.map(companyChartLabel),seriesA:periods.map(period=>period.metrics.operatingIncome||0),seriesB:periods.map(period=>period.metrics.netIncome||0),nameA:"Operating income",nameB:"Net income",fmt:B});
   const rdPeriods=periods.filter(period=>Number.isFinite(period.metrics.rd));
@@ -631,7 +656,7 @@ function renderPeerHardware(v){
   const cogs=companyMetricAt(latest,"costOfRevenue"), inventory=companyMetricAt(latest,"inventory"), ppe=companyMetricAt(latest,"propertyPlantEquipment"), payables=companyMetricAt(latest,"accountsPayable"), capex=companyMetricAt(latest,"capex"), revenue=companyMetricAt(latest,"revenue");
   const turns=(cogs!=null&&inventory)?(cogs*4)/inventory:null; // quarterly cost of revenue, annualized, over the point-in-time inventory balance
   const inventoryLight=inventory!=null&&revenue&&inventory/revenue<0.02;
-  v.innerHTML=`${companyHeader(`${company.name} hardware COGS & inventory`,`${qLabel(latest)} · point in time · $M`)}
+  v.innerHTML=`${companyHeader(`${company.name} hardware COGS & inventory`,`${qLabel(latest)} · point in time`)}
     ${companyContextNote("Cost of revenue, inventory, property/plant/equipment, and capex are standardized from SEC filings, same as every other tab. Inventory is a point-in-time balance, never summed across quarters.")}
     ${inventory==null?sowhat(`${company.name} does not disclose a comparable inventory balance in the standardized SEC source.`)
       :inventoryLight?sowhat(`${company.name} carries minimal inventory (${companyMoney(inventory)}, ${companyPercent(revenue?100*inventory/revenue:null)} of quarterly revenue) -- consistent with a software/services business, not a hardware manufacturer.`)
@@ -644,7 +669,7 @@ function renderPeerHardware(v){
       ${tile("Manufacturing capex",companyMoney(capex),qLabel(latest),"neutral")}
       ${tile("Accounts payable",companyMoney(payables),qLabel(latest),"neutral")}
     </div>
-    <div class="card" style="height:32%;margin-top:10px"><h3>Hardware-relevant facts by selected quarter</h3>${companyPeriodTable(["costOfRevenue","inventory","propertyPlantEquipment","capex","accountsPayable"],indexes)}</div>
+    <div class="card" style="flex:0 0 auto;height:auto;margin-top:10px"><h3>Hardware-relevant facts by selected quarter</h3>${companyPeriodTable(["costOfRevenue","inventory","propertyPlantEquipment","capex","accountsPayable"],indexes)}</div>
     ${hardwarePeersPointer()}`;
 }
 
@@ -652,7 +677,7 @@ function renderPeerBalance(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), latest=indexes[indexes.length-1];
   const cash=companyMetricAt(latest,"cash"), investments=companyMetricAt(latest,"shortTermInvestments"), debt=companyMetricAt(latest,"totalDebt"), receivables=companyMetricAt(latest,"accountsReceivable"), payables=companyMetricAt(latest,"accountsPayable");
   const currentAssets=companyMetricAt(latest,"currentAssets"), currentLiabilities=companyMetricAt(latest,"currentLiabilities"), currentRatio=currentAssets!=null&&currentLiabilities?currentAssets/currentLiabilities:null;
-  v.innerHTML=`${companyHeader(`${company.name} liquidity & working capital`,`${qLabel(latest)} · point in time · $M`)}
+  v.innerHTML=`${companyHeader(`${company.name} liquidity & working capital`,`${qLabel(latest)} · point in time`)}
     ${companyContextNote("Point-in-time balance-sheet facts from the latest selected filing. Values are never summed across quarters.")}
     ${sowhat(`${qLabel(latest)} cash was ${companyMoney(cash)}, reported debt was ${companyMoney(debt)}, and the current ratio was ${currentRatio==null?"unavailable":currentRatio.toFixed(2)+"x"}.`)}
     <div class="tiles">
@@ -663,26 +688,33 @@ function renderPeerBalance(v){
       ${tile("Accounts payable",companyMoney(payables),qLabel(latest),"neutral")}
       ${tile("Current ratio",currentRatio==null?"n/a":currentRatio.toFixed(2)+"x","current assets / current liabilities","neutral")}
     </div>
-    <div class="card" style="height:45%;margin-top:10px"><h3>Balance-sheet facts by selected quarter</h3>${companyPeriodTable(["cash","shortTermInvestments","accountsReceivable","accountsPayable","currentAssets","currentLiabilities","totalAssets","totalLiabilities","totalDebt"],indexes)}</div>`;
+    <div class="card" style="flex:0 0 auto;height:auto;margin-top:10px"><h3>Balance-sheet facts by selected quarter</h3>${companyPeriodTable(["cash","shortTermInvestments","accountsReceivable","accountsPayable","currentAssets","currentLiabilities","totalAssets","totalLiabilities","totalDebt"],indexes)}</div>`;
 }
 
+// capitalReturnsSentence: reads naturally whether both, one or neither of the two lines was filed.
+function capitalReturnsSentence(period,repurchases,dividends){
+  if(repurchases==null && dividends==null) return `No share repurchases or dividends paid were filed for ${period}.`;
+  if(repurchases==null) return `${period} dividends paid were ${companyMoney(dividends)}; no share repurchases were filed.`;
+  if(dividends==null) return `${period} repurchases were ${companyMoney(repurchases)}; no dividends paid were filed.`;
+  return `${period} repurchases were ${companyMoney(repurchases)} and dividends paid were ${companyMoney(dividends)}.`;
+}
 function renderPeerCapital(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), periods=companyPeriods();
   const repurchases=companyMetricTotal("repurchases",indexes), dividends=companyMetricTotal("dividends",indexes), stockComp=companyMetricTotal("shareBasedCompensation",indexes), latest=indexes[indexes.length-1], debt=companyMetricAt(latest,"totalDebt"), cash=companyMetricAt(latest,"cash");
   const capitalPeriods=periods.filter(period=>Number.isFinite(period.metrics.repurchases)||Number.isFinite(period.metrics.dividends));
-  v.innerHTML=`${companyHeader(`${company.name} treasury & capital allocation`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} treasury & capital allocation`,periodSub())}
     ${companyContextNote("Capital-return facts are standardized from cash-flow filings. Constant-currency or FX exposure is shown only when a comparable filed metric exists.")}
-    ${sowhat(`${periodLabel(indexes)} repurchases were ${companyMoney(repurchases)} and dividends paid were ${companyMoney(dividends)}. Comparable FX disclosure is not available in the standardized source.`)}
+    ${sowhat(`${capitalReturnsSentence(periodLabel(indexes),repurchases,dividends)} Comparable FX disclosure is not available in the standardized source.`)}
     <div class="tiles">
-      ${tile("Share repurchases",companyMoney(repurchases),periodLabel(indexes),repurchases==null?undefined:false)}
-      ${tile("Dividends paid",companyMoney(dividends),periodLabel(indexes),dividends==null?undefined:false)}
-      ${tile("Stock compensation",companyMoney(stockComp),stockComp==null?"not consistently filed":periodLabel(indexes),"neutral")}
+      ${tile("Share repurchases",companyMoney(repurchases),periodLabel(indexes),repurchases==null?undefined:"cost")}
+      ${tile("Dividends paid",companyMoney(dividends),periodLabel(indexes),dividends==null?undefined:"cost")}
+      ${tile("Stock compensation",companyMoney(stockComp),stockComp==null?"not consistently filed":periodLabel(indexes),"cost")}
       ${tile("Cash",companyMoney(cash),qLabel(latest),"neutral")}
-      ${tile("Debt",companyMoney(debt),qLabel(latest),debt==null?undefined:false)}
+      ${tile("Debt",companyMoney(debt),qLabel(latest),debt==null?undefined:"cost")}
       ${tile("FX impact","n/a","not standardized across issuers")}
     </div>
     ${macroContextHTML("Rates and FX context")}
-    <div class="body g21" style="height:47%">
+    <div class="body g21" style="${capitalPeriods.length?"height:47%":"flex:0 0 auto; height:auto"}">
       <div class="card"><h3>Capital returns trend</h3>${capitalPeriods.length?'<div class="fill"><svg id="peerCapitalChart"></svg></div>':emptyState("No comparable capital-return facts were filed for these periods.")}</div>
       ${companyUnavailable("Comparable FX exposure","SEC Company Facts does not provide a consistent cross-company constant-currency or foreign-exchange exposure metric. This dashboard will not infer one.")}
     </div>`;
@@ -692,16 +724,16 @@ function renderPeerCapital(v){
 function renderPeerPeople(v){
   const company=selectedCompany(), indexes=selectedCompanyIndexes(), periods=companyPeriods().filter(period=>Number.isFinite(period.metrics.rd));
   const rd=companyMetricTotal("rd",indexes), revenue=companyMetricTotal("revenue",indexes), ratio=rd!=null&&revenue?100*rd/revenue:null, change=companyMetricChange("rd",indexes);
-  v.innerHTML=`${companyHeader(`${company.name} workforce & investment`,periodSub("$M"))}
+  v.innerHTML=`${companyHeader(`${company.name} workforce & investment`,periodSub())}
     ${companyContextNote("R&D expense is standardized from SEC filings. Headcount is not consistently tagged in SEC Company Facts and is therefore not estimated.")}
-    ${sowhat(`${periodLabel(indexes)} R&D was ${companyMoney(rd)}, or ${companyPercent(ratio)} of revenue${change.delta==null?"":`, ${sgn(change.delta)}% versus the ${change.comparison.label}`}.`)}
+    ${sowhat(rd==null?`${company.name} does not separately file R&D, so no R&D comparison is shown for ${periodLabel(indexes)}.`:`${periodLabel(indexes)} R&D was ${companyMoney(rd)}, or ${companyPercent(ratio)} of revenue${change.delta==null?"":`, ${sgn(change.delta)}% versus the ${change.comparison.label}`}.`)}
     <div class="tiles">
-      ${tile("R&D expense",companyMoney(rd),periodLabel(indexes),change.delta==null?undefined:change.delta<=0)}
+      ${tile("R&D expense",companyMoney(rd),rd==null?"not separately filed":periodLabel(indexes),rd==null?undefined:"cost")}
       ${tile("R&D / revenue",companyPercent(ratio),"selected period","neutral")}
-      ${tile("R&D change",change.delta==null?"n/a":sgn(change.delta)+"%",change.comparison?.label||"comparison unavailable",change.delta==null?undefined:change.delta<=0)}
+      ${tile("R&D change",change.delta==null?"n/a":sgn(change.delta)+"%",change.comparison?.label||"comparison unavailable",change.delta==null?undefined:"cost")}
       ${tile("Headcount","n/a","not standardized in SEC Company Facts")}
     </div>
-    <div class="body g21" style="height:48%">
+    <div class="body g21" style="${periods.length?"height:48%":"flex:0 0 auto; height:auto"}">
       <div class="card"><h3>Quarterly R&D trend</h3>${periods.length?'<div class="fill"><svg id="peerRdTrend"></svg></div>':emptyState("R&D is not consistently filed for this issuer.")}</div>
       ${companyUnavailable("Comparable headcount series","Employee counts are usually disclosed as annual narrative text, not a consistent quarterly Company Facts metric. Add a separately governed filing-text source before showing this series.")}
     </div>`;
@@ -714,9 +746,9 @@ function renderPeerOutlook(v){
   const revenueChange=companyMetricChange("revenue",[latest]);
   v.innerHTML=`${companyHeader(`${company.name} outlook & investor relations`,`${qLabel(latest)} · latest filed quarter`)}
     ${companyContextNote("This view separates reported momentum from official management commentary. Internal forecasts and analyst consensus remain unavailable.")}
-    ${sowhat(`${qLabel(latest)} revenue was ${companyMoney(revenue)}${revenueChange.delta==null?"":`, ${sgn(revenueChange.delta)}% year over year`}. Gross margin was ${companyPercent(gm)} and operating margin was ${companyPercent(om)}.`)}
+    ${sowhat(`${qLabel(latest)} revenue was ${companyMoney(revenue)}${revenueChange.delta==null?"":`, ${sgn(revenueChange.delta)}% vs the ${revenueChange.comparison.label}`}. Gross margin was ${companyPercent(gm)} and operating margin was ${companyPercent(om)}.`)}
     <div class="tiles">
-      ${tile("Latest revenue",companyMoney(revenue),revenueChange.delta==null?qLabel(latest):`${sgn(revenueChange.delta)}% YoY`,revenueChange.delta==null?undefined:revenueChange.delta>=0)}
+      ${tile("Latest revenue",companyMoney(revenue),revenueChange.delta==null?qLabel(latest):`${sgn(revenueChange.delta)}% vs ${revenueChange.comparison.label}`,revenueChange.delta==null?undefined:revenueChange.delta>=0)}
       ${tile("Gross margin",companyPercent(gm),qLabel(latest),"neutral")}
       ${tile("Operating margin",companyPercent(om),qLabel(latest),op==null?undefined:op>=0)}
       ${tile("Management context",selectedPublicContext()?.coverage?.managementCommentary?"Connected":"n/a",selectedPublicContext()?.coverage?.managementCommentary?"official SEC-filed materials":"no relevant excerpt found")}
@@ -775,11 +807,11 @@ function renderPeerEnvironment(v){
   v.innerHTML=`${companyHeader(`${company.name} environment`,`${env.periodLabel} · company-published sustainability report`)}
     ${companyContextNote(`Sourced from ${company.name}'s ${env.reportTitle}${env.publishDate?` (published ${env.publishDate})`:""}. Curated by hand -- not part of the automated daily SEC refresh, since sustainability reports are published annually by each company, not continuously. REAL = directly stated by the company; DERIVED = simple arithmetic on REAL figures.`)}
     <div class="tiles">${tilesHTML}</div>
-    <div class="body g2" style="flex:0 0 auto; height:150px">
+    <div class="body g2" style="flex:0 0 auto; height:auto; min-height:0">
       <div class="card"><h3>Reduction / net-zero target</h3><div class="note">${escapeHtml(env.target?.text||"Not stated in the company's report.")}</div></div>
       <div class="card"><h3>Source</h3><div class="note"><a href="${escapeHtml(env.reportUrl)}" target="_blank" rel="noopener">${escapeHtml(env.reportTitle)}</a>${env.publishDate?`, published ${escapeHtml(env.publishDate)}`:""}. Covers ${escapeHtml(env.periodLabel)}.</div></div>
     </div>
-    ${env.unavailableNote?`<div class="body" style="flex:0 0 auto; height:150px; grid-template-columns:1fr">${companyUnavailable("What's not shown",env.unavailableNote)}</div>`:""}`;
+    ${env.unavailableNote?`<div class="body" style="flex:0 0 auto; height:auto; min-height:0; grid-template-columns:1fr">${companyUnavailable("What's not shown",env.unavailableNote)}</div>`:""}`;
 }
 function csvPeerEnv(){
   const company=selectedCompany(), env=(ENV_CONTEXT.companies||{})[companySlug];
@@ -898,10 +930,10 @@ function decisionLabHTML(){
         <div role="listitem"><span>NPV</span><strong>${companyMoney(model.npv)}</strong><small>${model.discountRate.toFixed(1)}% hurdle</small></div>
         <div role="listitem"><span>IRR</span><strong>${model.irr==null?"n/a":companyPercent(model.irr)}</strong><small>Modeled project return</small></div>
         <div role="listitem"><span>Payback</span><strong>${payback}</strong><small>Undiscounted</small></div>
-        <div role="listitem"><span>Five-year ROI</span><strong>${model.roi==null?"n/a":companyPercent(model.roi)}</strong><small>Net benefit less investment</small></div>
+        <div role="listitem"><span>${model.years}-year ROI</span><strong>${model.roi==null?"n/a":companyPercent(model.roi)}</strong><small>Net benefit less investment</small></div>
       </div>
     </div>
-    <div class="decision-sensitivity"><div><h3>NPV sensitivity <span>$M</span></h3><p>Annual net benefit versus discount rate</p></div><div class="scrollbox"><table><thead><tr><th>Net benefit</th>${sensitivity.rates.map(rate=>`<th>${rate.toFixed(1)}%</th>`).join("")}</tr></thead><tbody>${sensitivity.values.map((row,rowIndex)=>`<tr><th>${Math.round(sensitivity.benefits[rowIndex]*100)}%</th>${row.map(value=>`<td data-value="${value>=0?"positive":"negative"}">${companyMoney(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>
+    <div class="decision-sensitivity"><div><h3>NPV sensitivity <span>$B</span></h3><p>Annual net benefit versus discount rate</p></div><div class="scrollbox"><table><thead><tr><th>Net benefit</th>${sensitivity.rates.map(rate=>`<th>${rate.toFixed(1)}%</th>`).join("")}</tr></thead><tbody>${sensitivity.values.map((row,rowIndex)=>`<tr><th>${Math.round(sensitivity.benefits[rowIndex]*100)}%</th>${row.map(value=>`<td data-value="${value>=0?"positive":"negative"}">${companyMoney(value)}</td>`).join("")}</tr>`).join("")}</tbody></table></div></div>
     <div class="decision-boundary"><b>Decision discipline:</b> validate benefit ownership, timing, tax, depreciation, working capital, implementation risk and terminal value before using this as an approval model.</div>
   </section>`;
 }
@@ -929,10 +961,10 @@ function renderPlan(v){
       ${tile("Modeled operating expense",companyMoney(model.forecastOpex),`${sgn(planningState.opexGrowth)}% assumption`,planningState.opexGrowth<=0)}
       ${tile("Modeled operating income",companyMoney(model.forecastOperatingIncome),companyPercent(model.forecastOperatingMargin)+" margin",model.forecastOperatingIncome>=0)}
     </div>
-    <div class="body g21" style="height:42%">
+    <div class="body g21" style="flex:0 0 auto; height:auto; min-height:300px">
       <div class="card"><h3>Actual vs modeled next quarter</h3><div class="fill"><svg id="planComparison"></svg></div></div>
       <div class="card"><h3>Scenario bridge</h3><div class="scrollbox"><table>
-        <tr><th>Metric</th><th>${escapeHtml(model.period.label)} actual</th><th>Modeled next quarter</th></tr>
+        <tr><th>Metric · $M</th><th>${escapeHtml(model.period.label)} actual</th><th>Modeled next quarter</th></tr>
         <tr><td>Revenue</td><td>${M(model.revenue)}</td><td>${M(model.forecastRevenue)}</td></tr>
         <tr><td>Gross profit</td><td>${M(model.grossProfit)}</td><td>${M(model.forecastGrossProfit)}</td></tr>
         <tr><td>Operating expense</td><td>${M(model.opex)}</td><td>${M(model.forecastOpex)}</td></tr>
@@ -1034,7 +1066,7 @@ function irReportBody(indexes,rows){
   const latestChange=companyMetricChange("revenue",[latest]);
   const hasIr=Boolean(selectedPublicContext()?.coverage?.managementCommentary);
   return `<div class="report-columns">
-    <section><h3>Quarterly message</h3><p>${escapeHtml(company.name)} reported ${companyMoney(latestRevenue)} of revenue in ${qLabel(latest)}${latestChange.delta==null?"":`, ${sgn(latestChange.delta)}% year over year`}. Gross margin was ${latestRevenue&&latestGross!=null?companyPercent(100*latestGross/latestRevenue):"n/a"}.</p></section>
+    <section><h3>Quarterly message</h3><p>${escapeHtml(company.name)} reported ${companyMoney(latestRevenue)} of revenue in ${qLabel(latest)}${latestChange.delta==null?"":`, ${sgn(latestChange.delta)}% vs the ${latestChange.comparison.label}`}. Gross margin was ${latestRevenue&&latestGross!=null?companyPercent(100*latestGross/latestRevenue):"n/a"}.</p></section>
     <section><h3>Reported earnings</h3><dl class="report-facts"><div><dt>Revenue</dt><dd>${companyMoney(latestRevenue)}</dd></div><div><dt>Operating income</dt><dd>${companyMoney(latestOp)}</dd></div><div><dt>Net income</dt><dd>${companyMoney(latestNet)}</dd></div></dl></section>
   </div>
   <section><h3>Investor question set</h3><ol><li>What changed in revenue growth and business mix?</li><li>Which factors affected gross margin and operating leverage?</li><li>How is investment translating into future growth and cash generation?</li><li>What guidance, supply, demand, regulatory or capital risks matter next?</li></ol></section>
@@ -1075,8 +1107,30 @@ function csvReports(){
   downloadCSV(`${companySlug}_${reportState}_report_${periodFileTag(indexes)}.csv`,`Governed source data for the ${REPORT_DEFINITIONS[reportState].label}.`,["company","report","period","metric","actual","comparison","change_pct","field_basis"],rows.map(row=>[company.name,reportState,periodLabel(indexes),row.label,row.actual,row.prior,row.delta,"FILED_OR_DERIVED"]));
 }
 
+// Wiring for the Peer Calendar and Forecast Ledger tabs. Their renderers live in peer-table.js and
+// forecast-ledger.js; a missing global shows a plain UNAVAILABLE message instead of throwing.
+function tabUnavailable(v,title,detail){
+  v.innerHTML=`<div class="vhead"><h2>${escapeHtml(title)}</h2><span class="sub">UNAVAILABLE</span></div><div class="note" style="margin-top:10px">UNAVAILABLE: ${escapeHtml(detail)}</div>`;
+}
+function renderPeersTab(v){
+  if(typeof renderPeerCalendar==="function") renderPeerCalendar(v);
+  else tabUnavailable(v,"Peer Calendar","peer-table.js did not load.");
+}
+function renderLedgerTab(v){
+  if(typeof renderLedger==="function") renderLedger(v);
+  else tabUnavailable(v,"Forecast Ledger","forecast-ledger.js did not load.");
+}
+// Neither tab has a CSV of its own here; the Download button is not shown for them.
+function csvLedgerPeersNone(){}
+function homeLedgerStrip(){
+  try{
+    const html=typeof ledgerHomeStrip==="function"?ledgerHomeStrip():"";
+    return html?`<div class="ledger-home-strip">${html}</div>`:"";
+  }catch(e){ return ""; }
+}
+
 function renderPeerTab(tab,v){
-  ({home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,hwcogs:renderPeerHardware,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment,reports:renderReports}[tab]||renderPeerHome)(v);
+  ({peers:renderPeersTab,ledger:renderLedgerTab,home:renderPeerHome,glass:renderPeerGlass,revenue:renderPeerRevenue,variance:renderPeerVariance,profit:renderPeerProfit,hwcogs:renderPeerHardware,balance:renderPeerBalance,fx:renderPeerCapital,people:renderPeerPeople,outlook:renderPeerOutlook,env:renderPeerEnvironment,reports:renderReports}[tab]||renderPeerHome)(v);
 }
 
 function peerMetricKeysForTab(tab){

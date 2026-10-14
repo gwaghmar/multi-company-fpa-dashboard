@@ -25,7 +25,7 @@
   --s5-soft: color-mix(in srgb, var(--s5) 85%, white);
   --up:#1f8a44; --down:#d64545; --real:#1f8a44; --cfo:#d63a52;
   --sc1:#4a6cf7; --sc2:#808088; --sc3:#db6434; /* scope 1 / 2 / 3 per reference */
-  --glass-bg: rgba(255,255,255,.62); --glass-bg2: rgba(255,255,255,.4); --glass-bg-strong: rgba(255,255,255,.5);
+  --glass-bg: rgba(255,255,255,.94); --glass-bg2: rgba(255,255,255,.7); --glass-bg-strong: rgba(255,255,255,.96);
   --glass-border: rgba(17,17,19,.1); --glass-shadow: rgba(17,17,19,.14);
 }
 :root[data-theme="dark"]{
@@ -35,7 +35,7 @@
   --s1:#7b93ff; --s2:#ff9e76; --s3:#4cc873; --s4:#ff6b5e; --s5:#8e8e96;
   --up:#4cc873; --down:#ff6b5e; --real:#4cc873; --cfo:#ff7285;
   --sc1:#7b93ff; --sc2:#8e8e96; --sc3:#ff9e76;
-  --glass-bg: rgba(32,32,37,.58); --glass-bg2: rgba(32,32,37,.36); --glass-bg-strong: rgba(32,32,37,.45);
+  --glass-bg: rgba(26,26,31,.96); --glass-bg2: rgba(44,44,52,.85); --glass-bg-strong: rgba(22,22,27,.97);
   --glass-border: rgba(255,255,255,.14); --glass-shadow: rgba(0,0,0,.45);
 }
 @media (prefers-color-scheme: dark){
@@ -46,7 +46,7 @@
     --s1:#7b93ff; --s2:#ff9e76; --s3:#4cc873; --s4:#ff6b5e; --s5:#8e8e96;
     --up:#4cc873; --down:#ff6b5e; --real:#4cc873; --cfo:#ff7285;
     --sc1:#7b93ff; --sc2:#8e8e96; --sc3:#ff9e76;
-    --glass-bg: rgba(32,32,37,.58); --glass-bg2: rgba(32,32,37,.36); --glass-bg-strong: rgba(32,32,37,.45);
+    --glass-bg: rgba(26,26,31,.96); --glass-bg2: rgba(44,44,52,.85); --glass-bg-strong: rgba(22,22,27,.97);
     --glass-border: rgba(255,255,255,.14); --glass-shadow: rgba(0,0,0,.45);
   }
 }
@@ -105,7 +105,7 @@ nav::-webkit-scrollbar{display:none}
 @media (prefers-reduced-motion:reduce){ .nav-chevron{ animation:none } }
 .tab{
   border:0; background:transparent; color:var(--ink2); cursor:pointer; flex:0 0 auto;
-  font:500 11.5px/1 "Inter",sans-serif; padding:6px 10px; border-radius:99px; white-space:nowrap;
+  font:500 11.5px/1 "Inter",sans-serif; padding:6px 7px; border-radius:99px; white-space:nowrap;
 }
 .tab:hover{background:var(--grid); color:var(--ink)}
 .tab[aria-selected="true"]{background:var(--ink); color:var(--page); font-weight:600}
@@ -323,6 +323,7 @@ main{flex:1 1 auto; overflow:hidden; position:relative}
 .tile .d{font-size:11px; margin-top:2px; color:var(--ink2)}
 .d.up{color:var(--up)} .d.down{color:var(--down)}
 .unit{font-size:.6em; font-weight:500; color:var(--ink2)}
+.derived-mark{font-size:.85em; font-weight:650; color:var(--s2); margin-left:2px; cursor:help}
 .body{flex:1 1 auto; display:grid; gap:9px; min-height:200px}
 .g2{grid-template-columns:1fr 1fr}
 .g21{grid-template-columns:1.4fr 1fr}
@@ -457,21 +458,23 @@ tr.tot td{font-weight:650; color:var(--ink); border-top:1px solid var(--axis)}
 #home .home-secondary:hover{border-color:var(--accent); color:var(--accent)}
 #home .home-metrics{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:10px; flex:0 0 auto}
 #home .home-metric{position:relative; overflow:hidden; background:linear-gradient(145deg,color-mix(in srgb, var(--home-card-accent, var(--accent)) 5%, var(--surface)),var(--surface) 62%); border:1px solid color-mix(in srgb, var(--home-card-accent, var(--accent)) 22%, var(--ring)); border-top:3px solid var(--home-card-accent, var(--accent)); border-radius:16px; padding:11px 15px 12px; min-width:0; box-shadow:0 5px 16px color-mix(in srgb, var(--home-card-accent, var(--accent)) 10%, transparent)}
-#home .home-metric:nth-child(1){--home-card-accent:#4a6cf7}
-#home .home-metric:nth-child(2){--home-card-accent:#7357d9}
-#home .home-metric:nth-child(3){--home-card-accent:#e26b3d}
-#home .home-metric:nth-child(4){--home-card-accent:#0b9897}
-#home .home-metric:nth-child(5){--home-card-accent:#5a67d8}
-#home .home-metric:nth-child(6){--home-card-accent:#3f9b68}
+#home .home-metric:nth-child(1){--home-card-accent:var(--accent)}
+#home .home-metric:nth-child(2){--home-card-accent:var(--ink)}
+#home .home-metric:nth-child(3){--home-card-accent:var(--cfo)}
+#home .home-metric:nth-child(4){--home-card-accent:var(--up)}
+#home .home-metric:nth-child(5){--home-card-accent:var(--accent)}
+#home .home-metric:nth-child(6){--home-card-accent:var(--ink)}
 #home .home-metric-head{display:flex; align-items:center; gap:9px; min-width:0}
 #home .home-metric-icon{width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; flex:0 0 auto; border:1px solid color-mix(in srgb, var(--home-card-accent, var(--accent)) 28%, var(--ring)); border-radius:10px; background:color-mix(in srgb, var(--home-card-accent, var(--accent)) 12%, var(--surface)); color:var(--home-card-accent, var(--accent)); font-size:18px}
 #home .home-metric .ck{font:600 10px/1.15 "Inter",sans-serif; text-transform:uppercase; letter-spacing:.055em; color:var(--ink2); white-space:normal; min-height:23px; overflow:visible}
 #home .home-metric .cv{font:650 23px/1.1 "Inter Tight",sans-serif; letter-spacing:-.025em; margin-top:9px; white-space:nowrap}
 #home .home-metric .cv small{font:600 11px/1 "Inter",sans-serif; color:var(--up); margin-left:6px; letter-spacing:0}
-#home .home-metric .metric-compare{display:flex; align-items:center; gap:8px; margin-top:5px; min-width:0}
+#home .home-metric .metric-compare{display:flex; align-items:center; flex-wrap:wrap; gap:2px 8px; margin-top:5px; min-width:0}
 #home .home-metric .metric-delta{display:inline-flex; align-items:center; gap:2px; color:var(--up); font-size:11px; white-space:nowrap}
+#home .home-metric .metric-delta.down{color:var(--down)}
+#home .home-metric .metric-delta.flat{color:var(--ink2)}
 #home .home-metric .metric-delta i{font-size:13px}
-#home .home-metric .metric-baseline{font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+#home .home-metric .metric-baseline{font-size:10px; color:var(--muted); white-space:normal; min-width:0}
 #home .home-metric .metric-note{font-size:10.5px; color:var(--muted); margin-top:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
 #home .home-explore{background:linear-gradient(145deg,color-mix(in srgb, var(--accent) 3%, var(--surface)),var(--surface) 62%); border:1px solid color-mix(in srgb, var(--accent) 18%, var(--ring)); border-radius:18px; padding:15px; flex:0 0 auto; box-shadow:0 8px 24px rgba(17,17,19,.05)}
 #home .home-section-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:11px}
@@ -806,20 +809,20 @@ footer{
 #home .home-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}
 .home-primary-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.7fr);gap:12px;min-height:260px;flex:0 0 auto}
 .home-primary-chart{min-height:260px}
-.executive-overview{background:var(--ink);color:var(--page);border-radius:17px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.executive-overview{--eo-fg:#fafaf8;background:#111113;color:var(--eo-fg);border:1px solid #2a2a30;border-radius:17px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
 .executive-overview-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .executive-overview h2{font:650 21px/1.05 "Inter Tight",sans-serif;letter-spacing:-.02em}
-.executive-overview-head>span{font:650 10px/1 "Inter",sans-serif;letter-spacing:.08em;border:1px solid color-mix(in srgb,var(--page) 22%,transparent);padding:6px 8px;border-radius:99px}
+.executive-overview-head>span{font:650 10px/1 "Inter",sans-serif;letter-spacing:.08em;border:1px solid color-mix(in srgb,var(--eo-fg) 22%,transparent);padding:6px 8px;border-radius:99px}
 .section-kicker{display:block;font:650 9px/1.2 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.09em;color:var(--cfo);margin-bottom:6px}
-.overview-signal-list{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid color-mix(in srgb,var(--page) 18%,transparent)}
-.overview-signal-list>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--page) 13%,transparent)}
-.overview-signal-list span{font-size:10.5px;color:color-mix(in srgb,var(--page) 68%,transparent)}
+.overview-signal-list{display:grid;grid-template-columns:1fr;gap:0;border-top:1px solid color-mix(in srgb,var(--eo-fg) 18%,transparent)}
+.overview-signal-list>div{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid color-mix(in srgb,var(--eo-fg) 13%,transparent)}
+.overview-signal-list span{font-size:10.5px;color:color-mix(in srgb,var(--eo-fg) 68%,transparent)}
 .overview-signal-list strong{font:650 12px/1.2 "Inter Tight",sans-serif;text-align:right}
 .overview-watch>span{font:650 9px/1 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--cfo)}
-.overview-watch p{font-size:10.5px;line-height:1.35;margin-top:5px;color:color-mix(in srgb,var(--page) 78%,transparent)}
-.market-context{margin-top:auto;border:1px solid color-mix(in srgb,var(--page) 18%,transparent);border-radius:12px;padding:10px;display:grid;grid-template-columns:1fr auto;gap:3px 8px}
-.market-context>span{font:600 10px/1.2 "Inter",sans-serif}.market-context>strong{font:650 10px/1.2 "Inter",sans-serif;color:#ff9a9a}.market-context small{grid-column:1/-1;color:color-mix(in srgb,var(--page) 58%,transparent);font-size:9.5px;line-height:1.35}
-.home-operating-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.65fr);gap:12px;flex:0 0 auto}
+.overview-watch p{font-size:10.5px;line-height:1.35;margin-top:5px;color:color-mix(in srgb,var(--eo-fg) 78%,transparent)}
+.market-context{margin-top:auto;border:1px solid color-mix(in srgb,var(--eo-fg) 18%,transparent);border-radius:12px;padding:10px;display:grid;grid-template-columns:1fr auto;gap:3px 8px}
+.market-context>span{font:600 10px/1.2 "Inter",sans-serif}.market-context>strong{font:650 10px/1.2 "Inter",sans-serif;color:color-mix(in srgb,var(--eo-fg) 72%,transparent)}.market-context small{grid-column:1/-1;color:color-mix(in srgb,var(--eo-fg) 58%,transparent);font-size:9.5px;line-height:1.35}
+.home-operating-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.65fr);gap:12px;align-items:start;flex:0 0 auto}
 .home-workflow-card,.home-coverage-card,.home-reports{background:var(--surface);border:1px solid var(--ring);border-radius:18px;padding:15px}
 .home-workflow-card .home-section-head,.home-coverage-card .home-section-head{align-items:flex-start}
 .home-section-head>div h2{font:650 22px/1.05 "Inter Tight",sans-serif;letter-spacing:-.025em}
@@ -897,10 +900,11 @@ footer{
 
 /* Source-aware variance and management follow-up */
 .comparison-state-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.comparison-state-grid>div{border:1px solid var(--ring);border-radius:12px;background:var(--surface);padding:10px 12px;display:grid;gap:2px}.comparison-state-grid span{font:600 10px/1.2 "Inter",sans-serif;color:var(--ink2)}.comparison-state-grid strong{font:650 13px/1.2 "Inter Tight",sans-serif}.comparison-state-grid small{font-size:9.5px;color:var(--muted)}.comparison-state-grid [data-state="connected"] strong{color:var(--up)}.comparison-state-grid [data-state="missing"] strong{color:var(--down)}
-.management-followup ol{list-style:none;padding:0}.management-followup li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--ring)}.management-followup li>span{font:600 11px/1.2 "Inter",sans-serif}.management-followup li>strong{font:650 12px/1.2 "Inter Tight",sans-serif;color:var(--cfo)}.management-followup li>small{grid-column:1/-1;font-size:9.5px;color:var(--muted)}.action-boundary{margin-top:auto;padding-top:9px;font-size:9.5px;color:var(--muted)}
+.management-followup ol{list-style:none;padding:0}.management-followup li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-bottom:1px solid var(--ring)}.management-followup li>span{font:600 11px/1.2 "Inter",sans-serif}.management-followup li>strong{font:650 12px/1.2 "Inter Tight",sans-serif;color:var(--ink2)}.management-followup li>strong.fu-up{color:var(--up)}.management-followup li>strong.fu-down{color:var(--down)}.management-followup li>small{grid-column:1/-1;font-size:9.5px;color:var(--muted)}.action-boundary{margin-top:auto;padding-top:9px;font-size:9.5px;color:var(--muted)}
 .variance-detail{background:var(--surface);border:1px solid var(--ring);border-radius:12px;padding:9px 12px}.variance-detail summary{cursor:pointer;font:600 10.5px/1.3 "Inter",sans-serif;color:var(--ink2)}.variance-detail[open] summary{margin-bottom:8px}
 
 /* Standardized report center */
+.pc-card{flex:0 0 auto;margin-top:10px}.pc-scroll{flex:0 0 auto;overflow-x:auto;overflow-y:hidden}.pc-sub{display:block;font-size:9.5px;line-height:1.3;color:var(--ink2);white-space:nowrap;font-weight:500}.pc-empty{color:var(--muted);font-style:italic;font-size:10.5px}.pc-table td:first-child{white-space:nowrap}.pc-table tr.pc-sel td{background:color-mix(in srgb,var(--ink) 7%,transparent)}.pc-legend{margin-top:10px;line-height:1.55}.ledger-home-strip{margin:8px 0}
 .report-toolbar{display:flex;align-items:stretch;gap:7px;flex-wrap:wrap}.report-toolbar button{border:1px solid var(--ring);border-radius:10px;background:var(--surface);color:var(--ink);padding:8px 10px;cursor:pointer;font:600 10px/1.2 "Inter",sans-serif}.report-toolbar button>span{display:block;font-size:8px;letter-spacing:.08em;color:var(--muted);margin-bottom:2px}.report-toolbar button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--page)}.report-toolbar .report-print{margin-left:auto}.report-toolbar .report-ai{border-color:color-mix(in srgb,var(--cfo) 45%,var(--ring));color:var(--cfo)}
 .report-sheet{width:min(1040px,100%);margin:4px auto 18px;background:var(--surface);border:1px solid var(--ring);box-shadow:0 16px 42px rgba(17,17,19,.08);padding:28px 32px;display:flex;flex-direction:column;gap:22px}.report-sheet>header{display:flex;justify-content:space-between;gap:24px;border-bottom:2px solid var(--ink);padding-bottom:18px}.report-sheet>header span,.report-status>span{font:650 9px/1 "Inter",sans-serif;letter-spacing:.09em;color:var(--cfo)}.report-sheet h1{font:700 32px/1 "Inter Tight",sans-serif;letter-spacing:-.035em;margin-top:6px}.report-sheet header p{font-size:11px;color:var(--muted);margin-top:7px}.report-status{text-align:right;display:flex;flex-direction:column;gap:4px}.report-status strong{font:650 12px/1.2 "Inter",sans-serif}.report-status small{font-size:9.5px;color:var(--muted)}
 .report-sheet section>h3{font:650 10px/1.3 "Inter",sans-serif;text-transform:uppercase;letter-spacing:.08em;border-top:2px solid var(--ink);padding-top:8px;margin-bottom:9px}.report-sheet section>h3 span{color:var(--cfo);font-size:8px;margin-left:5px}.report-sheet section p,.report-sheet section li{font-size:11px;line-height:1.55;color:var(--ink2)}.report-sheet section ul,.report-sheet section ol{padding-left:18px}.report-columns{display:grid;grid-template-columns:1fr 1fr;gap:18px}.report-table{width:100%;border-collapse:collapse;font-size:10.5px}.report-table th,.report-table td{text-align:right;padding:7px;border-bottom:1px solid var(--ring);white-space:nowrap}.report-table th{font-size:8.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}.report-table th:first-child,.report-table td:first-child{text-align:left;font-weight:600}.report-table a{color:var(--cfo)}
@@ -986,7 +990,11 @@ footer{
 </aside>
 <button class="sel-pill" id="selPill">✦ Ask AI</button>
 
-<script src="./company-dashboard.js?v=20260917"></script>
+<script src="./company-dashboard.js?v=20261013"></script>
+<script type="module" src="./ledger-core.mjs"></script>
+<script type="module" src="./peer-core.mjs"></script>
+<script src="./forecast-ledger.js"></script>
+<script src="./peer-table.js"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -1049,8 +1057,10 @@ const SLOT=["--s1","--s2","--s3","--s4","--s5"];
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const col=c=>(typeof c==="string"&&c.startsWith("--"))?css(c):c;
 const sum=a=>a.reduce((x,y)=>x+y,0);
-const B=v=>"$"+(v/1000).toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1})+"B";
-const M=v=>"$"+v.toLocaleString("en-US");
+// Money formatters: the minus sign leads the "$" ("-$12.1B", never "$-12.1B"), and a value that
+// rounds to zero prints unsigned. M() rounds to whole $M so a column never mixes decimals.
+const B=v=>{ const s=(Math.abs(v)/1000).toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1}); return (v<0&&/[1-9]/.test(s)?"-":"")+"$"+s+"B"; };
+const M=v=>{ const r=Math.round(Math.abs(v)); return (v<0&&r>0?"-":"")+"$"+r.toLocaleString("en-US"); };
 const UNIT_TCO2E='<span class="unit"> tCO2e</span>'; // shrunk unit suffix, keeps the magnitude (M/K) full-size next to the number
 const pct=(v,d=1)=>v.toLocaleString("en-US",{minimumFractionDigits:d,maximumFractionDigits:d})+"%";
 const sgn=v=>(v>=0?"+":"")+v.toLocaleString("en-US",{minimumFractionDigits:1,maximumFractionDigits:1});
@@ -1114,7 +1124,7 @@ function sizeSquareSvg(svg,capPx){
 // draws a tiny flag glyph above the value label, hover shows the full text via showTT.
 function drawMarker(svg,x,topY,m){
   if(!m) return;
-  const my=Math.max(topY-15,11);
+  const my=Math.max(topY-27,11); // clear of the bar's own value label (drawn ~5px above the bar)
   const t=el("text",{x,y:my,"text-anchor":"middle",style:"font-size:9px; cursor:default",class:"evmark"},svg);
   t.textContent="🚩 "+m.label;
   t.setAttribute("fill",css("--s2"));
@@ -1144,11 +1154,23 @@ function barChart(svg,{labels,values,colors,fmt=B,sub=null,onClick=null,active=-
   el("line",{x1:L,x2:W-R,y1:T+ih,y2:T+ih,stroke:css("--axis"),"stroke-width":1},svg);
   const step=iw/nSlots, bw=Math.min(74,step*0.56);
   const guideY = (guide && guide.value!=null) ? Y(guide.value) : null;
+  // Narrow slots (phone width): shorten "Q1 FY25" to "Q1'25", then show every nth axis label, and
+  // thin the bar value labels the same way, instead of letting neighbours run together. Hover
+  // tooltips always keep the full label and exact value.
+  const approxW=t=>String(t).length*5.7;
+  let axisLabels=labels.slice(), axisEvery=1;
+  if(Math.max(...labels.map(approxW))>step-4){
+    axisLabels=labels.map(l=>String(l).replace(/ FY(\d\d)$/,"'$1"));
+    const w2=Math.max(...axisLabels.map(approxW));
+    if(w2>step-4) axisEvery=Math.ceil(w2/(step-4));
+  }
+  const valW=Math.max(...values.filter(v=>v!=null).map(v=>approxW(fmt(v))),0);
+  const valEvery=valW>step-2?Math.ceil(valW/(step-2)):1;
   values.forEach((v,i)=>{
     const x=L+step*i+(step-bw)/2;
     if(v==null){
       el("text",{x:x+bw/2,y:T+ih-6,"text-anchor":"middle",class:"dl",style:"fill:var(--muted);font-weight:500"},svg).textContent="n/a";
-      el("text",{x:x+bw/2,y:H-(sub?22:8),"text-anchor":"middle"},svg).textContent=labels[i];
+      if(i%axisEvery===0) el("text",{x:x+bw/2,y:H-(sub?22:8),"text-anchor":"middle"},svg).textContent=axisLabels[i];
       return;
     }
     const y=Y(v);
@@ -1159,8 +1181,8 @@ function barChart(svg,{labels,values,colors,fmt=B,sub=null,onClick=null,active=-
     // whenever they'd land within 14px of each other, rather than let them collide.
     let labelY=y-5;
     if(guideY!==null && Math.abs(labelY-guideY)<14) labelY=guideY-14;
-    el("text",{x:x+bw/2,y:labelY,"text-anchor":"middle",class:"dl"},svg).textContent=fmt(v);
-    el("text",{x:x+bw/2,y:H-(sub?22:8),"text-anchor":"middle"},svg).textContent=labels[i];
+    if(i%valEvery===0) el("text",{x:x+bw/2,y:labelY,"text-anchor":"middle",class:"dl"},svg).textContent=fmt(v);
+    if(i%axisEvery===0) el("text",{x:x+bw/2,y:H-(sub?22:8),"text-anchor":"middle"},svg).textContent=axisLabels[i];
     if(sub && sub[i]!=null) el("text",{x:x+bw/2,y:H-8,"text-anchor":"middle",fill:css(sub[i]>=0?"--up":"--down")},svg)
       .textContent=(sub[i]>=0?"+":"")+sub[i]+"%";
     if(onClick){ bar.classList.add("xbar"); bar.addEventListener("click",()=>onClick(i)); }
@@ -1640,7 +1662,7 @@ function yoyTile(label,arr,qIdxs,fmt=B,higherGood=true,noPYNote=null){
   const v=aggSum(arr,s);
   const d=aggYoYSameQtr(arr,s);
   if(d==null) return tile(label,fmt(v),noPYNote||null);
-  return tile(label,fmt(v),`${sgn(d)}% YoY`,higherGood? d>=0 : d<=0);
+  return tile(label,fmt(v),`${sgn(d)}% YoY`,higherGood==="cost"? "cost" : higherGood? d>=0 : d<=0);
 }
 function derivedBadge(realLabel){
   return selQ().includes(3)
@@ -1728,10 +1750,15 @@ function buildHash(){
   parts.push(`pgeo=${encodeIdxSet(namesToIdxSet(state.pgeo,D.geo.names),D.geo.names.length)}`);
   return "#"+parts.join("&");
 }
+// lastAppliedHash: the last hash the app itself wrote or applied. history.replaceState never fires
+// "hashchange", so the listener below only ever sees outside changes (pasted link, back/forward,
+// an in-page #tab= link); comparing against this value keeps it from re-rendering for its own writes.
+let lastAppliedHash="";
 function syncHash(){
   try{
     const h=buildHash();
     if(location.hash!==h) history.replaceState(null,"",h);
+    lastAppliedHash=location.hash;
   }catch(e){ /* non-fatal: URL state is a convenience, never block rendering on it */ }
 }
 // parseHashState: reads location.hash into `state` (q/cat/geo/pgeo) before the first render.
@@ -1756,6 +1783,34 @@ function parseHashState(){
     const tab=params.get("tab");
     return (tab && VIEWS.some(v=>v.id===tab)) ? tab : null;
   }catch(e){ return null; }
+}
+
+// onHashChange: re-applies state from the hash after an outside change. A hash with no q= keeps the
+// current period selection (so a bare #tab=ledger link does not reset filters) unless the company changes.
+function onHashChange(){
+  if(location.hash===lastAppliedHash) return;
+  try{
+    const prevHash=buildHash(), prevCompany=companySlug, prevTab=current, prevQ=state.q;
+    const hasQ=new URLSearchParams(location.hash.replace(/^#/,"")).has("q");
+    const requestedTab=parseHashState();
+    const nextTab=requestedTab||current;
+    if(companySlug!==prevCompany){
+      document.getElementById("companySelect").value=companySlug;
+      prevQSelection=null;
+      planningState={scenario:"base",...PLANNING_PRESETS.base};
+      decisionState=null;
+      const oldFilters=document.getElementById("filtersUnit");
+      if(oldFilters) oldFilters.remove();
+      buildFiltersBar();
+      buildNav();
+      go(nextTab);
+      return;
+    }
+    if(!hasQ) state.q=prevQ;
+    if(nextTab===prevTab && buildHash()===prevHash){ lastAppliedHash=location.hash; return; }
+    syncFiltersPanel();
+    go(nextTab);
+  }catch(e){ lastAppliedHash=location.hash; }
 }
 
 /* ---------- CSV export (synthetic transaction-level, seeded/deterministic) ---------- */
@@ -1957,7 +2012,7 @@ function varianceCardHTML(tab,sq,rows,avail){
   const basis=resolveVarBasis(tab,avail);
   const pp=priorPeriodQIdxs(sq);
   const cmpLabelPP=pp?periodLabel(pp):null;
-  const cmpLabelPY = tab==="revenue" ? priorYearLabelFor(sq) : (pyQIdxsOf(sq)?periodLabel(pyQIdxsOf(sq)):null);
+  const cmpLabelPY = (tab==="revenue" && current!=="variance") ? priorYearLabelFor(sq) : (pyQIdxsOf(sq)?periodLabel(pyQIdxsOf(sq)):null);
   const curLabel=periodLabel(sq);
   const cmpLabel = basis==="pp" ? cmpLabelPP : cmpLabelPY;
   const bothUnavailable = !avail.pp && !avail.py;
@@ -1965,14 +2020,14 @@ function varianceCardHTML(tab,sq,rows,avail){
     `<button type="button" class="vbasis-btn" data-vbasis="${key}" data-tab="${tab}" aria-pressed="${basis===key}"
       ${available?"":"disabled"} ${available?"":'title="not available for this selection"'}>${text}</button>`;
   const body = bothUnavailable
-    ? `<div class="note" style="margin-top:4px">No comparison basis is computable for this selection (it reaches before Q1 FY25, or the matching prior-year quarters aren't in this dataset).</div>`
+    ? emptyState(VARIANCE_EMPTY_MSG)
     : `<div class="scrollbox"><table>
         <tr><th>Line item</th><th>${escapeHtml(curLabel)}</th><th>${escapeHtml(cmpLabel||"n/a")}</th><th>Δ $</th><th>Δ %</th></tr>
         ${rows.join("")}
       </table></div>
       <div class="subnote">vs ${basis==="pp"?"prior period":"prior year"}: ${escapeHtml(curLabel)} vs ${escapeHtml(cmpLabel||"n/a")}. $ millions; unfavorable variances in parentheses.</div>`;
   return `<div class="card" id="varCard-${tab}">
-    <h3>Variance analysis
+    <h3>Variance analysis <span class="h3-note">$M</span>
       <span class="vbasis-toggle">${toggleBtn("pp","vs prior period",avail.pp)}${toggleBtn("py","vs prior year",avail.py)}</span>
     </h3>
     ${body}
@@ -1989,8 +2044,8 @@ function cccFor(i){
   return {dso,dpo,dio,ccc:dso+dio-dpo};
 }
 function gmStreak(uptoIdx){
-  let k=uptoIdx, count=1;
-  while(k>0 && D.q.gmPct[k]>=D.q.gmPct[k-1]){ count++; k--; }
+  let k=uptoIdx, count=0; // number of consecutive quarter-over-quarter expansions ending at uptoIdx
+  while(k>0 && D.q.gmPct[k]>D.q.gmPct[k-1]){ count++; k--; }
   return count;
 }
 function fcfCapStats(qIdxs){
@@ -2049,7 +2104,7 @@ function revenueSoWhat(){
 }
 function profitSoWhat(){
   const qIdxs=selQ(), lbl=periodLabel(qIdxs), snap=snapQ(), streak=gmStreak(snap), gmv=aggGmPctTotal(qIdxs);
-  const lead = streak>=2 ? `GM at ${pct(gmv,1)} after ${streak} straight quarters of expansion` : `GM was ${pct(gmv,1)} over ${lbl}`;
+  const lead = streak>=1 ? `GM at ${pct(gmv,1)} after ${streak} straight quarters of expansion` : `GM was ${pct(gmv,1)} over ${lbl}`;
   const guideVal=parseFloat(D.fwd.gmGuide);
   if(snap===6 && !isNaN(guideVal) && D.q.gmPct[snap]!=null){
     const d=guideVal-D.q.gmPct[snap];
@@ -2092,62 +2147,74 @@ function outlookSoWhat(){
   const gmNote = (!isNaN(guideVal) && D.q.gmPct[i]!=null) ? ` GM ${guideVal<D.q.gmPct[i]?"down":"up"} to ~${D.fwd.gmGuide} from ${pct(D.q.gmPct[i],1)}.` : "";
   return sowhat(`Q4 FY26 guided to ${D.fwd.revGuide} revenue growth.${gmNote} FX headwind of ${D.fwd.fxHeadwind} and supply constraints are the two risks management flagged.`);
 }
-function varianceSoWhat(sq){
-  const pp=priorPeriodQIdxs(sq), cmp=pp||pyQIdxsOf(sq);
-  if(!cmp) return sowhat("Choose a contiguous period with an available comparison basis to calculate a variance bridge.");
-  const rev=aggSum(D.is.totalRev,sq), revCmp=aggSum(D.is.totalRev,cmp);
+// varianceBasisInfo: the ONE comparison the Variance tab uses everywhere (headline, KPI tiles,
+// bridges, tables). `basis` is the tab's own control ("vs prior period" / "vs prior year"); the
+// comparison only counts as available when every selected quarter has its counterpart in the data.
+function varianceBasisInfo(sq){
+  const avail={pp:priorPeriodQIdxs(sq)!=null, py:pyQIdxsOf(sq)!=null};
+  const basis=resolveVarBasis("revenue",avail);
+  varBasis.profit=basis; // one control for the whole tab
+  const cmp=basis==="pp"?priorPeriodQIdxs(sq):pyQIdxsOf(sq);
+  return {avail,basis,cmp,name:basis==="pp"?"prior period":"prior year",cmpLabel:cmp?periodLabel(cmp):null};
+}
+const VARIANCE_EMPTY_MSG="No comparison basis for this selection. Choose a contiguous period with a prior period or prior year in the data.";
+function varianceSoWhat(sq,info){
+  info=info||varianceBasisInfo(sq);
+  if(!info.cmp) return sowhat("Choose a contiguous period with an available comparison basis to calculate a variance bridge.");
+  const cmp=info.cmp;
+  const rev=aggSum(D.is.totalRev,sq), revCmp=info.basis==="py"?aggSum(D.is.totalRevPY,sq):aggSum(D.is.totalRev,cmp);
   const op=aggSum(D.is.opIncome,sq), opCmp=aggSum(D.is.opIncome,cmp);
-  return sowhat(`${periodLabel(sq)} sales were ${sgn(100*(rev-revCmp)/revCmp)}% vs ${periodLabel(cmp)} and operating income was ${sgn(100*(op-opCmp)/opCmp)}%. Use the tables below to separate scale, mix, and cost movement.`);
+  return sowhat(`${periodLabel(sq)} sales were ${sgn(100*(rev-revCmp)/revCmp)}% and operating income was ${sgn(100*(op-opCmp)/opCmp)}% vs the ${info.name} (${info.cmpLabel}). Use the tables below to separate scale, mix, and cost movement.`);
 }
 
 /* ---------- tab renderer: Variance Analysis ---------- */
 function renderVariance(v){
-  const sq=selQ(), availR=revenueVarianceAvailability(sq), availP=profitVarianceAvailability(sq);
-  const basisR=resolveVarBasis("revenue",availR), basisP=resolveVarBasis("profit",availP);
-  const cmpR=basisR==="pp"?priorPeriodQIdxs(sq):sq;
-  const cmpP=basisP==="pp"?priorPeriodQIdxs(sq):pyQIdxsOf(sq);
-  const rev=aggSum(D.is.totalRev,sq), revCmp=cmpR?(basisR==="pp"?aggSum(D.is.totalRev,cmpR):aggSum(D.is.totalRevPY,sq)):null;
-  const op=aggSum(D.is.opIncome,sq), opCmp=cmpP?aggSum(D.is.opIncome,cmpP):null;
-  const gm=aggGmPctTotal(sq), gmCmp=cmpP?aggGmPctTotal(cmpP):null;
-  const opex=aggOpexRatio(sq), opexCmp=cmpP?aggOpexRatio(cmpP):null;
+  const sq=selQ(), info=varianceBasisInfo(sq), {avail,basis,cmp}=info;
+  const cmpLbl=info.cmpLabel, basisTxt=`vs ${info.name}`;
+  const rev=aggSum(D.is.totalRev,sq), revCmp=cmp?(basis==="pp"?aggSum(D.is.totalRev,cmp):aggSum(D.is.totalRevPY,sq)):null;
+  const op=aggSum(D.is.opIncome,sq), opCmp=cmp?aggSum(D.is.opIncome,cmp):null;
+  const gm=aggGmPctTotal(sq), gmCmp=cmp?aggGmPctTotal(cmp):null;
+  const opex=aggOpexRatio(sq), opexCmp=cmp?aggOpexRatio(cmp):null;
+  const none="No comparison basis for this selection";
+  const sgnB=d=>(d>=0?"+":"-")+B(Math.abs(d));
   v.innerHTML=`
-  <div class="vhead"><h2>Variance Analysis</h2><span class="sub">${periodSub("$M")}</span>
+  <div class="vhead"><h2>Variance Analysis</h2><span class="sub">${periodSub()}${cmp?` · ${basisTxt}`:""}</span>
     <span class="vhead-right">${derivedBadge("Real · comparison basis")}<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Download CSV</button></span></div>
   <div class="note" style="margin-bottom:10px">A finance review surface for actuals versus prior period or prior year. Apple does not publish an internal budget or forecast, so those figures are intentionally not invented here.</div>
-  ${varianceSoWhat(sq)}
+  ${varianceSoWhat(sq,info)}
   <div class="tiles">
-    ${tile("Net sales variance",revCmp==null?"n/a":sgn(rev-revCmp),revCmp==null?"No comparison available":`${pct(100*(rev-revCmp)/revCmp)} vs comparison`,revCmp==null?undefined:rev>=revCmp)}
-    ${tile("Operating income variance",opCmp==null?"n/a":sgn(op-opCmp),opCmp==null?"No comparison available":`${pct(100*(op-opCmp)/opCmp)} vs comparison`,opCmp==null?undefined:op>=opCmp)}
-    ${tile("Gross margin variance",gmCmp==null?"n/a":sgn(gm-gmCmp)+" pts",gmCmp==null?"No comparison available":`${pct(gm)} vs ${pct(gmCmp)}`,gmCmp==null?undefined:gm>=gmCmp)}
-    ${tile("Opex ratio variance",opexCmp==null?"n/a":sgn(opex-opexCmp)+" pts",opexCmp==null?"No comparison available":`${pct(opex)} vs ${pct(opexCmp)}`,opexCmp==null?undefined:opex<=opexCmp)}
+    ${tile("Net sales variance",revCmp==null?"n/a":sgnB(rev-revCmp),revCmp==null?none:`${sgn(100*(rev-revCmp)/revCmp)}% ${basisTxt} (${cmpLbl})`,revCmp==null?undefined:rev>=revCmp)}
+    ${tile("Operating income variance",opCmp==null?"n/a":sgnB(op-opCmp),opCmp==null?none:`${sgn(100*(op-opCmp)/opCmp)}% ${basisTxt} (${cmpLbl})`,opCmp==null?undefined:op>=opCmp)}
+    ${tile("Gross margin variance",gmCmp==null?"n/a":sgn(gm-gmCmp)+" pts",gmCmp==null?none:`${pct(gm)} vs ${pct(gmCmp)} ${info.name}`,gmCmp==null?undefined:gm>=gmCmp)}
+    ${tile("Opex ratio variance",opexCmp==null?"n/a":sgn(opex-opexCmp)+" pts",opexCmp==null?none:`${pct(opex)} vs ${pct(opexCmp)} ${info.name}`,opexCmp==null?undefined:opex<=opexCmp)}
   </div>
   ${managementSignalsHTML({title:"Signals to test against the variance",limit:3,categories:["Demand and revenue","Margin and cost","Investment","Risk and supply"]})}
   <div class="variance-chart-grid">
-    <div class="card variance-chart"><h3>Net sales bridge <span class="h3-note">$M · current vs comparison</span></h3><div class="chart"><svg id="varianceRevenueChart" aria-label="Net sales current period versus comparison"></svg></div></div>
-    <div class="card variance-chart"><h3>Operating income bridge <span class="h3-note">$M · current vs comparison</span></h3><div class="chart"><svg id="varianceProfitChart" aria-label="Operating income current period versus comparison"></svg></div></div>
+    <div class="card variance-chart"><h3>Net sales bridge <span class="h3-note">$B${cmp?` · current ${basisTxt}`:""}</span></h3>${cmp?'<div class="chart"><svg id="varianceRevenueChart" aria-label="Net sales current period versus comparison"></svg></div>':emptyState(VARIANCE_EMPTY_MSG)}</div>
+    <div class="card variance-chart"><h3>Operating income bridge <span class="h3-note">$B${cmp?` · current ${basisTxt}`:""}</span></h3>${cmp?'<div class="chart"><svg id="varianceProfitChart" aria-label="Operating income current period versus comparison"></svg></div>':emptyState(VARIANCE_EMPTY_MSG)}</div>
   </div>
   <div class="body" style="flex:0 0 auto; grid-template-columns:1fr">
-    ${varianceCardHTML("revenue",sq,revenueVarianceRows(sq,basisR),availR)}
+    ${varianceCardHTML("revenue",sq,revenueVarianceRows(sq,basis),avail)}
   </div>
   <div class="body" style="flex:0 0 auto; grid-template-columns:1fr">
-    ${varianceCardHTML("profit",sq,profitVarianceRows(sq,basisP),availP)}
+    ${varianceCardHTML("profit",sq,profitVarianceRows(sq,basis),avail)}
   </div>
   <div class="card" style="margin-bottom:20px"><h3>Management reporting handoff</h3><div class="note">The comparison is a decision-support starting point, not a generated explanation of causality. Ask AI can summarize the displayed figures, but drivers must be validated against operational source systems before being used in a management pack.</div></div>`;
-  const revCompare=basisR==="pp"?priorPeriodQIdxs(sq):sq;
-  const profitCompare=basisP==="pp"?priorPeriodQIdxs(sq):pyQIdxsOf(sq);
+  if(!cmp) return;
   const chartLabels=sq.map(qLabel);
   const revCurrent=sq.map(k=>D.is.totalRev[k]);
-  const revPrevious=basisR==="pp"?(revCompare||[]).map(k=>D.is.totalRev[k]):sq.map(k=>D.is.totalRevPY[k]);
+  const revPrevious=basis==="pp"?cmp.map(k=>D.is.totalRev[k]):sq.map(k=>D.is.totalRevPY[k]);
   const profitCurrent=sq.map(k=>D.is.opIncome[k]);
-  const profitPrevious=(profitCompare||[]).map(k=>D.is.opIncome[k]);
-  if(revCurrent.every(Number.isFinite)&&revPrevious.length===sq.length&&revPrevious.every(Number.isFinite)) groupedBar(document.getElementById("varianceRevenueChart"),{cats:chartLabels,seriesA:revCurrent,seriesB:revPrevious,nameA:"Current",nameB:basisR==="pp"?"Prior period":"Prior year",fmt:B});
-  if(profitCurrent.every(Number.isFinite)&&profitPrevious.length===sq.length&&profitPrevious.every(Number.isFinite)) groupedBar(document.getElementById("varianceProfitChart"),{cats:chartLabels,seriesA:profitCurrent,seriesB:profitPrevious,nameA:"Current",nameB:basisP==="pp"?"Prior period":"Prior year",fmt:B});
+  const profitPrevious=cmp.map(k=>D.is.opIncome[k]);
+  const nameB=basis==="pp"?"Prior period":"Prior year";
+  if(revCurrent.every(Number.isFinite)&&revPrevious.length===sq.length&&revPrevious.every(Number.isFinite)) groupedBar(document.getElementById("varianceRevenueChart"),{cats:chartLabels,seriesA:revCurrent,seriesB:revPrevious,nameA:"Current",nameB,fmt:B});
+  if(profitCurrent.every(Number.isFinite)&&profitPrevious.length===sq.length&&profitPrevious.every(Number.isFinite)) groupedBar(document.getElementById("varianceProfitChart"),{cats:chartLabels,seriesA:profitCurrent,seriesB:profitPrevious,nameA:"Current",nameB,fmt:B});
 }
 function csvVariance(){
-  const sq=selQ(), basisR=resolveVarBasis("revenue",revenueVarianceAvailability(sq)), basisP=resolveVarBasis("profit",profitVarianceAvailability(sq));
+  const sq=selQ(), info=varianceBasisInfo(sq), cmp=info.cmp;
   const rows=[
-    ["Revenue",periodLabel(sq),basisR==="pp"?"prior period":"prior year",aggSum(D.is.totalRev,sq),basisR==="pp"&&priorPeriodQIdxs(sq)?aggSum(D.is.totalRev,priorPeriodQIdxs(sq)):aggSum(D.is.totalRevPY,sq)],
-    ["Operating income",periodLabel(sq),basisP==="pp"?"prior period":"prior year",aggSum(D.is.opIncome,sq),basisP==="pp"&&priorPeriodQIdxs(sq)?aggSum(D.is.opIncome,priorPeriodQIdxs(sq)):pyQIdxsOf(sq)?aggSum(D.is.opIncome,pyQIdxsOf(sq)):null]
+    ["Revenue",periodLabel(sq),info.name,aggSum(D.is.totalRev,sq),cmp?(info.basis==="pp"?aggSum(D.is.totalRev,cmp):aggSum(D.is.totalRevPY,sq)):null],
+    ["Operating income",periodLabel(sq),info.name,aggSum(D.is.opIncome,sq),cmp?aggSum(D.is.opIncome,cmp):null]
   ];
   downloadCSV(`apple_variance_${periodFileTag(sq)}.csv`,REAL_LINE,["metric","period","comparison_basis","current","comparison"],rows);
 }
@@ -2166,25 +2233,25 @@ function renderCompany(v){
   const gm=rev&&gp!=null?100*gp/rev:null, om=rev&&op!=null?100*op/rev:null;
   const missing=["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"].filter(key=>companyMetricTotal(key,indexes)==null);
   const rows=periods.map(period=>`<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.periodEnd)}</td>
-    ${["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"].map(key=>`<td>${companyMetric(period,key)==null?"n/a":M(companyMetric(period,key))}${period.derivedMetrics.includes(key)?'<span class="unit">*</span>':""}</td>`).join("")}
+    ${["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"].map(key=>`<td>${companyMetric(period,key)==null?"n/a":M(companyMetric(period,key))}${period.derivedMetrics.includes(key)&&companyMetric(period,key)!=null?DERIVED_MARK:""}</td>`).join("")}
     <td><a href="${period.source.url}" target="_blank" rel="noopener">${escapeHtml(period.source.form)}</a></td></tr>`).join("");
   v.innerHTML=`
-    <div class="vhead"><h2>${escapeHtml(company.name)} <span class="unit">${escapeHtml(company.ticker)}</span></h2><span class="sub">${escapeHtml(periodLabel(indexes))} · $M</span>
+    <div class="vhead"><h2>${escapeHtml(company.name)} <span class="unit">${escapeHtml(company.ticker)}</span></h2><span class="sub">${escapeHtml(periodLabel(indexes))}</span>
       <span class="vhead-right">${derivedBadge("SEC sourced")}<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Download CSV</button></span></div>
     <div class="note" style="margin-bottom:10px">Standardized public-company view from SEC filings. The period filter applies to every chart and table. Company-specific product, geography, guidance, and environmental fields appear only when sourced.</div>
     ${sowhat(`${company.name} generated ${B(rev)} of revenue in ${periodLabel(indexes)}${revYoy==null?"":`, ${sgn(revYoy)}% versus ${revenueChange.comparison.label}`}, with ${om==null?"operating margin unavailable":pct(om,1)+" operating margin"}.`)}
     <div class="tiles">
-      ${tile("Selected-period revenue",B(rev),revYoy==null?periodLabel(indexes):`${pct(Math.abs(revYoy),1)} vs ${revenueChange.comparison.label}`,revYoy==null?undefined:revYoy>=0)}
+      ${tile("Selected-period revenue",B(rev),revYoy==null?periodLabel(indexes):`${sgn(revYoy)}% vs ${revenueChange.comparison.label}`,revYoy==null?undefined:revYoy>=0)}
       ${tile("Gross margin",gm==null?"n/a":pct(gm,1),gm==null?"Not consistently filed":`${periodLabel(indexes)} filed/derived`,"neutral")}
       ${tile("Operating income",op==null?"n/a":B(op),om==null?"Margin unavailable":`${pct(om,1)} margin`,op==null?undefined:op>=0)}
       ${tile("Free cash flow",fcf==null?"n/a":B(fcf),fcf==null?"Not consistently filed":`${periodLabel(indexes)} operating cash less capex`,fcf==null?undefined:fcf>=0)}
     </div>
     <div class="company-chart-grid">
-      <div class="card company-chart"><h3>Revenue trend <span class="h3-note">filed quarter · $M</span></h3><div class="chart"><svg id="companyRevenueChart" aria-label="Quarterly revenue trend"></svg></div></div>
-      <div class="card company-chart"><h3>Profit profile <span class="h3-note">operating vs net income · $M</span></h3><div class="chart"><svg id="companyProfitChart" aria-label="Operating income and net income by quarter"></svg></div></div>
+      <div class="card company-chart"><h3>Revenue trend <span class="h3-note">filed quarter · $B</span></h3><div class="chart"><svg id="companyRevenueChart" aria-label="Quarterly revenue trend"></svg></div></div>
+      <div class="card company-chart"><h3>Profit profile <span class="h3-note">operating vs net income · $B</span></h3><div class="chart"><svg id="companyProfitChart" aria-label="Operating income and net income by quarter"></svg></div></div>
     </div>
     <div class="card" style="margin-bottom:9px"><h3>Filed metrics by quarter <span class="h3-note">* derived from filed annual or YTD facts</span></h3>
-      <div class="scrollbox"><table><tr><th>Period</th><th>End</th><th>Revenue</th><th>Gross profit</th><th>Operating income</th><th>Net income</th><th>R&amp;D</th><th>Operating cash</th><th>Capex</th><th>FCF</th><th>Source</th></tr>${rows}</table></div>
+      <div class="scrollbox"><table><tr><th>Period · $M</th><th>End</th><th>Revenue</th><th>Gross profit</th><th>Operating income</th><th>Net income</th><th>R&amp;D</th><th>Operating cash</th><th>Capex</th><th>FCF</th><th>Source</th></tr>${rows}</table></div>
       <div class="subnote">${escapeHtml(COMPANY_DATA.methodology)}${missing.length?` Selected-period unavailable: ${missing.map(escapeHtml).join(", ")}.`:""}</div>
     </div>`;
   const labels=periods.map(companyChartLabel), revenues=periods.map(period=>companyMetric(period,"revenue"));
@@ -2212,16 +2279,36 @@ const VIEWS=[
   {id:"people", name:"Workforce & Investment"},
   {id:"outlook", name:"Outlook & IR"},
   {id:"env", name:"Sustainability"},
+  {id:"peers", name:"Peers"},
+  {id:"ledger", name:"Forecasts"},
   {id:"reports", name:"Reports"}
 ];
 function visibleViews(){ return VIEWS; }
 let current="home";
 
+// deltaDir: direction of a change (+1 up, -1 down, 0 flat) read from the first explicitly signed
+// number in the given texts ("+6.4% YoY", "-12.0 pts"), or null when none is signed (a plain
+// period label such as "Q4 FY26 - Q2 FY27 · 3 quarters" has no direction and gets no arrow).
+function deltaDir(...texts){
+  for(let i=0;i<texts.length;i++){
+    const t=texts[i];
+    // the tile VALUE (not a caption) counts only when it is itself a signed change ("+57.5%", "-1.1 pts"),
+    // never a signed amount such as "-$12.1B" free cash flow
+    if(i>0 && !/^\s*[+\-−]\s?[\d,.]+(%| pts)\s*$/.test(String(t==null?"":t))) continue;
+    const m=/(^|[\s(])([+\-−])\s?\$?([\d,]*\.?\d+)/.exec(String(t==null?"":t).replace(/<[^>]*>/g,""));
+    if(m) return parseFloat(m[3].replace(/,/g,""))===0 ? 0 : (m[2]==="+"?1:-1);
+  }
+  return null;
+}
 function tile(k,v,d,up){
-  // up: true = green up-arrow, false = red down-arrow, "neutral"/undefined = no arrow, no color
-  const styled = up===true || up===false;
-  const cls = styled ? (up?"up":"down") : "";
-  const arrow = styled ? (up?"▲ ":"▼ ") : "";
+  // up: true = favourable (green), false = unfavourable (red), "cost" = cost-type line (R&D, capex,
+  // debt, buybacks, stock comp: arrow only, neutral colour), "neutral"/undefined = no arrow, no color.
+  // The arrow's DIRECTION always follows the sign of the change shown in the caption (or in the
+  // value when the caption is just a label); its COLOUR follows `up`. No signed change, no arrow.
+  const styled = up===true || up===false || up==="cost";
+  const dir = (styled && d) ? deltaDir(d,v) : null;
+  const cls = !dir ? "" : (up===true?"up":up===false?"down":"");
+  const arrow = !dir ? "" : (dir>0?"▲ ":"▼ ");
   return `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div>
   ${d?`<div class="d ${cls}">${arrow}${d}</div>`:""}</div>`;
 }
@@ -2423,11 +2510,19 @@ function homeMiniChart(svg,values,kind="line",secondary=null){
 }
 function renderHome(v){
   const qIdxs=selQ(), lbl=periodLabel(qIdxs);
-  const rev=aggSum(D.is.totalRev,qIdxs), revYoy=aggYoYFromPY(D.is.totalRev,D.is.totalRevPY,qIdxs);
-  const gm=aggGmPctTotal(qIdxs), gmYoy=aggRatioPtsYoY(aggGmPctTotal,qIdxs);
-  const opInc=aggSum(D.is.opIncome,qIdxs), opYoy=aggYoYSameQtr(D.is.opIncome,qIdxs);
+  const rev=aggSum(D.is.totalRev,qIdxs);
+  const gm=aggGmPctTotal(qIdxs);
+  const opInc=aggSum(D.is.opIncome,qIdxs);
   const eps=aggEPS(qIdxs);
   const fcf=aggSum(D.cf.opCash,qIdxs)-aggSum(D.cf.capex,qIdxs);
+  // Deltas use the SAME comparison as the Executive overview panel (companyMetricChange ->
+  // companyComparison): a prior-year delta only exists when every selected quarter has its matching
+  // prior-year quarter in the data. With no comparison there is no arrow and no number.
+  const cmpInfo=companyComparison(qIdxs);
+  const revCh=companyMetricChange("revenue",qIdxs), opCh=companyMetricChange("operatingIncome",qIdxs), fcfCh=companyMetricChange("freeCashFlow",qIdxs);
+  const gmCmpVal=cmpInfo?aggGmPctTotal(cmpInfo.indexes):null;
+  const gmPts=gmCmpVal!=null&&gm!=null?gm-gmCmpVal:null;
+  const cmpCaption=cmpInfo?(cmpInfo.label==="prior year"?"vs prior-year period":"vs prior period"):"No prior-year comparison in data";
   const lastQ=qIdxs[qIdxs.length-1] ?? 6;
   // A single-quarter landing view keeps its mini-chart context by showing the latest
   // three filed quarters. The headline numbers still remain exactly on the selected quarter.
@@ -2440,6 +2535,19 @@ function renderHome(v){
   const heroPeriod=qIdxs.length===1?`${qLabel(lastQ)} · filed results`:`${qIdxs.length} quarters through ${qLabel(lastQ)} · filed results`;
   const money=v=>v==null?"n/a":B(v);
   const delta=v=>v==null?"":`${sgn(v)}%`;
+  // KPI comparison line: arrow direction follows the sign of the change; colour is favourable/unfavourable
+  // (all four KPIs are higher-is-better). No comparison: no arrow, no number, a plain caption.
+  const kpiCompare=(value,text)=>{
+    if(value==null||!Number.isFinite(value)) return `<span class="metric-baseline">No prior-year comparison in data</span>`;
+    const dir=Math.abs(value)<0.05?"flat":value>0?"up":"down";
+    return `<span class="metric-delta ${dir}">${dir==="flat"?"":`<i class="ph ph-arrow-${dir}"></i>`}${text}</span><span class="metric-baseline">${cmpCaption}</span>`;
+  };
+  // Title follows the selected window: one fiscal year name when the window sits inside a single
+  // FY, otherwise a neutral range label.
+  const parsedSel=qIdxs.map(i=>parseCompanyPeriodLabel(qLabel(i)));
+  const oneFY=parsedSel.length>0 && parsedSel.every(item=>item && item.fy===parsedSel[0].fy);
+  const heroWindow=oneFY?`FY${String(parsedSel[0].fy).padStart(2,"0")}`
+    :isContiguous(qIdxs)?`${qLabel(qIdxs[0])} – ${qLabel(lastQ)}`:`${qIdxs.length} selected quarters`;
   const exploreCard=(target,title,desc,metricLabel,metric,detail,icon,chart,chartKind="line",chartFormat="money",chartLabels=qIdxs.map(qLabel))=>{
     const chartA=Array.isArray(chart)?chart:(chart&&chart.a)||null, chartB=chart&&chart.b||null;
     return `
@@ -2452,7 +2560,7 @@ function renderHome(v){
   <div class="hero">
     <div class="home-hero-head">
       <div class="home-copy">
-        <h1>Apple FY26 at a glance</h1>
+        <h1>Apple ${heroWindow} at a glance</h1>
         <div class="lede">${heroPeriod}</div>
         <div class="home-actions">
           <button type="button" class="home-primary" id="homeExecBtn">Open Executive Summary</button>
@@ -2462,13 +2570,14 @@ function renderHome(v){
       <span class="vhead-right home-tools"><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span>
     </div>
     <div class="home-metrics" role="region" aria-label="Key performance indicators for ${lbl}">
-      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-currency-dollar"></i></span><div class="ck">Net sales</div></div><div class="cv">${money(rev)}</div><div class="metric-compare"><span class="metric-delta"><i class="ph ph-arrow-up"></i>${delta(revYoy)}</span><span class="metric-baseline">vs prior-year period</span></div></div>
-      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-chart-pie-slice"></i></span><div class="ck">Gross margin</div></div><div class="cv">${pct(gm)}</div><div class="metric-compare"><span class="metric-delta"><i class="ph ph-arrow-up"></i>${gmYoy!=null?`${sgn(gmYoy)} pts`:"n/a"}</span><span class="metric-baseline">vs prior-year period</span></div></div>
-      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-trend-up"></i></span><div class="ck">Operating income</div></div><div class="cv">${money(opInc)}</div><div class="metric-compare"><span class="metric-delta"><i class="ph ph-arrow-up"></i>${delta(opYoy)}</span><span class="metric-baseline">vs prior-year period</span></div></div>
-      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-money"></i></span><div class="ck">Free cash flow</div></div><div class="cv">${money(fcf)}</div><div class="metric-compare"><span class="metric-baseline">Operating cash less capex</span></div></div>
+      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-currency-dollar"></i></span><div class="ck">Net sales</div></div><div class="cv">${money(rev)}</div><div class="metric-compare">${kpiCompare(revCh.delta,delta(revCh.delta))}</div></div>
+      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-chart-pie-slice"></i></span><div class="ck">Gross margin</div></div><div class="cv">${pct(gm)}</div><div class="metric-compare">${kpiCompare(gmPts,gmPts==null?"":`${sgn(gmPts)} pts`)}</div></div>
+      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-trend-up"></i></span><div class="ck">Operating income</div></div><div class="cv">${money(opInc)}</div><div class="metric-compare">${kpiCompare(opCh.delta,delta(opCh.delta))}</div></div>
+      <div class="home-metric"><div class="home-metric-head"><span class="home-metric-icon"><i class="ph ph-money"></i></span><div class="ck">Free cash flow</div></div><div class="cv">${money(fcf)}</div><div class="metric-compare">${kpiCompare(fcfCh.delta,delta(fcfCh.delta))}</div></div>
     </div>
+    ${homeLedgerStrip()}
     <div class="home-primary-grid">
-      <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $M</span></h3><div class="fill"><svg id="appleHomeRevenue"></svg></div></div>
+      <div class="card home-primary-chart"><h3>Revenue trajectory <span class="h3-note">seven filed quarters · $B</span></h3><div class="fill"><svg id="appleHomeRevenue"></svg></div></div>
       ${companyExecutiveOverview()}
     </div>
     ${managementSignalsHTML({limit:3})}
@@ -2999,11 +3108,11 @@ function renderHwCogs(v){
   const capexAgg=aggSum(cf.capex,sq), revAgg=aggSum(is.totalRev,sq);
   v.innerHTML=`
   <div class="vhead"><h2>Hardware COGS &amp; Inventory</h2>
-    <span class="sub">${lbl} · $M</span>
+    <span class="sub">${lbl}</span>
     <span class="vhead-right"><span class="badge">Real · Apple 10-Q/10-K</span><button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Download CSV</button></span></div>
   ${hwcogsSoWhat()}
   <div class="tiles">
-    ${yoyTile("Cost of revenue · "+lbl,is.totalCos,sq)}
+    ${yoyTile("Cost of revenue · "+lbl,is.totalCos,sq,B,"cost")}
     ${tile("Inventory",B(bs.inventories[bsIdx]),`${sgn(100*(bs.inventories[bsIdx]-bs.inventories[prevIdx])/bs.inventories[prevIdx])}% vs prior quarter-end (${bs.dates[prevIdx]})`)}
     ${tile("Inventory turns (annualized)",turns.toFixed(1)+"x",`≈${dio} days on hand, ${qLabel(i)}`)}
     ${tile("Manufacturing capex · "+lbl,B(capexAgg),`${pct(100*capexAgg/revAgg,1)} of revenue`)}
@@ -3063,11 +3172,11 @@ function renderBalance(v){
     ${tile("Operating cash flow",B(opCashAgg),`${lbl} · YTD-differenced, summed`,true)}
     ${tile("Net cash",B(netCash),`${sgn(netCashDelta/1000)}B vs prior quarter-end · cash + securities − total debt`,netCashDelta>=0)}
   </div>
-  <div class="body g21">
+  <div class="body g21" style="flex:0 0 auto; height:auto">
     <div class="card"><h3>Working capital movement</h3>
       <div class="note">Change vs prior quarter-end, ${b.dates[prevIdx]} (from ${b.dates[bsIdx]}).</div>
       <div class="fill"><svg id="wcChart"></svg></div></div>
-    <div class="card"><h3>Balance sheet detail</h3><div class="note">Selected lines, $ millions.</div>
+    <div class="card"><h3>Balance sheet detail <span class="h3-note">$M</span></h3><div class="note">Selected lines, $ millions.</div>
       <div class="scrollbox"><table id="bsTable"></table></div></div>
   </div>
   <div class="body g2" style="flex:0 0 auto; height:${multi?"30%":"34%"}">
@@ -3260,6 +3369,9 @@ function renderPeople(v){
   const sbcSum=sum(sq.map(k=>cf.sbc[k])), fcfSum2=sum(sq.map(k=>cf.opCash[k]-cf.capex[k]));
   const sbcPctFCF = fcfSum2>0 ? 100*sbcSum/fcfSum2 : null;
   const scissors=sq.length>=2;
+  // heading follows the actual numbers: indexed R&D vs revenue growth, first to last selected quarter
+  const rdIdxEnd=scissors?is.rd[sq[sq.length-1]]/is.rd[sq[0]]:1, revIdxEnd=scissors?is.totalRev[sq[sq.length-1]]/is.totalRev[sq[0]]:1;
+  const scissorsTitle=Math.abs(rdIdxEnd-revIdxEnd)<0.005?"R&amp;D is growing in line with revenue":rdIdxEnd>revIdxEnd?"R&amp;D is growing faster than revenue":"R&amp;D is growing slower than revenue";
   const rsuAsOf=D.bs.dates[D.bs.dates.length-1];
   v.innerHTML=`
   <div class="vhead"><h2>Workforce &amp; Investment</h2>
@@ -3268,7 +3380,7 @@ function renderPeople(v){
   ${peopleSoWhat()}
   <div class="tiles">
     ${tile("Full-time equivalents",(h.fte/1000).toFixed(0)+"K",`as of ${h.fteAsOf}`)}
-    ${yoyTile("R&D expense · "+lbl,is.rd,sq)}
+    ${yoyTile("R&D expense · "+lbl,is.rd,sq,B,"cost")}
     ${tile("Share-based comp (9mo FY26)",B(h.sbc9mo),`+${Math.round(100*(h.sbc9mo-h.sbc9moPy)/h.sbc9moPy)}% YoY`)}
     ${tile("Unrecognized comp",B(h.unrecognizedComp),`over ${h.recognitionYears} years`)}
     ${tile("RSUs outstanding",(h.rsuClose/1000).toFixed(1)+"M",`avg grant FV $${h.rsuFVClose.toFixed(2)}`)}
@@ -3289,7 +3401,7 @@ function renderPeople(v){
       <div class="fill"><svg id="sbcChart"></svg></div></div>
   </div>
   ${scissors?`<div class="body" style="flex:0 0 auto; height:26%; grid-template-columns:1fr">
-    <div class="card"><h3>R&amp;D is growing faster than revenue</h3>
+    <div class="card"><h3>${scissorsTitle}</h3>
       <div class="note">Indexed to 100 at ${qLabel(sq[0])}; quarterly R&amp;D vs total net sales, ${sq.length} selected quarters.</div>
       <div class="fill"><svg id="scissorsChart"></svg></div></div>
   </div>`:""}`;
@@ -3378,7 +3490,7 @@ function renderOutlook(v){
     ${tile("CEO transition",ceoDate,"John Ternus succeeds Tim Cook")}
   </div>
   ${managementSignalsHTML({title:"Latest outlook signals",limit:3,categories:["Guidance","Demand and revenue","Margin and cost","Investment","Risk and supply"]})}
-  <div class="body g12">
+  <div class="body g12" style="flex:0 0 auto; height:auto; min-height:340px">
     <div class="card"><h3>Quarterly revenue · reported, selected quarters</h3>
       <div class="note">Q4 FY26 is guided, not reported. Click a bar to focus that quarter.</div>
       <div class="fill"><svg id="outChart"></svg></div></div>
@@ -3711,9 +3823,9 @@ function syncThemeBtn(){
   btn.textContent=dark?"Light":"Dark";
 }
 const RENDER={home:renderHome,company:renderCompany,glass:renderGlass,revenue:renderRevenue,plan:renderPlan,profit:renderProfit,
-  variance:renderVariance,hwcogs:renderHwCogs,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv,reports:renderReports};
+  variance:renderVariance,hwcogs:renderHwCogs,balance:renderBalance,fx:renderFX,people:renderPeople,outlook:renderOutlook,env:renderEnv,peers:renderPeersTab,ledger:renderLedgerTab,reports:renderReports};
 const CSV_FN={home:csvHome,company:csvCompany,glass:csvGlass,revenue:csvRevenue,plan:csvPlan,profit:csvProfit,
-  variance:csvVariance,hwcogs:csvHwCogs,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv,reports:csvReports};
+  variance:csvVariance,hwcogs:csvHwCogs,balance:csvBalance,fx:csvFX,people:csvPeople,outlook:csvOutlook,env:csvEnv,peers:csvLedgerPeersNone,ledger:csvLedgerPeersNone,reports:csvReports};
 // relocateFiltersUnit: the Filters button+panel+summary is ONE node (#filtersUnit), built once
 // in buildFiltersBar(). Home keeps it on the dedicated line under the header (#filterbar,
 // visible); every other tab instead hosts it inline in that tab's own .vhead-right cluster,
@@ -3762,7 +3874,7 @@ function render(){
   }
   if(companySlug!=="apple" && current!=="company" && current!=="plan") renderPeerTab(current,view);
   else RENDER[current](view);
-  if(current!=="reports" && current!=="env") view.insertAdjacentHTML("beforeend",annualReportHTML({tab:current}));
+  if(current!=="reports" && current!=="env" && current!=="peers" && current!=="ledger") view.insertAdjacentHTML("beforeend",annualReportHTML({tab:current}));
   relocateFiltersUnit();
   const dl=document.getElementById("dlBtn");
   if(dl) dl.addEventListener("click",()=>{
@@ -3771,7 +3883,7 @@ function render(){
   });
   const rangeTxt = periodLabel();
   document.getElementById("foot").textContent =
-    companySlug!=="apple" || current==="company" || current==="plan" || current==="reports"
+    companySlug!=="apple" || current==="company" || current==="plan" || current==="reports" || current==="peers" || current==="ledger"
     ? `Source: ${COMPANY_DATA.companies[companySlug].name} SEC filings via SEC Company Facts. Filed values are shown directly; derived Q4/YTD arithmetic and modeled scenarios are labeled. Showing ${rangeTxt}. Built by Govind Waghmare · govindwaghmare.me`
     : current==="home"
     ? `Sources: Apple Inc. FY25 Form 10-K (filed Oct 31, 2025); FY25 Q1–Q3 and FY26 Q1–Q3 Form 10-Qs; Q3 FY26 earnings call (July 30, 2026); 2026 Environmental Progress Report; Apple Newsroom. Showing ${rangeTxt}. Built by Govind Waghmare · govindwaghmare.me`
@@ -4014,6 +4126,7 @@ document.getElementById("main").addEventListener("click",e=>{
   const b=e.target.closest(".vbasis-btn");
   if(!b || b.disabled) return;
   varBasis[b.dataset.tab]=b.dataset.vbasis;
+  if(current==="variance") varBasis.revenue=varBasis.profit=b.dataset.vbasis; // one basis for the whole Variance tab
   render();
 });
 // chart <-> table toggle (Feature 2): same delegation pattern, keyed by the svg id it targets.
@@ -4052,6 +4165,7 @@ async function loadData(){
       '<p style="padding:40px;color:var(--muted)">Couldn\'t load data.json. This dashboard needs to be served over http(s) (not opened as a bare file://), and data.json must sit next to index.html.</p>';
     throw e;
   }
+  await Promise.all([import("./ledger-core.mjs"),import("./peer-core.mjs")]).catch(()=>{}); // deferred module scripts may not have run yet on a deep link
   initFilters();
   let restoredTab=parseHashState(); // may mutate state.q/cat/geo/pgeo; returns a tab id or null
   const companySelect=document.getElementById("companySelect");
@@ -4076,6 +4190,7 @@ async function loadData(){
   window.goToCompany=slug=>{ companySelect.value=slug; companySelect.dispatchEvent(new Event("change")); };
   buildNav(); syncThemeBtn(); buildFiltersBar(); renderAISugg();
   go(restoredTab||current); // routed through go() so glass-tab theme forcing runs correctly
+  window.addEventListener("hashchange",onHashChange);
 }
 loadData();
 </script>

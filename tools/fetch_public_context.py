@@ -114,6 +114,12 @@ BOILERPLATE = [
 ]
 
 
+GUIDANCE_MONEY = re.compile(r"\$\s?\d[\d,.]*\s*(?:-|to|\u2013)?\s*\$?\s?\d*[\d,.]*\s*(?:billion|million)", re.I)
+GUIDANCE_REVENUE = re.compile(r"\b(?:revenue|revenues|net sales)\b", re.I)
+GUIDANCE_FORWARD = re.compile(r"\b(?:expect|expects|expected|expecting|forecast|forecasting|forecasted|guidance|outlook)\b", re.I)
+GUIDANCE_QUARTER = re.compile(r"\bquarter\b|\bQ[1-4]\b", re.I)
+
+
 class TextExtractor(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
@@ -209,6 +215,29 @@ def extract_signals(text: str, source: dict) -> list[dict]:
     return output
 
 
+def extract_guidance(text: str, source: dict) -> list[dict]:
+    """Verbatim 8-K exhibit sentences that state a forward revenue figure. No numbers are parsed here;
+    the dashboard parses at render time and shows the sentence either way."""
+    output = []
+    for order, sentence in enumerate(re.split(r"(?<=[.!?])\s+", text)):
+        clean = re.sub(r"\s+", " ", sentence).strip()
+        clean = re.sub(r"^[\u2022\u25aa\u25cf\-\s]+", "", clean)
+        clean = re.sub(r"\.\s*\.$", ".", clean)
+        if not 6 <= len(clean.split()) <= 90 or len(clean) > 700:
+            continue
+        if not (GUIDANCE_MONEY.search(clean) and GUIDANCE_REVENUE.search(clean) and GUIDANCE_FORWARD.search(clean)):
+            continue
+        quoted = clean[0] in "\u201c\"'"
+        output.append({
+            "rank": (0 if GUIDANCE_QUARTER.search(clean) else 1, 1 if quoted else 0, order),
+            "text": clean,
+            "filed": source["filed"],
+            "url": source["url"],
+            "sourceTitle": source["title"],
+        })
+    return output
+
+
 def extract_annual_report_context(text: str, source: dict) -> list[dict]:
     """Select compact, auditable annual-report excerpts across finance-relevant areas."""
     sentences = re.split(r"(?<=[.!?])\s+", text)
@@ -266,7 +295,8 @@ def filing_base(cik: str, accession: str) -> str:
 def build_document(row: dict, url: str, title: str, source_type: str) -> dict:
     source = {"title": title, "sourceType": source_type, "filed": row["filingDate"], "url": url}
     text = html_text(fetch(url))
-    return {**source, "signals": extract_signals(text, source)}
+    guidance = extract_guidance(text, source) if source_type == "SEC 8-K exhibit" else []
+    return {**source, "signals": extract_signals(text, source), "guidanceCandidates": guidance}
 
 
 def build_annual_report(row: dict, url: str) -> dict:
@@ -337,6 +367,14 @@ def company_context(slug: str, company: dict) -> dict:
                 "filed": latest_annual["filingDate"], "url": annual_url, "evidence": [], "error": str(error)[:120],
             }
 
+    # One verbatim guidance sentence per company: quarterly beats annual, narrative beats a quoted
+    # remark, then earliest in the exhibit. Null when no 8-K exhibit states a forward revenue figure.
+    candidates = [(item["rank"], index, item) for index, document in enumerate(documents) for item in document.get("guidanceCandidates", [])]
+    guidance = None
+    if candidates:
+        best = min(candidates, key=lambda entry: (entry[0][0], entry[0][1], entry[1], entry[0][2]))[2]
+        guidance = {key: best[key] for key in ("text", "filed", "url", "sourceTitle")}
+
     signals = []
     seen_categories = set()
     for document in documents:
@@ -351,8 +389,9 @@ def company_context(slug: str, company: dict) -> dict:
         "irUrl": IR_URLS.get(slug),
         "submissionsUrl": submissions_url,
         "recentFilings": filings,
-        "documents": [{key: value for key, value in document.items() if key != "signals"} for document in documents],
+        "documents": [{key: value for key, value in document.items() if key not in {"signals", "guidanceCandidates"}} for document in documents],
         "managementSignals": signals[:6],
+        "guidance": guidance,
         "annualReport": annual_report,
         "coverage": {
             "secFilings": bool(filings),
@@ -440,7 +479,7 @@ def main() -> None:
         except Exception as error:
             output["companies"][slug] = {
                 "name": company["name"], "ticker": company["ticker"], "irUrl": IR_URLS.get(slug),
-                "managementSignals": [], "recentFilings": [], "documents": [], "annualReport": None,
+                "managementSignals": [], "guidance": None, "recentFilings": [], "documents": [], "annualReport": None,
                 "coverage": {"secFilings": False, "managementCommentary": False, "annualReport": False, "investorRelationsLink": bool(IR_URLS.get(slug)), "internalPlan": False, "analystConsensus": False, "stockPrices": False},
                 "error": str(error)[:160],
             }

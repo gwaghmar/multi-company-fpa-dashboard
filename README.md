@@ -29,6 +29,48 @@ quarters. CSV exports preserve the company, period, source, and field basis.
 - **Outlook** — reported momentum for every company; Apple adds sourced earnings-call commentary
 - **Environment (CSRD)** — Apple sourced detail; other companies show the sustainability source needed rather than estimated data
 
+## Forecast Ledger
+
+The **Forecast Ledger** tab holds the owner's own calls (revenue, gross margin, opex for a
+quarter that has not been filed yet), next to the verbatim revenue guidance each company
+published in its latest SEC 8-K earnings exhibit, and the filed actuals once they exist.
+`forecasts.json` ships empty. Nothing in it is generated: only a call you lock with the helper appears.
+
+```bash
+node tools/add_forecast.mjs apple "Q4 FY26" 2026-09-26 --revenue 112000 --gm 47.0 --opex 19500 [--note "..."]
+```
+
+The helper sets `lockedAt` to today, computes the hash, appends the entry, refuses a duplicate id, and
+refuses any `periodEnd` at or before the company's latest period in `companies.json` (no backfilling).
+It warns when the company does not file `sellingGeneralAdministrative` under the standard tag, because
+opex then cannot be graded. Entry shape (numbers are USD millions; the values below are a format example only):
+
+```json
+{"id":"apple-2026-09-26","company":"apple","label":"Q4 FY26","periodEnd":"2026-09-26",
+ "revenue":112000,"grossMarginPct":47.0,"opex":19500,"note":"","lockedAt":"2026-10-14",
+ "hash":"<sha256 of id|company|label|periodEnd|revenue|grossMarginPct|opex|lockedAt>"}
+```
+
+How it is enforced: `npm test` (part of the daily workflow) rechecks every entry: unique ids, hash
+recomputes, sorted by `lockedAt`, label matches `companies.json`, and `lockedAt` is before the period's first
+filing (`source.firstFiled`) when that is known, otherwise not in the future. Git history is the audit trail.
+`lockedAt` is self-reported: the hash and git history show that an entry did not change after it was
+committed, not when it was first written.
+
+Filed guidance comes from `guidance` in `company-context.json` (built by `tools/fetch_public_context.py`
+from "SEC 8-K exhibit" documents only): one verbatim sentence with its source link and date, or `null`.
+The dashboard parses a range at render time only for these shapes: `$61-64 billion`,
+`$15.8 billion to $16.8 billion`, `between $X and $Y`, `plus or minus N%` and `plus or minus $N`
+(the last two are tagged DERIVED because the range is computed from the tolerance), plus
+`approximately $34.8 billion`; anything else shows the excerpt with "Range not parsed".
+Annual guidance is not graded.
+
+Known limit: only the latest earnings 8-K guidance sentence is stored, so "Guidance in range"
+grading needs a per-quarter guidance history that is not built yet.
+
+The same tab has a **Figures changed in later filings** section for the selected company. It reads
+`restatements` from `companies.json` when the fetcher provides it and says UNAVAILABLE until then.
+
 ## Sources and evidence states
 
 The multi-company layer uses official SEC Company Facts and links every period to
