@@ -151,10 +151,15 @@ function sumSeries(series, quarterIndexes) {
 function filedDilutedEps(quarterIndexes) {
   const signature = quarterIndexes.join(",");
   if (quarterIndexes.length === 1) return CURATED_DATA.is.epsDiluted[quarterIndexes[0]] ?? null;
-  if (signature === "0,1,2") return CURATED_DATA.is.epsDiluted9mo?.fy25 ?? null;
-  if (signature === "4,5,6") return CURATED_DATA.is.epsDiluted9mo?.fy26 ?? null;
-  if (signature === "0,1,2,3") return CURATED_DATA.is.epsDilutedAnnual?.fy25 ?? null;
-  return null;
+  // Pick by quarter label: Q1..Q3 of one fiscal year is the filed nine-month EPS, Q1..Q4 the filed annual EPS.
+  const parsed = quarterIndexes.map((index) => /^Q([1-4]) FY(\d{2})$/.exec(CURATED_DATA.meta.quarters[index] || ""));
+  if ((quarterIndexes.length !== 3 && quarterIndexes.length !== 4) || parsed.some((m) => !m)) return null;
+  const fy = parsed[0][2];
+  if (!parsed.every((m, n) => m[2] === fy && Number(m[1]) === n + 1)) return null;
+  const key = `fy${fy}`;
+  return quarterIndexes.length === 4
+    ? CURATED_DATA.is.epsDilutedAnnual?.[key] ?? null
+    : CURATED_DATA.is.epsDiluted9mo?.[key] ?? null;
 }
 
 function aggregateNamedSeries(map, names, quarterIndexes) {
@@ -258,8 +263,13 @@ function sourceMetadata(quarterIndexes) {
     const source = CURATED_DATA.meta.sources[label];
     if (source) sources.push({ label, ...source });
   }
-  if (quarterIndexes.includes(3) && CURATED_DATA.meta.sources["FY25 10-K"]) {
-    sources.push({ label: "FY25 10-K", ...CURATED_DATA.meta.sources["FY25 10-K"] });
+  // A selected Q4 is derived from that fiscal year's 10-K, so cite it too.
+  for (const index of quarterIndexes) {
+    const match = /^Q4 FY(\d{2})$/.exec(CURATED_DATA.meta.quarters[index] || "");
+    const tenKLabel = match && `FY${match[1]} 10-K`;
+    if (tenKLabel && CURATED_DATA.meta.sources[tenKLabel] && !sources.some((item) => item.label === tenKLabel)) {
+      sources.push({ label: tenKLabel, ...CURATED_DATA.meta.sources[tenKLabel] });
+    }
   }
   return sources;
 }

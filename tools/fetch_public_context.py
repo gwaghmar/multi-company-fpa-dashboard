@@ -460,7 +460,41 @@ def safe_source(name: str, builder) -> dict:
         return {"status": "unavailable", "source": name, "error": str(error)[:160]}
 
 
+def load_previous_output() -> dict:
+    try:
+        with open(OUT, encoding="utf-8") as handle:
+            return json.load(handle)
+    except (OSError, ValueError):
+        return {}
+
+
+def merge_guidance_history(previous: dict | None, current: dict | None) -> list[dict]:
+    """Every distinct guidance entry seen so far, deduped by (url, text), sorted by filed date.
+
+    Carried forward from the previous company-context.json (its guidanceHistory plus its latest
+    guidance, so a file written before this field existed seeds itself) and extended with today's.
+    """
+    entries = list((previous or {}).get("guidanceHistory") or [])
+    for item in ((previous or {}).get("guidance"), current):
+        if item:
+            entries.append(item)
+    seen: set[tuple[str, str]] = set()
+    merged: list[dict] = []
+    for item in entries:
+        if not isinstance(item, dict) or not item.get("text"):
+            continue
+        key = (str(item.get("url") or ""), str(item["text"]))
+        if key in seen:
+            continue
+        seen.add(key)
+        merged.append({field: item.get(field) for field in ("text", "filed", "url", "sourceTitle")})
+    merged.sort(key=lambda item: (str(item.get("filed") or ""), str(item.get("url") or ""), item["text"]))
+    return merged
+
+
 def main() -> None:
+    previous = load_previous_output()
+    previous_companies = previous.get("companies") or {}
     with open(COMPANIES_PATH, encoding="utf-8") as handle:
         companies = json.load(handle)["companies"]
     output = {
@@ -483,6 +517,8 @@ def main() -> None:
                 "coverage": {"secFilings": False, "managementCommentary": False, "annualReport": False, "investorRelationsLink": bool(IR_URLS.get(slug)), "internalPlan": False, "analystConsensus": False, "stockPrices": False},
                 "error": str(error)[:160],
             }
+        entry = output["companies"][slug]
+        entry["guidanceHistory"] = merge_guidance_history(previous_companies.get(slug), entry.get("guidance"))
         time.sleep(0.12)
     with open(OUT, "w", encoding="utf-8") as handle:
         json.dump(output, handle, indent=2)

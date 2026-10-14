@@ -34,13 +34,34 @@ jobs:
           python tools/fetch_company_sources.py
           python tools/fetch_public_context.py
 
+      # data.json (Apple's detailed dataset) must carry the same quarter labels as Apple's periods in
+      # companies.json. When a new Apple filing moves that window, rebuild data.json from EDGAR.
+      # NOTE: tools/fetch_edgar_data.py derives Apple's 7-quarter window and filings list from SEC
+      # EDGAR itself, so a new 10-Q/10-K moves the window with no code change. If EDGAR has not yet
+      # published the new filing, this step rebuilds the same window and the test below fails
+      # loudly (and nothing is committed). The hand-curated sections (fx, cap, hc, env, fwd) are
+      # carried over verbatim and still need a manual refresh after each new quarter.
+      - name: Rebuild data.json when Apple quarters changed
+        run: |
+          if node -e '
+            const fs=require("fs");
+            const n=l=>String(l).replace(/\s+/g," ").trim();
+            const d=JSON.parse(fs.readFileSync("data.json","utf8")).meta.quarters.map(n);
+            const c=JSON.parse(fs.readFileSync("companies.json","utf8")).companies.apple.periods.map(p=>n(p.label));
+            process.exit(JSON.stringify(d)===JSON.stringify(c)?0:1);
+          '; then
+            echo "data.json quarters already match companies.json"
+          else
+            python tools/fetch_edgar_data.py --no-csv
+          fi
+
       - name: Verify AI evidence and calculations
         run: npm test
 
       - name: Detect refreshed data
         id: changes
         run: |
-          if git diff --quiet -- companies.json company-context.json; then
+          if git diff --quiet -- companies.json company-context.json data.json; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
@@ -51,6 +72,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add companies.json company-context.json
+          git add companies.json company-context.json data.json
           git commit -m "Refresh official company context"
           git push

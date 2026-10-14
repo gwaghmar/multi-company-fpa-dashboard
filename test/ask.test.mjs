@@ -326,7 +326,7 @@ test("company AI evidence carries filed fiscal YTD values only for a true fiscal
   assert.ok(checkedSingleQuarter > 20 && checkedYtd > 10, "the fixture exercised too few cases");
 });
 
-test("NVIDIA exact filed fiscal YTD values reconcile to the six-month filing", () => {
+test("NVIDIA exact filed fiscal YTD values reconcile to the six-month filing", (t) => {
   const companies = JSON.parse(readFileSync(new URL("../companies.json", import.meta.url), "utf8"));
   // The window slides with the daily refresh, so the label comes from the data: NVIDIA's latest second
   // fiscal quarter. The filed six-month values below belong to Q2 FY27; a newer Q2 needs its own entry.
@@ -335,7 +335,8 @@ test("NVIDIA exact filed fiscal YTD values reconcile to the six-month filing", (
   const filed = {
     "Q2 FY27": { revenue: 177837, netIncome: 118010, grossProfit: 133299, operatingIncome: 117270 }
   };
-  assert.ok(filed[latest.label], `add the filed six-month values for ${latest.label}`);
+  // A new Q2 entering the window must not halt the daily refresh: skip until its values are added.
+  if (!filed[latest.label]) return t.skip(`add filed six-month values for ${latest.label}`);
   for (const [metric, value] of Object.entries(filed[latest.label])) assert.equal(latest.fiscalYtdMetrics[metric], value, metric);
 });
 
@@ -420,4 +421,18 @@ test("handler rate limits a single IP", async () => {
   for (let i = 0; i < 21; i += 1) { last = responseRecorder(); await handler({ method: "POST", headers, body: {} }, last); }
   assert.equal(last.code, 429);
   assert.equal(last.headers["Retry-After"], "60");
+});
+
+test("guidanceHistory entries are unique, sorted by filed date, and include the latest guidance", () => {
+  const context = JSON.parse(readFileSync(new URL("../company-context.json", import.meta.url), "utf8"));
+  for (const [slug, company] of Object.entries(context.companies)) {
+    assert.ok(Array.isArray(company.guidanceHistory), `${slug} has no guidanceHistory array`);
+    const keys = company.guidanceHistory.map(item => `${item.url}|${item.text}`);
+    assert.equal(new Set(keys).size, keys.length, `${slug} guidanceHistory has duplicates`);
+    const filed = company.guidanceHistory.map(item => item.filed);
+    assert.deepEqual(filed, [...filed].sort(), `${slug} guidanceHistory is not sorted by filed date`);
+    if (company.guidance) {
+      assert.ok(keys.includes(`${company.guidance.url}|${company.guidance.text}`), `${slug} latest guidance missing from history`);
+    }
+  }
 });

@@ -6,9 +6,15 @@ mapped consistently across issuers.
 
 Rules (also written up in DATA_PROVENANCE.md, Part D):
 
-* One XBRL tag per metric per company. Candidate tags are never pooled: the tag
-  that carries the company's filed fiscal year-to-date series is chosen once and
-  every quarter, YTD value and Q4 derivation for that metric uses that tag only.
+* One primary XBRL tag per metric per company (metricTags): the tag that carries
+  the company's filed fiscal year-to-date series is chosen once. Candidate tags
+  are never pooled or summed.
+* Renamed-tag fallback, span level. When an issuer moves a line to a new tag, a
+  second candidate tag may supply a filed (start, end) span ONLY when the primary
+  tag never filed that span, and ONLY after a bridge check: the two tags share at
+  least one filed span and every shared span has the identical first-filed value.
+  Each span still comes from exactly one tag. Which spans came from the fallback
+  is written to metricTagFallbacks.
 * As originally filed. When the same fact was filed more than once (a later
   filing repeats or restates a prior period in its comparative column) the
   earliest filing wins, so both ends of every subtraction share one vintage.
@@ -58,7 +64,9 @@ CONCEPTS = {
     "operatingCashFlow": ["NetCashProvidedByUsedInOperatingActivities"],
     "capex": ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets"],
     "repurchases": ["PaymentsForRepurchaseOfCommonStock"],
-    "dividends": ["PaymentsOfDividendsCommonStock", "PaymentsOfDividends"],
+    # PaymentsOfOrdinaryDividends: Alphabet's tag for the same "Dividend payments" line from the
+    # Q2 2026 10-Q on. It is used only as a bridged fallback (see FALLBACK_METRICS).
+    "dividends": ["PaymentsOfDividendsCommonStock", "PaymentsOfDividends", "PaymentsOfOrdinaryDividends"],
     "shareBasedCompensation": ["ShareBasedCompensation", "AllocatedShareBasedCompensationExpense"],
     "sellingGeneralAdministrative": ["SellingGeneralAndAdministrativeExpense"],
     "depreciationAmortization": [
@@ -67,10 +75,27 @@ CONCEPTS = {
         "DepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
         "Depreciation",
     ],
-    "interestExpense": ["InterestExpenseNonOperating", "InterestAndDebtExpense"],
+    # Gross interest expense only. Net tags (InterestIncomeExpenseNet and friends) and cash
+    # interest paid (InterestPaidNet) are deliberately absent: interest income is never netted.
+    "interestExpense": ["InterestExpenseNonoperating", "InterestExpense", "InterestExpenseDebt"],
     "incomeTaxExpense": ["IncomeTaxExpenseBenefit"],
     "acquisitions": ["PaymentsToAcquireBusinessesNetOfCashAcquired", "PaymentsToAcquireBusinessesGross"],
 }
+# Metrics allowed to take a bridged fallback tag (add_fallback_spans). Kept to the metrics where a
+# tag rename was verified against the filed statements; other metrics stay strictly one tag.
+FALLBACK_METRICS = {"dividends", "interestExpense"}
+
+# Metrics left unmapped for one company even though a candidate tag exists, with the reason.
+UNMAPPED = {
+    "meta": {
+        "interestExpense": (
+            "InterestExpenseDebt is filed only in some 10-Qs (absent from the Q1, Q2 and Q3 2025 "
+            "and Q1 2026 10-Qs as filed) and covers debt interest only: FY2025 1,090 vs 1,165 total interest "
+            "expense (InterestExpenseNonoperating, 10-K only). No clean quarterly series."
+        ),
+    },
+}
+
 # Income-statement metrics: the filed three-month fact is the quarter.
 INCOME_KEYS = [
     "revenue", "costOfRevenue", "grossProfit", "operatingIncome", "netIncome", "rd",
@@ -280,6 +305,55 @@ def choose_flow_tag(payload: dict, names: list[str], periods: list[dict]) -> tup
     return best_name, best_items
 
 
+def first_filed_by_span(items: list[dict]) -> dict[tuple[str, str], dict]:
+    spans: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for item in items:
+        spans[(item["start"], item["end"])].append(item)
+    return {span: first_filed(rows) for span, rows in spans.items()}
+
+
+def add_fallback_spans(payload: dict, names: list[str], primary: str | None, items: list[dict]) -> tuple[list[dict], dict | None]:
+    """Fill spans the primary tag never filed from a renamed tag, one tag per span.
+
+    A candidate qualifies only if it bridges to the primary: at least one (start, end) span is
+    filed under both tags and every such shared span has the identical first-filed value. That
+    proves the two tags label the same line. The fallback then supplies only spans absent from
+    the primary; a span the primary filed is never replaced. Candidates are tried in CONCEPTS
+    order and a later candidate cannot overwrite a span an earlier one supplied.
+    """
+    if not primary:
+        return items, None
+    merged = list(items)
+    have = first_filed_by_span(items)
+    report = None
+    for name in names:
+        if name == primary:
+            continue
+        candidate = first_filed_by_span(tag_facts(payload, name))
+        shared = [span for span in candidate if span in have and have[span]["concept"] == primary]
+        if not shared or any(candidate[span]["val"] != have[span]["val"] for span in shared):
+            continue
+        new_spans = sorted(span for span in candidate if span not in have)
+        if not new_spans:
+            continue
+        for span in new_spans:
+            merged.extend(item for item in tag_facts(payload, name) if (item["start"], item["end"]) == span)
+            have[span] = candidate[span]
+        report = report or {"tags": [], "bridge": [], "spans": []}
+        report["tags"].append(name)
+        report["bridge"].extend({
+            "tag": name, "start": span[0], "end": span[1], "value": value_millions(candidate[span]),
+            "primaryAccession": have[span]["accn"] if have[span]["concept"] == primary else None,
+            "fallbackAccession": candidate[span]["accn"],
+        } for span in sorted(shared))
+        report["spans"].extend({
+            "tag": name, "start": span[0], "end": span[1], "value": value_millions(candidate[span]),
+            "form": candidate[span].get("form"), "filed": candidate[span].get("filed"),
+            "accession": candidate[span].get("accn"),
+        } for span in new_spans)
+    return merged, report
+
+
 def choose_instant_tag(payload: dict, names: list[str], periods: list[dict]) -> tuple[str | None, list[dict]]:
     """Pick ONE tag for a balance-sheet metric: the tag filed at the most emitted period ends."""
     best_name, best_items, best_score = None, [], 0
@@ -397,11 +471,13 @@ def filing_values(items: list[dict]) -> dict[str, dict]:
     return by_filing
 
 
-def restatement_rows(payload: dict, metric_tags: dict, periods: list[dict], labels: list[str]) -> list[dict]:
+def restatement_rows(payload: dict, metric_tags: dict, periods: list[dict], labels: list[str],
+                     flow_facts: dict[str, list[dict]] | None = None) -> list[dict]:
     """Prior-period figures that a later filing reports differently from the first filing.
 
     Its own pass over the SEC facts, including 10-K/A and 10-Q/A (the main filter drops amendments).
-    Only the tag chosen for each metric (metricTags) and only directly filed facts are compared:
+    Only the tag that supplied each span (metricTags, or the bridged fallback listed in
+    metricTagFallbacks for a span the primary never filed) and only directly filed facts are compared:
     the exact three-month fact for income-statement metrics and for first-quarter cash-flow metrics
     (a first-quarter YTD fact is the quarter), and the instant fact for balance-sheet metrics.
     Derived values are never compared: fiscal Q4 flow quarters, YTD-differenced cash-flow quarters,
@@ -412,6 +488,11 @@ def restatement_rows(payload: dict, metric_tags: dict, periods: list[dict], labe
     the same period's revenue and net income are unchanged between the first and the latest filing
     that reports them (fiscal Q4 uses the annual fact); otherwise changed.
     """
+    def span_tag(key: str, start: str, end: str) -> str | None:
+        """Tag that supplied this span: the primary, or the bridged fallback for a span the primary never filed."""
+        chosen = [item for item in flow_facts.get(key, []) if item["start"] == start and item["end"] == end]
+        return first_filed(chosen)["concept"] if chosen else metric_tags.get(key)
+
     def revenue_or_income(key: str, period: dict) -> tuple[float | None, float | None]:
         name = metric_tags.get(key)
         if not name:
@@ -424,6 +505,7 @@ def restatement_rows(payload: dict, metric_tags: dict, periods: list[dict], labe
             return None, None
         return value_millions(ordered[0]), value_millions(ordered[-1])
 
+    flow_facts = flow_facts or {}
     rows = []
     for period, label in zip(periods, labels):
         candidates = []
@@ -432,7 +514,8 @@ def restatement_rows(payload: dict, metric_tags: dict, periods: list[dict], labe
                 continue
             if period["quarter"] == 4 or not metric_tags.get(key):
                 continue
-            candidates.append((key, [item for item in tag_facts(payload, metric_tags[key], forms=RESTATEMENT_FORMS)
+            name = span_tag(key, period["start"], period["end"])
+            candidates.append((key, [item for item in tag_facts(payload, name, forms=RESTATEMENT_FORMS)
                                      if item["start"] == period["start"] and item["end"] == period["end"]]))
         for key in INSTANT_CONCEPTS:
             if metric_tags.get(key):
@@ -476,8 +559,27 @@ def build_company(slug: str, config: dict) -> dict:
     periods = all_periods[-7:]
     metric_tags = {}
     facts = {}
+    fallbacks = {}
     for key, names in CONCEPTS.items():
+        if key in UNMAPPED.get(slug, {}):
+            metric_tags[key], facts[key] = None, []
+            continue
         metric_tags[key], facts[key] = choose_flow_tag(payload, names, periods)
+        report = None
+        if key in FALLBACK_METRICS:
+            facts[key], report = add_fallback_spans(payload, names, metric_tags[key], facts[key])
+        if report:
+            # Keep only the fallback spans that feed a period in the window (its own span,
+            # its fiscal YTD span, or the previous quarter's fiscal YTD span).
+            needed = set()
+            for period in periods:
+                needed.add((period["start"], period["end"]))
+                for candidate in all_periods:
+                    if candidate["fy"] == period["fy"] and candidate["quarter"] in (period["quarter"], period["quarter"] - 1):
+                        needed.add((candidate["fiscalStart"], candidate["end"]))
+            report["spans"] = [span for span in report["spans"] if (span["start"], span["end"]) in needed]
+            if report["spans"]:
+                fallbacks[key] = report
     instant = {}
     for key, names in INSTANT_CONCEPTS.items():
         metric_tags[key], instant[key] = choose_instant_tag(payload, names, periods)
@@ -545,8 +647,10 @@ def build_company(slug: str, config: dict) -> dict:
         "sourceType": "SEC Company Facts",
         "sourceUrl": url,
         "metricTags": metric_tags,
+        "metricTagFallbacks": fallbacks,
+        "unmappedMetrics": UNMAPPED.get(slug, {}),
         "periods": rows,
-        "restatements": restatement_rows(payload, metric_tags, periods, [row["label"] for row in rows]),
+        "restatements": restatement_rows(payload, metric_tags, periods, [row["label"] for row in rows], facts),
     }
 
 
@@ -556,7 +660,9 @@ def main() -> None:
         "units": "USD millions",
         "vintage": VINTAGE,
         "methodology": (
-            "As originally filed, one XBRL tag per metric per company. Income-statement quarters are filed "
+            "As originally filed, one primary XBRL tag per metric per company; a renamed tag may fill only "
+            "spans the primary never filed, after an identical-value bridge check (metricTagFallbacks). "
+            "Income-statement quarters are filed "
             "three-month facts; cash-flow quarters are differences between filed fiscal year-to-date facts; "
             "fiscal Q4 is the filed annual fact minus the first three quarters. Total debt is current plus "
             "noncurrent carrying value from the balance sheet. Derived values are listed in derivedMetrics."

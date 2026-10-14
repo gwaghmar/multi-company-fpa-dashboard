@@ -7,7 +7,9 @@ Part D covers the global multi-company source and the modeled FP&A scenario.
 ## Part A. `data.json` — 7-quarter time series, Q1 FY25 – Q3 FY26
 
 Rebuilt from live SEC EDGAR data by `tools/fetch_edgar_data.py`. Every figure
-traces to one of eight Apple filings, listed below with accession numbers.
+traces to one of eight Apple filings, listed below with accession numbers. The window
+and this filings list are derived from SEC EDGAR on each rebuild (not a fixed list), so
+the table below is the current snapshot and shifts when Apple files a new 10-Q or 10-K.
 Company-wide income statement, balance sheet, and cash flow totals come from
 each filing's `companyfacts.json` (`us-gaap` facts, filtered by accession).
 Product-category revenue/cost, geography revenue/cost/S&M/operating income,
@@ -224,7 +226,8 @@ Oracle, Salesforce, and Intel.
 
 The standardized source includes filed or arithmetically derived quarterly revenue,
 gross profit, operating income, net income, R&D, operating cash flow, capex, free
-cash flow, repurchases, dividends, and share-based compensation where available.
+cash flow, repurchases, dividends, share-based compensation, and gross interest
+expense where available.
 It also includes point-in-time cash, investments, receivables, payables, assets,
 liabilities, and debt where a comparable US-GAAP fact is filed. Every period carries
 the filing form, filing date, accession, and SEC source URL. Derived values are
@@ -245,6 +248,52 @@ both `DepreciationDepletionAndAmortization` (cash-flow statement) and `Depreciat
 (cash-flow statement) and a rounded `AllocatedShareBasedCompensationExpense`.
 Mixing them inside one series produced quarters that did not add up to the filed
 annual figure.
+
+**1a. Renamed-tag fallback (added 2026-10-13, dividends and interest expense only).**
+When an issuer moves one statement line to a new tag, the primary tag stops being
+filed and its quarters go null. The fallback fixes that without pooling:
+
+- The primary tag (`metricTags`) is chosen exactly as in rule 1 and never changes.
+- A second candidate tag may supply a filed (start, end) span **only when the
+  primary tag never filed that span**. A span the primary filed is never replaced.
+  Each span therefore comes from exactly one tag.
+- The second tag qualifies only after a **bridge check**: it shares at least one
+  filed span with the primary, and every shared span has the identical first-filed
+  value. That is evidence the two tags label the same line.
+- Allowed only for `dividends` and `interestExpense` (`FALLBACK_METRICS`). Both
+  renames were checked against the filed statements. A generic dry run also matched
+  Apple and AMD `AllocatedShareBasedCompensationExpense` to `ShareBasedCompensation`;
+  that changed no values but would have changed `derivedMetrics`, so other metrics
+  stay strictly one tag.
+- Every span the fallback supplied, and the bridge spans that justified it, are
+  written to `metricTagFallbacks` on the company, with accessions.
+
+What this changes from rule 1: a derived quarter can subtract a fallback-tag YTD fact
+from a primary-tag YTD fact (Alphabet Q2 FY26 dividends below). The bridge check is
+what makes that subtraction one line, not two numbers.
+
+Applied today:
+
+| Company | Metric | Primary tag | Fallback tag | Bridge (identical first-filed values) | Span filled |
+|---|---|---|---|---|---|
+| Alphabet | dividends | `PaymentsOfDividends` | `PaymentsOfOrdinaryDividends` | H1 2025: 4,977 (0001652044-25-000062 and 0001652044-26-000071) | H1 2026 5,231 (10-Q 0001652044-26-000071) |
+| Broadcom | interestExpense | `InterestExpense` | `InterestExpenseNonoperating` | FY23 1,622; FY24 3,953 | FY25 annual 3,210 (10-K 0001730168-25-000121) |
+| Salesforce | interestExpense | `InterestExpenseDebt` | `InterestExpenseNonoperating` | Q1 FY26 68; H1 FY26 135; Q2 FY26 67 | Q1 FY27 317, H1 FY27 790, Q2 FY27 473 |
+
+Resulting values: Alphabet Q2 FY26 dividends = 5,231 - 2,542 = 2,689 (derived).
+Broadcom Q4 FY25 interest expense = 3,210 - 2,449 = 761 (derived). Salesforce Q1
+FY27 317 and Q2 FY27 473 are the filed income-statement "Interest expense" line
+(checked in R3.htm of 0001108524-26-000127).
+
+Alphabet note: its cash-flow line is "Dividend payments" under both tags. The
+`PaymentsOfOrdinaryDividends` definition covers common, preferred, and noncontrolling
+interest dividends, and Alphabet issued mandatory convertible preferred stock in 2026
+(`DividendsPreferredStockCash` 86 declared in Q2 2026). From Q2 FY26 the line may
+include preferred dividends paid. It is still the filed statement line.
+
+Negative example (bridge fails, nothing filled): Meta files `InterestExpenseDebt`
+1,090 and `InterestExpenseNonoperating` 1,165 for FY2025. Different values, so they
+are different lines and are never combined.
 
 A tag that is filed only for full fiscal years (no first-quarter, six-month, or
 nine-month fact in the window) does not carry the series and is not used. The
@@ -329,8 +378,25 @@ that repeats the period as a comparative column is never cited. `source.filed` a
   statement and excludes amortization of intangibles (large for Broadcom).
   `metricTags` shows which tag was used.
 - Alphabet moved dividends from `PaymentsOfDividends` to
-  `PaymentsOfOrdinaryDividends` in its Q2 2026 10-Q. Under the one-tag rule Q2 FY26
-  dividends are null until the new tag carries the series.
+  `PaymentsOfOrdinaryDividends` in its Q2 2026 10-Q. Q2 FY26 is now filled by the
+  rule 1a fallback (2,689).
+- Interest expense is gross interest expense only. Candidate tags, in order:
+  `InterestExpenseNonoperating`, `InterestExpense`, `InterestExpenseDebt`. Net tags
+  (`InterestIncomeExpenseNet`, `InterestIncomeExpenseNonoperatingNet`) and cash
+  interest paid (`InterestPaidNet`) are never used; interest income is never netted.
+  (Before 2026-10-13 the list misspelled `InterestExpenseNonoperating`, so every
+  company was unmapped.) Mapped: Alphabet, NVIDIA, Microsoft, Amazon, Intel
+  (`InterestExpenseNonoperating`); AMD, Oracle, Broadcom (`InterestExpense`);
+  Salesforce (`InterestExpenseDebt`, with fallback). Null:
+  - Apple files no interest expense fact; it reports only "Other income/(expense), net".
+  - Meta is excluded on purpose (`UNMAPPED` in the script, `unmappedMetrics` in
+    `companies.json`). `InterestExpenseDebt` is filed only in some filings (missing
+    from the Q1, Q2, and Q3 2025 and Q1 2026 10-Qs as filed) and covers debt interest only
+    (FY2025 1,090 against 1,165 total interest expense, which Meta tags only in the
+    10-K). A partial series from a debt note is not a clean quarterly figure.
+- Interest expense values are each issuer's own filed interest expense fact, from
+  the income statement or the other-income note depending on the issuer. Treatment
+  of capitalized interest follows each issuer.
 - Fiscal YTD values in `fiscalYtdMetrics` are valid only for a selection that is
   exactly fiscal quarters 1 to n of one fiscal year. `api/ask.js` nulls them for any
   other selection so a single quarter is never answered with a YTD or full-year

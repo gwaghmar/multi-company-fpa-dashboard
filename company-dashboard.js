@@ -164,7 +164,7 @@ function publicContextDate(value){
 }
 
 function publicContextLink(url,label){
-  return url?`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(label)} <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>`:"";
+  return safeHttpsUrl(url)?`<a href="${escapeHtml(safeHttpsUrl(url))}" target="_blank" rel="noopener">${escapeHtml(label)} <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>`:(url?escapeHtml(label):"");
 }
 
 // cleanExcerpt: source excerpts sometimes start with a bare bullet glyph or an opening quote whose
@@ -500,7 +500,7 @@ function companyPeriodTable(metricKeys,indexes){
       const value=period.metrics?.[key];
       const derived=(period.derivedMetrics||[]).includes(key);
       return `<td>${value==null?"n/a":M(value)}${derived&&value!=null?DERIVED_MARK:""}</td>`;
-    }).join("")}<td><a href="${period.source.url}" target="_blank" rel="noopener">${escapeHtml(period.source.form)}</a></td></tr>`;
+    }).join("")}<td>${linkOrText(period.source.url,escapeHtml(period.source.form))}</td></tr>`;
   }).join("");
   return `<div class="scrollbox"><table><tr><th>Period · $M</th><th>End</th>${keys.map(key=>`<th>${escapeHtml(labels[key]||key)}</th>`).join("")}<th>Source</th></tr>${rows}</table></div>${hasDerivedValues(keys,indexes)?'<div class="subnote">* derived from filed annual or YTD facts</div>':""}`;
 }
@@ -809,7 +809,7 @@ function renderPeerEnvironment(v){
     <div class="tiles">${tilesHTML}</div>
     <div class="body g2" style="flex:0 0 auto; height:auto; min-height:0">
       <div class="card"><h3>Reduction / net-zero target</h3><div class="note">${escapeHtml(env.target?.text||"Not stated in the company's report.")}</div></div>
-      <div class="card"><h3>Source</h3><div class="note"><a href="${escapeHtml(env.reportUrl)}" target="_blank" rel="noopener">${escapeHtml(env.reportTitle)}</a>${env.publishDate?`, published ${escapeHtml(env.publishDate)}`:""}. Covers ${escapeHtml(env.periodLabel)}.</div></div>
+      <div class="card"><h3>Source</h3><div class="note">${linkOrText(env.reportUrl,escapeHtml(env.reportTitle))}${env.publishDate?`, published ${escapeHtml(env.publishDate)}`:""}. Covers ${escapeHtml(env.periodLabel)}.</div></div>
     </div>
     ${env.unavailableNote?`<div class="body" style="flex:0 0 auto; height:auto; min-height:0; grid-template-columns:1fr">${companyUnavailable("What's not shown",env.unavailableNote)}</div>`:""}`;
 }
@@ -1025,7 +1025,7 @@ function reportMetricRows(indexes){
 function reportSourceAppendix(indexes){
   return `<table class="report-table"><thead><tr><th>Period</th><th>Filed</th><th>Form</th><th>Evidence</th></tr></thead><tbody>${indexes.map(index=>{
     const period=companyPeriodAt(index);
-    return `<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.source.filed||"n/a")}</td><td>${escapeHtml(period.source.form||"n/a")}</td><td><a href="${period.source.url}" target="_blank" rel="noopener">SEC filing</a></td></tr>`;
+    return `<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.source.filed||"n/a")}</td><td>${escapeHtml(period.source.form||"n/a")}</td><td>${linkOrText(period.source.url,"SEC filing")}</td></tr>`;
   }).join("")}</tbody></table>`;
 }
 

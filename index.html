@@ -80,6 +80,8 @@ body{
 }
 nav{
   display:flex; gap:2px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex:1; min-width:0; scrollbar-width:none;
+  /* end padding equals the edge-fade width so the first/last tab can scroll fully clear of the mask */
+  padding:0 16px; scroll-padding:0 16px;
   mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 14px,#000 calc(100% - 14px),transparent);
 }
@@ -990,11 +992,11 @@ footer{
 </aside>
 <button class="sel-pill" id="selPill">✦ Ask AI</button>
 
-<script src="./company-dashboard.js?v=20261013"></script>
+<script src="./company-dashboard.js?v=20261014"></script>
 <script type="module" src="./ledger-core.mjs"></script>
 <script type="module" src="./peer-core.mjs"></script>
-<script src="./forecast-ledger.js"></script>
-<script src="./peer-table.js"></script>
+<script src="./forecast-ledger.js?v=20261014"></script>
+<script src="./peer-table.js?v=20261014"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -1537,7 +1539,18 @@ function snapQ(){ return Math.max(...state.q); }
 // focusQ: kept as an alias of snapQ for "most recently reported quarter, for reference" call
 // sites (single-quarter references that are never summed, e.g. Outlook's "actual growth" tile).
 function focusQ(){ return Math.max(...state.q); }
-function pyIdx(i){ return i>=4? i-4 : null; }
+// pyIdx: index of the same fiscal quarter one year earlier, matched by label ("Q3 FY26" -> "Q3 FY25"),
+// or null when that quarter is outside the data window. Never positional, so it survives the window sliding.
+function pyIdx(i){
+  const p=parseCompanyPeriodLabel(D.meta.quarters[i]);
+  if(!p) return null;
+  const j=D.meta.quarters.indexOf(`Q${p.quarter} FY${String(p.fy-1).padStart(2,"0")}`);
+  return j>=0? j : null;
+}
+// qIdxsOfFY: window indexes of fiscal year `fy` (2-digit), optionally only quarters 1..maxQ, in order.
+function qIdxsOfFY(fy,maxQ=4){
+  return D.meta.quarters.map((l,i)=>{ const p=parseCompanyPeriodLabel(l); return p&&p.fy===fy&&p.quarter<=maxQ? i : -1; }).filter(i=>i>=0);
+}
 function qLabel(i){ return companyPeriodAt(i)?.label || D.meta.quarters[i] || `Quarter ${i+1}`; }
 function fyNum(i){ return 2000+ +D.meta.quarters[i].slice(-2); }
 function isContiguous(s){ for(let k=1;k<s.length;k++) if(s[k]!==s[k-1]+1) return false; return true; }
@@ -1630,23 +1643,31 @@ function aggRatioPtsYoY(ratioFn,qIdxs){
 function aggEPS(qIdxs){
   const s=[...(qIdxs||selQ())].sort((a,b)=>a-b);
   if(s.length===1) return D.is.epsDiluted[s[0]];
-  const isFY25=s.length===4 && [0,1,2,3].every(k=>s.includes(k));
-  const is9mo26=s.length===3 && [4,5,6].every(k=>s.includes(k));
-  const is9mo25=s.length===3 && [0,1,2].every(k=>s.includes(k));
-  if(isFY25) return D.is.epsDilutedAnnual?.fy25 ?? null;
-  if(is9mo26) return D.is.epsDiluted9mo.fy26;
-  if(is9mo25) return D.is.epsDiluted9mo.fy25;
-  return null;
+  const fy=epsFilingFY(s);
+  if(fy==null) return null;
+  const key="fy"+String(fy).padStart(2,"0");
+  if(s.length===4) return D.is.epsDilutedAnnual?.[key] ?? null;
+  return D.is.epsDiluted9mo?.[key] ?? null;
+}
+// epsFilingFY: the 2-digit fiscal year when `s` is exactly Q1..Q4 (full year) or Q1..Q3 (nine months)
+// of ONE fiscal year, matched by quarter label; otherwise null.
+function epsFilingFY(s){
+  if(s.length!==3 && s.length!==4) return null;
+  const parsed=s.map(k=>parseCompanyPeriodLabel(D.meta.quarters[k]));
+  if(parsed.some(p=>!p)) return null;
+  const fy=parsed[0].fy;
+  const ok=parsed.every((p,n)=>p.fy===fy && p.quarter===n+1);
+  return ok? fy : null;
 }
 // true when aggEPS(qIdxs) came from the filed 9mo EPS figure (not a single quarter) -- callers use
 // this to append an "as filed, 9mo" qualifier so it's never mistaken for a naive sum.
 function aggEPSIs9mo(qIdxs){
   const s=[...(qIdxs||selQ())].sort((a,b)=>a-b);
-  return s.length===3 && ([4,5,6].every(k=>s.includes(k)) || [0,1,2].every(k=>s.includes(k)));
+  return s.length===3 && epsFilingFY(s)!=null;
 }
 function aggEPSFiledLabel(qIdxs){
   const s=[...(qIdxs||selQ())].sort((a,b)=>a-b);
-  if(s.length===4 && [0,1,2,3].every(k=>s.includes(k))) return "as filed, FY25";
+  if(s.length===4 && epsFilingFY(s)!=null) return "as filed, FY"+String(epsFilingFY(s)).padStart(2,"0");
   if(aggEPSIs9mo(s)) return "as filed, 9mo";
   return "";
 }
@@ -1665,7 +1686,7 @@ function yoyTile(label,arr,qIdxs,fmt=B,higherGood=true,noPYNote=null){
   return tile(label,fmt(v),`${sgn(d)}% YoY`,higherGood==="cost"? "cost" : higherGood? d>=0 : d<=0);
 }
 function derivedBadge(realLabel){
-  return selQ().includes(3)
+  return selQ().includes(D.meta.quarters.indexOf("Q4 FY25"))
     ? `<span class="badge" style="color:var(--s2); border-color:color-mix(in srgb, var(--s2) 45%, transparent)">Includes derived Q4 FY25 (10-K − 9mo filed)${infoFlag("Apple doesn't separately file Q4 FY25 results. This figure is calculated as the FY25 10-K annual total minus the three quarters Apple did file, not a number Apple reported directly.")}</span>`
     : `<span class="badge">${realLabel}</span>`;
 }
@@ -1865,7 +1886,10 @@ function allocateInt(total,n,rnd){
 function txnCount(dollars){ return Math.max(3,Math.min(35,Math.round(3*Math.log10(Math.max(dollars,1)+10)))); }
 function quarterRange(i){
   const end=D.meta.quarterEnds[i];
-  const prevEnd = i===0 ? "2024-09-28" : D.meta.quarterEnds[i-1];
+  // bs.dates[0] is the pre-series opening snapshot (label form "Sep 28, 2024"); read it from the data.
+  const od=/^([A-Za-z]{3}) (\d{1,2}), (\d{4})$/.exec(D.bs.dates[0]);
+  const openingISO=od? new Date(Date.UTC(+od[3],"JanFebMarAprMayJunJulAugSepOctNovDec".indexOf(od[1])/3,+od[2])).toISOString().slice(0,10) : D.meta.quarterEnds[0];
+  const prevEnd = i===0 ? openingISO : D.meta.quarterEnds[i-1];
   const startDate=new Date(prevEnd+"T00:00:00Z"); startDate.setUTCDate(startDate.getUTCDate()+1);
   return {startISO:startDate.toISOString().slice(0,10), endISO:end};
 }
@@ -2055,8 +2079,13 @@ function fcfCapStats(qIdxs){
 }
 function envIntensityStats(){
   const e=D.env, is=D.is;
-  const idxFY25=[0,1,2,3];
-  const rev25=idxFY25.map(k=>is.totalRev[k]), rev24=idxFY25.map(k=>is.totalRevPY[k]);
+  // FY25 net sales: the FY25 quarters in the window when all four are there; once the window has slid
+  // past Q1 FY25, the filed prior-year column of the four FY26 quarters instead (and FY24 is then unknown).
+  const idxFY25=qIdxsOfFY(25), idxFY26=qIdxsOfFY(26);
+  let rev25, rev24;
+  if(idxFY25.length===4){ rev25=idxFY25.map(k=>is.totalRev[k]); rev24=idxFY25.map(k=>is.totalRevPY[k]); }
+  else if(idxFY26.length===4){ rev25=idxFY26.map(k=>is.totalRevPY[k]); rev24=[null]; }
+  else { rev25=[null]; rev24=[null]; }
   const rev25Sum=sum(rev25);
   const chg=100*(e.total2025-e.total2024)/e.total2024;
   const intensity2025=e.total2025/rev25Sum;
@@ -2086,7 +2115,7 @@ function homeSoWhat(qIdxs){
   const gm=aggGmPctTotal(qIdxs);
   const gmTxt = gm!=null ? ` at ${pct(gm,1)} gross margin` : "";
   const revTxt = revYoy!=null ? `grew ${sgn(revYoy)}% YoY to ${B(rev)}` : `totaled ${B(rev)}`;
-  const guideNote = qIdxs.includes(6) ? ` Q4 guidance points to ${D.fwd.revGuide} revenue growth and ~${D.fwd.gmGuide} margin, both slower than ${lbl}.` : "";
+  const guideNote = qIdxs.includes(guideIdx()) ? ` Q4 guidance points to ${D.fwd.revGuide} revenue growth and ~${D.fwd.gmGuide} margin, both slower than ${lbl}.` : "";
   return sowhat(`${lbl} net sales ${revTxt}${gmTxt}.${guideNote}`);
 }
 function revenueSoWhat(){
@@ -2099,7 +2128,7 @@ function revenueSoWhat(){
   if(!catTot.length && !geoTot.length) return sowhat(`No prior-year comparison is available for ${lbl}.`);
   const worst=catDown[0];
   const watch = worst ? ` ${worst} is shrinking, down ${pct(Math.abs(catAggYoy(worst,qIdxs)),1)} YoY.` : "";
-  const guideNote = qIdxs.includes(6) ? ` Q4 guidance implies deceleration to ${D.fwd.revGuide} YoY.` : "";
+  const guideNote = qIdxs.includes(guideIdx()) ? ` Q4 guidance implies deceleration to ${D.fwd.revGuide} YoY.` : "";
   return sowhat(`Growth is broad (${catUp.length} of ${catTot.length} categories, ${geoUp.length} of ${geoTot.length} regions up YoY) in ${lbl}.${watch}${guideNote}`);
 }
 function profitSoWhat(){
@@ -2234,7 +2263,7 @@ function renderCompany(v){
   const missing=["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"].filter(key=>companyMetricTotal(key,indexes)==null);
   const rows=periods.map(period=>`<tr><td>${escapeHtml(period.label)}</td><td>${escapeHtml(period.periodEnd)}</td>
     ${["revenue","grossProfit","operatingIncome","netIncome","rd","operatingCashFlow","capex","freeCashFlow"].map(key=>`<td>${companyMetric(period,key)==null?"n/a":M(companyMetric(period,key))}${period.derivedMetrics.includes(key)&&companyMetric(period,key)!=null?DERIVED_MARK:""}</td>`).join("")}
-    <td><a href="${period.source.url}" target="_blank" rel="noopener">${escapeHtml(period.source.form)}</a></td></tr>`).join("");
+    <td>${linkOrText(period.source.url,escapeHtml(period.source.form))}</td></tr>`).join("");
   v.innerHTML=`
     <div class="vhead"><h2>${escapeHtml(company.name)} <span class="unit">${escapeHtml(company.ticker)}</span></h2><span class="sub">${escapeHtml(periodLabel(indexes))}</span>
       <span class="vhead-right">${derivedBadge("SEC sourced")}<button class="dlbtn" id="dlBtn"><svg class="dl-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.2v7.6M4.6 6.6 8 10l3.4-3.4M2.8 12.8h10.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Download CSV</button></span></div>
@@ -2334,12 +2363,29 @@ function emptyState(msg){
 
 /* ---------- event markers (Feature 5): real filing/announcement events, sourced from D ----------
    built lazily (not a module-level const) because D isn't loaded yet when this script first parses */
-const ALLQ=[0,1,2,3,4,5,6];
+const ALLQ=[]; // filled with every window index once data.json loads (see fillAllQ)
+function fillAllQ(){ ALLQ.length=0; D.meta.quarters.forEach((_,k)=>ALLQ.push(k)); }
+// guidedFromLabel: the quarter whose earnings call D.fwd was authored from, read out of the
+// attribution on D.fwd.quotes ("... · Q3 FY26 earnings call"). null if it cannot be read.
+function guidedFromLabel(){
+  const m=/(Q[1-4] FY\d{2}) earnings call/.exec(D.fwd?.quotes?.[0]?.[1]||"");
+  return m? m[1] : null;
+}
+// guideIdx: window index of the quarter D.fwd guidance was authored from, or -1 when it is not in the window.
+function guideIdx(){ const l=guidedFromLabel(); return l? D.meta.quarters.indexOf(l) : -1; }
+function nextQuarterLabel(label){
+  const p=parseCompanyPeriodLabel(label); if(!p) return null;
+  return p.quarter===4? `Q1 FY${String(p.fy+1).padStart(2,"0")}` : `Q${p.quarter+1} FY${String(p.fy).padStart(2,"0")}`;
+}
 function eventMarkers(){
-  return {
-    5:{label:"Buyback+CEO",text:`New $${(D.cap.newProgram/1000).toFixed(0)}B buyback program announced Apr 30, 2026. John Ternus named CEO effective Sep 1, 2026, announced Apr 20, 2026.`},
-    6:{label:"Q4 guide",text:`Q4 FY26 guided: revenue ${D.fwd.revGuide} growth, gross margin ~${D.fwd.gmGuide}, FX headwind ${D.fwd.fxHeadwind} (Q3 FY26 earnings call).`}
-  };
+  // Markers are placed by quarter LABEL, not position, so they stay on the right bar when the window slides.
+  const out={}, qs=D.meta.quarters;
+  const buybackIdx=qs.indexOf("Q2 FY26"); // quarter the Apr 30, 2026 program and Apr 20, 2026 CEO news fall in
+  if(buybackIdx>=0) out[buybackIdx]={label:"Buyback+CEO",text:`New $${(D.cap.newProgram/1000).toFixed(0)}B buyback program announced Apr 30, 2026. John Ternus named CEO effective Sep 1, 2026, announced Apr 20, 2026.`};
+  const from=guidedFromLabel(), next=from&&nextQuarterLabel(from), guideIdx=from?qs.indexOf(from):-1;
+  // only while the guided quarter has not been reported yet (it is not in the window)
+  if(guideIdx>=0 && next && !qs.includes(next)) out[guideIdx]={label:`${next.split(" ")[0]} guide`,text:`${next} guided: revenue ${D.fwd.revGuide} growth, gross margin ~${D.fwd.gmGuide}, FX headwind ${D.fwd.fxHeadwind} (${from} earnings call).`};
+  return out;
 }
 function buildMarkers(qArr){ const em=eventMarkers(); return qArr.map(k=>em[k]||null); }
 
@@ -2356,17 +2402,22 @@ function parseGuideRange(str){
   return {lo,hi,mid:(lo+hi)/2};
 }
 function ghostQ4FY26(){
-  if(!selQ().includes(6)) return null; // only append the estimate when Q3 FY26 is selected
+  // Only append the estimate when the quarter D.fwd was authored from is the latest in the window
+  // and is selected, and the guided quarter is not itself in the data yet.
+  const from=guidedFromLabel(), next=from&&nextQuarterLabel(from);
+  if(!from || D.meta.quarters[D.meta.quarters.length-1]!==from || !selQ().includes(D.meta.quarters.length-1)) return null;
+  const pyI=D.meta.quarters.indexOf(`${next.split(" ")[0]} FY${String(parseCompanyPeriodLabel(next).fy-1).padStart(2,"0")}`);
+  if(pyI<0) return null;
   const g=parseGuideRange(D.fwd.revGuide);
-  const py=D.is.totalRev[3]; // Q4 FY25, filed
+  const py=D.is.totalRev[pyI]; // same quarter one year earlier, filed or derived
   if(!g || py==null) return null;
   const value=py*(1+g.mid/100);
   const fxNum=parseFloat(D.fwd.fxHeadwind);
   const fxTxt=isNaN(fxNum)?D.fwd.fxHeadwind:`${fxNum}pt`;
   return {
-    label:"Q4 FY26E",
+    label:next+"E",
     value,
-    tooltip:`Guided: revenue +${g.lo} to ${g.hi}% YoY, GM ~${D.fwd.gmGuide}, incl. ${fxTxt} FX headwind. Midpoint shown. Source: Q3 FY26 earnings call, Jul 30 2026.`
+    tooltip:`Guided: revenue +${g.lo} to ${g.hi}% YoY, GM ~${D.fwd.gmGuide}, incl. ${fxTxt} FX headwind. Midpoint shown. Source: ${from} earnings call.`
   };
 }
 
@@ -2788,7 +2839,7 @@ function renderGlass(v){
       <h3>Recent activity · real filing events</h3>
       <div class="gfeed">
         <div class="ev"><span class="when">Jul 30 '26</span><span class="what">Q4 guide: revenue ${revG?`+${revG.lo}–${revG.hi}%`:f.revGuide}, GM ~${f.gmGuide}</span><span class="amt" style="color:var(--down)">FX ${isNaN(fxHeadwindNum)?f.fxHeadwind:"−"+fxHeadwindNum+"pt"}</span></div>
-        <div class="ev"><span class="when">Q3 FY26</span><span class="what">Common stock repurchased (10-Q text; cash flow statement shows ${B(D.cf.buybacks[6])} cash paid)</span><span class="amt">${B(c.buybackQ3)}</span></div>
+        <div class="ev"><span class="when">Q3 FY26</span><span class="what">Common stock repurchased (10-Q text; cash flow statement shows ${B(D.cf.buybacks[D.meta.quarters.indexOf("Q3 FY26")])} cash paid)</span><span class="amt">${B(c.buybackQ3)}</span></div>
         <div class="ev"><span class="when">Q3 FY26</span><span class="what">Dividend declared per share</span><span class="amt">$${c.dpsQ3.toFixed(2)}</span></div>
         <div class="ev"><span class="when">Apr 30 '26</span><span class="what">New buyback program announced</span><span class="amt" style="color:var(--up)">${B(c.newProgram)}</span></div>
         <div class="ev"><span class="when">Apr 20 '26</span><span class="what">John Ternus named CEO, eff. Sep 1</span><span class="amt">·</span></div>
@@ -3020,7 +3071,7 @@ function renderProfit(v){
   ]});
   const gmGuideVal=parseFloat(D.fwd.gmGuide);
   const gmProducts=aggGmPctProducts(sq), gmServices=aggGmPctServices(sq);
-  const showGmGuide=!isNaN(gmGuideVal) && sq.includes(6);
+  const showGmGuide=!isNaN(gmGuideVal) && sq.includes(guideIdx());
   const gmGuideLabel=`Q4 FY26 guided ~${D.fwd.gmGuide} (FX + supply constraints)`;
   chartTable(document.getElementById("gmChart"),"bar",{labels:["Products","Services","Total"],
     values:[gmProducts,gmServices,gmPct],
@@ -3153,7 +3204,7 @@ function csvHwCogs(){
 /* ---------- tab renderers: Balance Sheet (renderBalance/csvBalance) ---------- */
 function renderBalance(v){
   const i=snapQ(), sq=selQ(), b=D.bs, cf=D.cf; // i: point-in-time -- balance sheet reads the latest selected quarter's snapshot
-  const bsIdx=i+1, prevIdx=i; // bs.dates[0] is the pre-series baseline, Sep 28, 2024
+  const bsIdx=i+1, prevIdx=i; // bs.dates[0] is the pre-series baseline (opening snapshot)
   const {dso,dpo,dio,ccc}=cccFor(i);
   const netCashOf=k=>(b.cash[k]+b.mktSecCurrent[k]+b.mktSecNonCurrent[k])-(b.termDebtCurrent[k]+b.termDebtNonCurrent[k]+b.commercialPaper[k]);
   const netCash=netCashOf(bsIdx), netCashPrev=netCashOf(prevIdx), netCashDelta=netCash-netCashPrev;
@@ -3310,7 +3361,7 @@ function renderFX(v){
     onClick:idx=>toggleQuarterFocus(sq[idx]), markers:buildMarkers(sq)});
   else chartTable(document.getElementById("capChart"),"bar",{
     labels:["Buybacks","Dividends","Capex"], values:[cf.buybacks[i],cf.dividends[i],cf.capex[i]]});
-  const buyback9moCash=aggSum(cf.buybacks,[4,5,6]), buybackQ3Cash=cf.buybacks[6];
+  const fy26Idx=qIdxsOfFY(26,3), buyback9moCash=aggSum(cf.buybacks,fy26Idx), buybackQ3Cash=cf.buybacks[D.meta.quarters.indexOf("Q3 FY26")];
   document.getElementById("capComm").innerHTML=`
     <p><b>${B(buyback9moCash)} of stock repurchased</b> (cash paid, per the cash flow statement) across the first nine months of FY26 (${c.sharesRepurchased9mo} million shares), including ${B(buybackQ3Cash)} in Q3 alone. Shares outstanding fell from ${(c.sharesOutSep25/1000).toFixed(0)}M to ${(c.sharesOutJun26/1000).toFixed(0)}M.</p>
     <p><b>${B(c.remainingMay2025)} remains</b> under the May 2025 authorization, and a new ${B(c.newProgram)} program was announced April 30, 2026.</p>
@@ -3484,7 +3535,7 @@ function renderOutlook(v){
   ${outlookSoWhat()}
   <div class="tiles">
     ${tile("Q4 revenue growth guided",f.revGuide,"year over year")}
-    ${tile("Q4 gross margin guided",f.gmGuide,`vs ${pct(D.is.gmPctTotal[6])} in Q3 FY26`,false)}
+    ${tile("Q4 gross margin guided",f.gmGuide,`vs ${pct(D.is.gmPctTotal[guideIdx()])} in ${D.meta.quarters[guideIdx()]}`,false)}
     ${tile("FX headwind",f.fxHeadwind,"to September quarter growth")}
     ${tile(qLabel(snap)+" actual growth",sgn(q.yoy[snap])+"%","for reference",q.yoy[snap]>=0)}
     ${tile("CEO transition",ceoDate,"John Ternus succeeds Tim Cook")}
@@ -3509,7 +3560,7 @@ function renderOutlook(v){
   </div>`;
   chartTable(document.getElementById("outChart"),"bar", {labels:sq.map(qLabel), values:sq.map(k=>q.revenue[k]), sub:sq.map(k=>q.yoy[k]), active:sq.indexOf(snap),
     onClick:idx=>toggleQuarterFocus(sq[idx]), markers:buildMarkers(sq)});
-  const showGmGuide=sq[sq.length-1]===6 && !isNaN(gmGuideVal);
+  const showGmGuide=sq[sq.length-1]===guideIdx() && !isNaN(gmGuideVal);
   chartTable(document.getElementById("gmTrend"),"bar", {
     labels: sq.map(qLabel).concat(showGmGuide?["Q4 FY26 guided"]:[]),
     values: sq.map(k=>q.gmPct[k]).concat(showGmGuide?[gmGuideVal]:[]),
@@ -3967,7 +4018,11 @@ document.addEventListener("click",e=>{
   if(e.target.closest(`#${openDrop}Btn, #${openDrop}Panel`)) return;
   closeDropdown();
 }, true);
-function escapeHtml(s){ return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+// safeHttpsUrl: only https:// URLs may go into an href; anything else (javascript:, http:, data:) returns "".
+function safeHttpsUrl(url){ return /^https:\/\//i.test(String(url||"").trim()) ? String(url).trim() : ""; }
+// linkOrText: <a> when the URL is https, plain escaped text otherwise.
+function linkOrText(url,innerHtml){ const u=safeHttpsUrl(url); return u?`<a href="${escapeHtml(u)}" target="_blank" rel="noopener">${innerHtml}</a>`:innerHtml; }
 function mdToHtml(text){
   // normalize runs of 3+ blank lines to a single paragraph break before anything else touches it
   const esc=escapeHtml(text.replace(/\n{3,}/g,"\n\n"));
@@ -4149,6 +4204,7 @@ async function loadData(){
       .catch(()=>({companies:{}}));
     const [dataResponse,companyResponse,publicContext,envContext,privateContext] = await Promise.all([fetch("./data.json"),fetch("./companies.json"),contextPromise,envContextPromise,privateContextPromise]);
     D = await dataResponse.json();
+    fillAllQ();
     COMPANY_DATA = await companyResponse.json();
     PUBLIC_CONTEXT = publicContext;
     ENV_CONTEXT = envContext;

@@ -28,11 +28,11 @@ let LEDGER_DATA = null;      // parsed forecasts.json, or {failed:true}
 let LEDGER_LOADING = null;
 
 function ledgerEsc(value){
-  return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  return String(value ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
 
 function ledgerSafeUrl(url){
-  return /^https:\/\//i.test(url||"") ? ledgerEsc(url) : "";
+  return /^https:\/\//i.test(String(url||"").trim()) ? ledgerEsc(String(url).trim()) : "";
 }
 
 function ledgerInjectStyle(){
