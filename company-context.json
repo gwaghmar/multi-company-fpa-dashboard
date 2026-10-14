@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T02:10:10.925373+00:00",
+  "generatedAt": "2026-10-14T04:12:40.382043+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
@@ -153,7 +153,6 @@
         }
       ],
       "guidance": null,
-      "guidanceHistory": [],
       "annualReport": {
         "title": "FY2025 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -243,7 +242,8 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": []
     },
     "alphabet": {
       "name": "Alphabet",
@@ -365,7 +365,6 @@
         }
       ],
       "guidance": null,
-      "guidanceHistory": [],
       "annualReport": {
         "title": "FY2025 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -455,7 +454,8 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": []
     },
     "nvidia": {
       "name": "NVIDIA",
@@ -572,14 +572,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
         "sourceTitle": "CFO commentary"
       },
-      "guidanceHistory": [
-        {
-          "text": "Revenue is expected to be $108.0 billion, plus or minus 2%.",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
-          "sourceTitle": "CFO commentary"
-        }
-      ],
       "annualReport": {
         "title": "FY2026 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -669,7 +661,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "Revenue is expected to be $108.0 billion, plus or minus 2%.",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
+          "sourceTitle": "CFO commentary"
+        }
+      ]
     },
     "microsoft": {
       "name": "Microsoft",
@@ -791,7 +791,6 @@
         }
       ],
       "guidance": null,
-      "guidanceHistory": [],
       "annualReport": {
         "title": "FY2026 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -881,7 +880,8 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": []
     },
     "amazon": {
       "name": "Amazon",
@@ -1014,14 +1014,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm",
         "sourceTitle": "Earnings release exhibit"
       },
-      "guidanceHistory": [
-        {
-          "text": "Net sales are expected to be between $197.0 billion and $202.0 billion, or to grow between 9% and 12% compared with third quarter 2025.",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm",
-          "sourceTitle": "Earnings release exhibit"
-        }
-      ],
       "annualReport": {
         "title": "FY2025 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -1111,7 +1103,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "Net sales are expected to be between $197.0 billion and $202.0 billion, or to grow between 9% and 12% compared with third quarter 2025.",
+          "filed": "2026-07-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm",
+          "sourceTitle": "Earnings release exhibit"
+        }
+      ]
     },
     "meta": {
       "name": "Meta",
@@ -1238,14 +1238,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm",
         "sourceTitle": "Earnings release exhibit"
       },
-      "guidanceHistory": [
-        {
-          "text": "We expect third quarter 2026 total revenue to be in the range of $61-64 billion.",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm",
-          "sourceTitle": "Earnings release exhibit"
-        }
-      ],
       "annualReport": {
         "title": "FY2025 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -1335,7 +1327,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "We expect third quarter 2026 total revenue to be in the range of $61-64 billion.",
+          "filed": "2026-07-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm",
+          "sourceTitle": "Earnings release exhibit"
+        }
+      ]
     },
     "amd": {
       "name": "AMD",
@@ -1468,14 +1468,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm",
         "sourceTitle": "Earnings release exhibit"
       },
-      "guidanceHistory": [
-        {
-          "text": "For the third quarter of 2026, AMD expects revenue to be approximately $13 billion, plus or minus $300 million.",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm",
-          "sourceTitle": "Earnings release exhibit"
-        }
-      ],
       "annualReport": {
         "title": "FY2025 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -1565,7 +1557,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "For the third quarter of 2026, AMD expects revenue to be approximately $13 billion, plus or minus $300 million.",
+          "filed": "2026-08-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm",
+          "sourceTitle": "Earnings release exhibit"
+        }
+      ]
     },
     "broadcom": {
       "name": "Broadcom",
@@ -1692,14 +1692,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm",
         "sourceTitle": "Earnings release exhibit"
       },
-      "guidanceHistory": [
-        {
-          "text": "Fourth quarter fiscal year 2026 revenue guidance of approximately $34.8 billion, an increase of 93 percent from the prior year period.",
-          "filed": "2026-09-02",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm",
-          "sourceTitle": "Earnings release exhibit"
-        }
-      ],
       "annualReport": {
         "title": "FY2025 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -1789,7 +1781,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "Fourth quarter fiscal year 2026 revenue guidance of approximately $34.8 billion, an increase of 93 percent from the prior year period.",
+          "filed": "2026-09-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm",
+          "sourceTitle": "Earnings release exhibit"
+        }
+      ]
     },
     "oracle": {
       "name": "Oracle",
@@ -1908,14 +1908,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm",
         "sourceTitle": "Earnings release exhibit"
       },
-      "guidanceHistory": [
-        {
-          "text": "For fiscal year 2027, we now expect total revenue to be at least $90 billion, and non-GAAP EPS to be at $8.10.",
-          "filed": "2026-09-10",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm",
-          "sourceTitle": "Earnings release exhibit"
-        }
-      ],
       "annualReport": {
         "title": "FY2026 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -2005,7 +1997,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "For fiscal year 2027, we now expect total revenue to be at least $90 billion, and non-GAAP EPS to be at $8.10.",
+          "filed": "2026-09-10",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm",
+          "sourceTitle": "Earnings release exhibit"
+        }
+      ]
     },
     "salesforce": {
       "name": "Salesforce",
@@ -2132,14 +2132,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm",
         "sourceTitle": "Earnings release exhibit"
       },
-      "guidanceHistory": [
-        {
-          "text": "Initiates third quarter FY27 revenue guidance of $11.42 billion to $11.5 billion, up 11% - 12% Y/Y and in CC, including slightly above 4pts Informatica contribution.",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm",
-          "sourceTitle": "Earnings release exhibit"
-        }
-      ],
       "annualReport": {
         "title": "FY2026 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -2229,7 +2221,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "Initiates third quarter FY27 revenue guidance of $11.42 billion to $11.5 billion, up 11% - 12% Y/Y and in CC, including slightly above 4pts Informatica contribution.",
+          "filed": "2026-08-26",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000187/crm-q2fy27xexhibit991.htm",
+          "sourceTitle": "Earnings release exhibit"
+        }
+      ]
     },
     "intel": {
       "name": "Intel",
@@ -2356,14 +2356,6 @@
         "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm",
         "sourceTitle": "Earnings release exhibit"
       },
-      "guidanceHistory": [
-        {
-          "text": "Forecasting third-quarter 2026 revenue of $15.8 billion to $16.8 billion; expecting third-quarter EPS attributable to Intel of $0.31 and non-GAAP EPS attributable to Intel of $0.38.",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm",
-          "sourceTitle": "Earnings release exhibit"
-        }
-      ],
       "annualReport": {
         "title": "FY2025 annual report",
         "sourceType": "SEC 10-K annual report",
@@ -2453,7 +2445,15 @@
         "internalPlan": false,
         "analystConsensus": false,
         "stockPrices": false
-      }
+      },
+      "guidanceHistory": [
+        {
+          "text": "Forecasting third-quarter 2026 revenue of $15.8 billion to $16.8 billion; expecting third-quarter EPS attributable to Intel of $0.31 and non-GAAP EPS attributable to Intel of $0.38.",
+          "filed": "2026-07-23",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm",
+          "sourceTitle": "Earnings release exhibit"
+        }
+      ]
     }
   }
 }
