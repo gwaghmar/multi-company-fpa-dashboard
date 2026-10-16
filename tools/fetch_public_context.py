@@ -29,7 +29,7 @@ from html.parser import HTMLParser
 ROOT = os.path.dirname(os.path.dirname(__file__))
 COMPANIES_PATH = os.path.join(ROOT, "companies.json")
 OUT = os.path.join(ROOT, "company-context.json")
-USER_AGENT = os.environ.get("SEC_USER_AGENT", "Govind Waghmare sec-contact@example.invalid")
+USER_AGENT = os.environ.get("SEC_USER_AGENT") or "findashboard local run (set SEC_USER_AGENT to 'Name email')"
 
 IR_URLS = {
     "apple": "https://investor.apple.com/",

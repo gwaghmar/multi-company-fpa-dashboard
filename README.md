@@ -1,49 +1,84 @@
-# Multi-company FP&A + Strategic Finance Dashboard
+# Multi-Company FP&A Dashboard
 
-Single-page public-company finance dashboard with global company switching,
-deterministic calculations, FP&A scenarios, sourced Ask AI, and explicit data
-availability boundaries.
+A CFO-style FP&A dashboard for 11 public tech companies, built only from SEC filings, refreshed daily, with every number traceable to its source.
 
-Live: https://findashboard.vercel.app
+**Live: https://findashboard.vercel.app**
 
-The company selector covers Apple, Alphabet, NVIDIA, Microsoft, Amazon, Meta,
-AMD, Broadcom, Oracle, Salesforce, and Intel. Every company includes seven
-standardized SEC quarters. Apple also includes richer product, geography,
-guidance, headcount, and environmental sources.
+[![Refresh SEC company data](https://github.com/gwaghmar/multi-company-fpa-dashboard/actions/workflows/refresh-company-data.yml/badge.svg)](https://github.com/gwaghmar/multi-company-fpa-dashboard/actions/workflows/refresh-company-data.yml)
+![tests: 61 passing](https://img.shields.io/badge/tests-61%20passing-brightgreen)
 
-Every tab uses the selected company's fiscal calendar. Period presets include
-current fiscal YTD, latest quarter, latest complete fiscal year, and all available
-quarters. CSV exports preserve the company, period, source, and field basis.
+## What it is
 
-## Tabs
-- **Home** — company-aware KPIs, How It Works, FP&A use cases, source notes, and the agentic finance stack
-- **Company Overview** — standardized SEC facts and source links by quarter
-- **Executive Summary** — management view of performance, risks, and unavailable disclosures
-- **Revenue** — standardized quarterly revenue for every company; Apple adds product and geography detail
-- **Variance Analysis** — current vs prior-year or prior-period financial bridge with charts and table
-- **Planning & Scenarios** — visible revenue, gross-margin, and opex assumptions applied to the latest filed baseline; always labeled MODELED
-- **Profitability & Opex** — standardized margins and R&D; Apple adds segment and geography detail
-- **Balance Sheet · AR/AP** — standardized liquidity, debt, receivables, and payables; Apple adds working-capital cycles
-- **FX & Capital Returns** — standardized buybacks, dividends, cash, and debt; Apple adds FX detail
-- **Headcount & R&D** — standardized R&D; unavailable headcount remains explicit outside Apple
-- **Outlook** — reported momentum for every company; Apple adds sourced earnings-call commentary
-- **Environment (CSRD)** — Apple sourced detail; other companies show the sustainability source needed rather than estimated data
+Pick Apple, Alphabet, NVIDIA, Microsoft, Amazon, Meta, AMD, Broadcom, Oracle, Salesforce or Intel and get the views a finance team uses: revenue, variance bridge, profitability, liquidity, capital returns, outlook, scenarios and a peer table. All figures come from SEC EDGAR (Company Facts and 8-K earnings exhibits). Each period links to the 10-Q or 10-K it came from, and each value is labeled by how it was produced. Where a company does not file a figure, the dashboard says UNAVAILABLE instead of estimating it.
 
-## Forecast Ledger
+## Why it stands out
 
-The **Forecast Ledger** tab holds the owner's own calls (revenue, gross margin, opex for a
-quarter that has not been filed yet), next to the verbatim revenue guidance each company
-published in its latest SEC 8-K earnings exhibit, and the filed actuals once they exist.
-`forecasts.json` ships empty. Nothing in it is generated: only a call you lock with the helper appears.
+- **As-originally-filed data with restatement tracking.** The first filing of a fact wins, so quarters add up to the filed year-to-date figures. A separate pass lists prior-period figures that later filings report differently (12-quarter lookback).
+- **Forecast ledger.** Calls on unfiled quarters are locked with a SHA-256 hash and graded against the filed actuals. Management guidance from 8-K exhibits is graded the same way (guided range vs actual, inside or outside, midpoint error).
+- **Calendar-aligned peer table.** Companies with different fiscal calendars are mapped to the nearest calendar quarter so they can be compared side by side.
+- **Ask AI grounded in filed data.** A Claude-backed assistant receives the selected company, period, tab and filed evidence. If the data is not there, it says so.
+- **Evidence labels on every number.** REAL (filed), DERIVED (arithmetic on filed values), MODELED (assumption-driven) or UNAVAILABLE.
+- **Automated daily refresh with tests.** A GitHub Action rebuilds the data every day and runs 61 automated tests (count read from `status.json`). Data is committed, and so deployed, only if they pass.
+
+## How it works
+
+```mermaid
+flowchart LR
+  A[SEC EDGAR<br/>Company Facts + 8-K exhibits] --> B[Python stdlib fetchers<br/>tools/*.py]
+  B --> C[JSON datasets<br/>companies.json, company-context.json, data.json]
+  C --> D[Static HTML + JS<br/>hand-rolled SVG charts]
+  D --> E[Vercel serverless<br/>/api/ask]
+  F[Daily GitHub Action] -->|runs fetchers, npm test, commits| C
+  F -->|push triggers deploy| G[Vercel]
+```
+
+- **Fetchers:** `tools/fetch_company_sources.py`, `tools/fetch_public_context.py` and `tools/fetch_edgar_data.py` use only the Python standard library.
+- **Frontend:** one `index.html` plus plain JavaScript, no framework and no build step. Charts are hand-written SVG.
+- **Ask AI:** `api/ask.js` is a Vercel serverless function that calls Claude server-side, so the key never reaches the browser. It hands the model deterministic data-tool results rather than the whole database.
+- **Refresh:** `.github/workflows/refresh-company-data.yml` runs daily at 10:17 UTC (and on demand). It rebuilds the datasets, runs `npm test`, writes `status.json`, and commits only if the tests pass. The Vercel project is Git-integrated, so the commit triggers the deploy.
+
+**Stack:** Python 3.12 (stdlib), Node.js (built-in test runner), vanilla JavaScript, SVG, Vercel, GitHub Actions, Claude API.
+
+**Tabs:** Home, Executive Review, Revenue, Variance Analysis, Planning & Scenarios, Profitability & Opex, Hardware COGS & Inventory, Liquidity & Working Capital, Treasury & Capital, Workforce & Investment, Outlook & IR, Sustainability, Peers, Forecasts, Reports. Apple has the richest detail (product, geography, headcount, environmental). Other companies show standardized SEC metrics and mark everything else UNAVAILABLE.
+
+## Run it locally
+
+```bash
+python3 -m http.server 4173        # open http://localhost:4173/ (Ask AI needs the Vercel function)
+npm test                           # runs the node:test suite (no dependencies to install)
+
+# rebuild data from SEC EDGAR (set a contact user agent first)
+export SEC_USER_AGENT="Your Name your@email.com"
+python3 tools/fetch_company_sources.py      # companies.json
+python3 tools/fetch_public_context.py       # company-context.json
+python3 tools/fetch_edgar_data.py --no-csv  # data.json (Apple detail)
+node tools/write_status.mjs                 # status.json (test counts for the header strip)
+```
+
+To enable Ask AI on your own deployment, add `ANTHROPIC_API_KEY` in the Vercel project environment variables and redeploy. Without it the UI says Ask AI is not configured yet.
+
+## Data integrity rules
+
+Full detail is in [DATA_PROVENANCE.md](DATA_PROVENANCE.md). The short version:
+
+1. **One XBRL tag per metric per company.** Candidate tags are never pooled. The chosen tag is recorded in `metricTags`. A renamed-tag fallback is allowed only for dividends and interest expense, and only after a bridge check shows identical values on shared spans.
+2. **As originally filed.** When a fact is filed more than once, the earliest filing wins, so both ends of a YTD subtraction come from the same vintage.
+3. **Quarters are built from filed facts.** Cash-flow quarters are differences of consecutive YTD facts. Fiscal Q4 is the annual figure minus the first three quarters and is listed in `derivedMetrics`.
+4. **Debt is balance-sheet carrying value**, never a note-table principal figure. If the noncurrent piece is not filed, total debt is null.
+5. **Source attribution.** Each period cites the filing that first reported it, with form, date, accession and SEC URL.
+6. **No cross-company fallbacks.** Missing fields show UNAVAILABLE and name the source that would be needed.
+7. **Planning & Scenarios is always MODELED.** It applies visible assumptions to the latest filed quarter and is not guidance, consensus or a budget.
+8. **Non-SEC data is curated by hand and labeled.** Environmental figures come from each company's own report. OpenAI and Anthropic appear as private-company snapshots (REAL vs REPORTED) and are outside the SEC pipeline.
+
+## Forecast ledger details
+
+`forecasts.json` ships empty. Nothing in it is generated: only a call you lock with the helper appears. Numbers are USD millions.
 
 ```bash
 node tools/add_forecast.mjs apple "Q4 FY26" 2026-09-26 --revenue 112000 --gm 47.0 --opex 19500 [--note "..."]
 ```
 
-The helper sets `lockedAt` to today, computes the hash, appends the entry, refuses a duplicate id, and
-refuses any `periodEnd` at or before the company's latest period in `companies.json` (no backfilling).
-It warns when the company does not file `sellingGeneralAdministrative` under the standard tag, because
-opex then cannot be graded. Entry shape (numbers are USD millions; the values below are a format example only):
+The helper sets `lockedAt` to today, computes the hash, appends the entry, refuses a duplicate id, and refuses any `periodEnd` at or before the company's latest period in `companies.json` (no backfilling). It warns when the company does not file SG&A under the standard tag, because opex then cannot be graded. Entry shape (values are a format example only):
 
 ```json
 {"id":"apple-2026-09-26","company":"apple","label":"Q4 FY26","periodEnd":"2026-09-26",
@@ -51,82 +86,32 @@ opex then cannot be graded. Entry shape (numbers are USD millions; the values be
  "hash":"<sha256 of id|company|label|periodEnd|revenue|grossMarginPct|opex|lockedAt>"}
 ```
 
-How it is enforced: `npm test` (part of the daily workflow) rechecks every entry: unique ids, hash
-recomputes, sorted by `lockedAt`, label matches `companies.json`, and `lockedAt` is before the period's first
-filing (`source.firstFiled`) when that is known, otherwise not in the future. Git history is the audit trail.
-`lockedAt` is self-reported: the hash and git history show that an entry did not change after it was
-committed, not when it was first written.
+`npm test` rechecks every entry: unique ids, hash recomputes, sorted by `lockedAt`, label matches `companies.json`, and `lockedAt` is before the period's first filing when that is known, otherwise not in the future. Git history is the audit trail. `lockedAt` is self-reported: the hash and git history show that an entry did not change after it was committed, not when it was first written.
 
-Filed guidance comes from `guidance` in `company-context.json` (built by `tools/fetch_public_context.py`
-from "SEC 8-K exhibit" documents only): one verbatim sentence with its source link and date, or `null`.
-The dashboard parses a range at render time only for these shapes: `$61-64 billion`,
-`$15.8 billion to $16.8 billion`, `between $X and $Y`, `plus or minus N%` and `plus or minus $N`
-(the last two are tagged DERIVED because the range is computed from the tolerance), plus
-`approximately $34.8 billion`; anything else shows the excerpt with "Range not parsed".
-Annual guidance is not graded.
+Filed guidance comes from `guidance` in `company-context.json` (built from SEC 8-K exhibits only): one verbatim sentence with its source link and date, or `null`. The dashboard parses ranges at render time for these shapes: `$61-64 billion`, `$15.8 billion to $16.8 billion`, `between $X and $Y`, `plus or minus N%`, `plus or minus $N` (the last two are tagged DERIVED), and `approximately $34.8 billion`. Anything else shows the excerpt with "Range not parsed". Annual guidance is not graded.
 
-**Forecast accuracy** shows once any call is graded: calls graded, mean absolute revenue error, bias (mean signed
-revenue error, labeled "runs high" or "runs low"), mean absolute gross margin error in points, and mean absolute
-opex error where SG&A is filed under the standard tag. With no graded calls it shows one quiet line instead.
+**Forecast accuracy** appears once any call is graded: calls graded, mean absolute revenue error, bias, mean absolute gross margin error in points, and mean absolute opex error where SG&A is filed under the standard tag.
 
-**Management guidance vs actual** grades every sentence in `guidanceHistory` (per company, in `company-context.json`,
-accumulated by the daily refresh). Guidance filed on date D targets the first period in `companies.json` whose
-`periodEnd` is after D. If that quarter is not filed yet the row says "Awaiting filing"; once filed it shows the guided
-range (REAL, with the excerpt and link), actual revenue (REAL), inside or outside, and midpoint error. Ranges the
-parser does not recognise show "Range not parsed, excerpt shown". A sentence filed more than 135 days before the
-first stored quarter ends is not tied to any quarter (that quarter has left the window).
+**Management guidance vs actual** grades every sentence in `guidanceHistory`. Guidance filed on date D targets the first period in `companies.json` whose `periodEnd` is after D. Until that quarter is filed the row says "Awaiting filing". Afterward it shows the guided range, actual revenue, inside or outside, and midpoint error.
 
-The same tab has a **Figures changed in later filings** section for the selected company. It reads
-`restatements` from `companies.json` when the fetcher provides it and says UNAVAILABLE until then.
+**Figures changed in later filings** reads `restatements` from `companies.json`. A test checks that every listed row's `firstValue` equals the value shown for that period.
 
-## Sources and evidence states
+## Ask AI details
 
-The multi-company layer uses official SEC Company Facts and links every period to
-its 10-Q or 10-K. Apple-specific tabs also use Apple filings, earnings-call
-commentary, and the Environmental Progress Report. Values are presented as REAL,
-DERIVED, MODELED, or UNAVAILABLE. See `DATA_PROVENANCE.md`.
+Dashboard AI receives the selected company, fiscal period, tab, supported filters, source evidence and visible scenario assumptions: standardized SEC metrics, tab-scoped management excerpts from SEC-filed earnings materials, the latest 10-K context, and U.S. Treasury, BLS and ECB macro data for Planning and Treasury. Fiscal YTD values are sent only for a true fiscal YTD selection, so a single quarter is never answered with a YTD or full-year figure. General AI receives no dashboard evidence.
 
-## Ask AI
-`api/ask.js` is a Vercel serverless function that calls Claude server-side. The
-browser never sees the key. Dashboard AI receives the selected company, fiscal
-period, tab, supported filters, source evidence, and visible scenario assumptions.
-General AI receives no dashboard evidence. Missing company data remains unavailable.
+## About me
 
-For every company, Dashboard AI also receives the connected refresh timestamp,
-all standardized SEC metrics available for the selected periods, and tab-scoped
-official management excerpts from recent SEC-filed earnings materials. Planning
-and Treasury also receive U.S. Treasury, BLS, and ECB macro context. Every company
-also receives a separately ingested latest 10-K with tab-scoped annual business,
-strategy, risk, liquidity, workforce, market-risk, and legal context. Coverage includes
-core statements plus inventory, goodwill, PP&E, deferred revenue, noncurrent
-marketable securities, SG&A, depreciation and amortization, interest, taxes,
-acquisitions, and stock compensation when filed by the issuer.
+**Govind Waghmare**, New York. Open to FP&A, finance systems and finance analytics roles.
 
-## Automated refresh
+- **Manager, Financial Applications, Omnicom Group (2023 to present).** Owns the Cognos and TM1 (Planning Analytics) platforms for global FP&A. Consolidates multi-ERP data (D365, NetSuite, SAP, Workday) into Azure Synapse. Leads AI-enabled analytics rollouts (Databricks Genie, Azure AI Foundry, Copilot Studio). Manages SOX ITGC/ITAC controls.
+- **Business Intelligence Analyst, TDS Telecommunications.** SQL, Alteryx, Tableau, Power BI and Snowflake; Capex/Opex variance analysis.
+- **Founder, logistics company in Mumbai (2018 to 2021).** Founded and ran it.
+- **Education:** MS Business Intelligence & Data Analytics, Stevens Institute of Technology. M.Com Finance & Accounting, University of Mumbai.
+- **Skills:** FP&A systems (TM1, OneStream, Adaptive, Hyperion); ERP (D365, SAP, NetSuite, Workday); data (SQL, Python, Databricks, Snowflake, Azure Synapse); BI (Cognos, Power BI, Tableau).
 
-`.github/workflows/refresh-company-data.yml` runs daily at 10:17 UTC and can also
-be started manually. It rebuilds `companies.json` from official SEC Company Facts,
-refreshes `company-context.json` from SEC filings, U.S. Treasury, BLS, and ECB,
-runs the AI evidence tests, commits the verified datasets, and deploys the clean
-repository contents to the existing Vercel project. The repository must contain a
-`VERCEL_TOKEN` Actions secret with deploy access to `findashboard`.
+Website: https://www.govindwaghmare.me/ | LinkedIn: https://www.linkedin.com/in/govindw/
 
-To enable it on any deployment:
-1. In the Vercel project → Settings → Environment Variables, add `ANTHROPIC_API_KEY` with a real Anthropic API key.
-2. Redeploy. Without the key, the UI degrades gracefully with a message telling the visitor it isn't configured yet.
+## How this was built
 
-## Running locally / deploying
-```bash
-# from the repo root
-python3 -m http.server 4173
-# then open http://localhost:4173/ (Ask AI still needs the Vercel function)
-```
-
-Deploys are automatic: the Vercel project `findashboard` is Git-integrated with
-this repository, so every push to `main` builds and promotes to
-https://findashboard.vercel.app (alias: apple-dashboard-eta.vercel.app). There is no
-separate `vercel --prod` step. `.github/workflows/refresh-company-data.yml` reruns the
-SEC fetchers daily, runs `npm test`, and commits refreshed `companies.json` /
-`company-context.json`, which triggers the same deploy.
-
-Opening Claude Code in this repo directory (`claude` in your terminal) gives it full context on this dashboard — you can ask it to keep iterating on layout, data, or the Ask AI logic directly.
+I built this with AI coding assistants (Claude Code) under my direction. The finance logic, data rules, tests and data checks are ones I specified and reviewed, and the automated tests run on every daily refresh.

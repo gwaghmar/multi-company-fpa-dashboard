@@ -114,7 +114,7 @@ the intangibles line.
 ### Rebuild pipeline
 
 `tools/fetch_edgar_data.py` pulls the filings above live from SEC EDGAR
-(`User-Agent: Govind Waghmare sec-contact@example.invalid`, cached under
+(User-Agent from the `SEC_USER_AGENT` environment variable, cached under
 `edgar_cache/`), runs 52 automated consistency checks (0 mismatches), and
 writes `data.json` plus the repo-root CSVs `01_revenue_by_category.csv`,
 `02_revenue_by_geography.csv`, `03_income_statement.csv`,

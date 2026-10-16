@@ -59,7 +59,7 @@ from datetime import date, timedelta
 # Configuration
 # --------------------------------------------------------------------------
 
-UA = os.environ.get("SEC_USER_AGENT") or "Govind Waghmare sec-contact@example.invalid"
+UA = os.environ.get("SEC_USER_AGENT") or "findashboard local run (set SEC_USER_AGENT to 'Name email')"
 CIK = "0000320193"
 DEFAULT_CACHE_DIR = os.path.join(tempfile.gettempdir(), "edgar_cache")
 # Repo root = parent of tools/. data.json lives at the repo root.

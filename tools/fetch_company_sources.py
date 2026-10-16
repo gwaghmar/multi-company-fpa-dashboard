@@ -35,7 +35,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 
 
-USER_AGENT = os.environ.get("SEC_USER_AGENT", "Govind Waghmare sec-contact@example.invalid")
+USER_AGENT = os.environ.get("SEC_USER_AGENT") or "findashboard local run (set SEC_USER_AGENT to 'Name email')"
 # Optional: read cached Company Facts files (CIK##########.json) from this directory instead of
 # calling the SEC API. Used for offline verification only; the scheduled refresh never sets it.
 FACTS_DIR = os.environ.get("SEC_COMPANYFACTS_DIR")
