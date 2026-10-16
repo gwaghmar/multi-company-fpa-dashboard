@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-15T15:05:06.308823+00:00",
+  "generatedAt": "2026-10-16T05:53:39.679398+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-14",
+      "date": "2026-10-15",
       "threeMonth": "4.28",
-      "twoYear": "4.82",
-      "tenYear": "5.19",
-      "thirtyYear": "5.52",
+      "twoYear": "4.77",
+      "tenYear": "5.10",
+      "thirtyYear": "5.43",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
