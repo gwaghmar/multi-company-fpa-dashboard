@@ -371,7 +371,68 @@ that period: the 10-Q for the quarter, or the 10-K for a fiscal Q4. A later fili
 that repeats the period as a comparative column is never cited. `source.filed` and
 `source.firstFiled` hold the same date.
 
+**6. Figures changed in later filings (`restatements`, extended 2026-10-16).** A
+separate pass lists prior-period figures that a later filing reports differently
+from the first filing. It never changes a value shown in the seven periods (rule 2
+still applies); a test checks that every listed row's `firstValue` equals the shown
+value for that period.
+
+- Lookback: the latest 12 fiscal quarters (about three fiscal years), wider than the
+  seven shown. It stops at the first break in the fiscal calendar (a gap between
+  period ends outside 80 to 100 days, or a skipped quarter number), so an older
+  52/53-week quarter whose label could be wrong is never printed. Apple stops at 11
+  quarters (Q1 FY24 onward): its quarters ended 2023-04-01 and 2023-07-01 fall on the
+  wrong side of a month boundary. The covered period ends are in
+  `restatementWindow` on each company.
+- Source: SEC Company Facts only, 10-Q, 10-K, 10-Q/A, 10-K/A. Same tag per metric
+  as the main build (`metricTags`, or the bridged fallback tag for a span the
+  primary never filed).
+- What is compared (`basis` on each row): `quarter` = filed three-month fact for
+  fiscal Q1 to Q3 income-statement metrics and the first-quarter cash-flow fact;
+  `ytd` = filed six- or nine-month cash-flow fact (label `H1 FY25`, `9M FY23`);
+  `annual` = filed full-year fact for every flow metric (label `FY24`); `instant` =
+  balance-sheet fact at each period end.
+- Not compared (noise): fiscal Q4 three-month values (always derived), cash-flow
+  quarters built by subtracting YTD facts, free cash flow, total debt, and gross
+  profit built from revenue minus cost. Segment and member facts never enter: Company
+  Facts carries only facts without dimensions (checked: no fact in the 11 files has a
+  dimension field). Repeats inside one filing count once; a filing with two different
+  values for the same span is dropped as ambiguous (none today).
+- Vintage guard: the earliest filing of the fact must be the filing that first
+  reported the period. If a tag first appears only in a later comparative column (a
+  renamed tag), its earliest value is not the original figure and the row is skipped.
+  Today this skips 10 candidate comparisons, none of them above the threshold.
+- Threshold: latest value differs from first value by more than 0.5% and by at least
+  1 ($M). `deltaPct` = 100 × (latest − first) / max(|first|, 1), two decimals.
+- `kind`: `amended` when the latest filing is a 10-K/A or 10-Q/A. `presentation`
+  only when revenue and net income for the same span are filed in BOTH compared
+  filings (same accessions) and identical. Otherwise `changed` (cause not
+  determinable from XBRL), including when the totals are not filed for that span, as
+  for six- and nine-month cash-flow facts. The totals read are in `totalsChecked`.
+- Extra row fields the UI may ignore: `basis`, `periodStart`, `tag`, `totalsChecked`.
+
+Result on 2026-10-16: 10 rows. Alphabet 1, Meta 2, AMD 7, all others 0. All 10 are
+`presentation`. Spot checks, values read from both filings' statements on EDGAR:
+
+| Company | Row | First filed | Later filed |
+|---|---|---|---|
+| Alphabet | Repurchases of stock, H1 FY25 | 28,706 (10-Q 0001652044-25-000062, R9) | 28,306 (10-Q 0001652044-26-000071, R9) |
+| Meta | Purchases of property and equipment, FY23 | 27,266 (10-K 0001326801-24-000012, R8) | 27,045 (10-K 0001628280-26-003942, R9) |
+| AMD | Marketing, general and administrative, Q1 FY24 | 620 (10-Q 0000002488-24-000056, R2) | 607 (10-Q 0000002488-25-000047, R2) |
+
+Meta note: the FY23 10-K shows "Proceeds relating to property and equipment 221" as
+its own line, and 27,266 − 221 = 27,045 exactly. That fits the later 10-K netting
+those proceeds into capex, but the filing does not say so; the kind stays
+`presentation` only because revenue and net income are unchanged.
+
 **Known limits.**
+
+- Intel cash at 2024-12-28 (Q4 FY24): the FY24 10-K (0000050863-25-000009) tagged
+  that line `CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents`, so under
+  the chosen tag `CashAndCashEquivalentsAtCarryingValue` the earliest fact is the
+  comparative column of the 10-Q filed 2025-07-24. The value is the same (8,249) in
+  both, but strictly it is not the first filing of that tag. Intel Q1 FY25 cash is
+  null for the same tag reason.
 
 - Alphabet, Microsoft, Broadcom, Oracle, and Intel file no single total D&A tag.
   Their `depreciationAmortization` is the `Depreciation` tag from the cash-flow

@@ -57,6 +57,8 @@ function ledgerInjectStyle(){
 .lg-strip{display:flex; flex-wrap:wrap; gap:6px 14px; align-items:baseline; border:1px solid var(--ring); border-radius:12px; background:var(--surface); padding:7px 12px; font-size:12px; color:var(--ink2)}
 .lg-strip b{color:var(--ink)} .lg-strip a{color:var(--accent); text-decoration:none; font-weight:600}
 .lg-table a{color:var(--accent)}
+.lg-acc{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px}
+.lg-acc .tile .v{font:650 18px/1.2 "Inter Tight",sans-serif}
 `;
   document.head.appendChild(style);
 }
@@ -154,6 +156,55 @@ function ledgerCallsSection(core,data){
   </section>`;
 }
 
+function ledgerAccuracySection(core,data){
+  const a=core.accuracySummary(data.forecasts||[],ledgerCompanies());
+  if(!a.graded) return `<div class="lg-muted" style="margin-top:6px" data-ledger-accuracy>Accuracy appears once the first call is graded.</div>`;
+  const tile=(k,v,sub)=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div>${sub?`<div class="lg-meta">${sub}</div>`:""}</div>`;
+  const tiles=[
+    tile("Calls graded",String(a.graded),""),
+    tile("Mean absolute revenue error",a.meanAbsRevenueErrPct==null?"n/a":a.meanAbsRevenueErrPct.toFixed(1)+"%",ledgerTag("DERIVED")),
+    tile("Bias (mean signed revenue error)",a.biasPct==null?"n/a":ledgerSigned(a.biasPct,"%"),a.biasLabel?ledgerEsc(a.biasLabel):""),
+    tile("Mean gross margin error",a.meanAbsGmErrPts==null?"n/a":a.meanAbsGmErrPts.toFixed(1)+" pts",a.gmN<a.graded?`${a.gmN} of ${a.graded} calls gradable`:"absolute, in points"),
+    tile("Mean absolute opex error",a.opexN?a.meanAbsOpexErrPct.toFixed(1)+"%":"n/a",a.opexN?(a.opexN<a.graded?`${a.opexN} of ${a.graded} calls gradable`:""):ledgerUnavailable("SG&A not filed under the standard tag"))
+  ].join("");
+  return `<section class="lg-section" data-ledger-accuracy><h3>Forecast accuracy</h3><div class="lg-acc">${tiles}</div>
+    <div class="subnote">Computed from graded calls only. Error is call minus actual: positive means the call was above the filed figure. Opex is R&amp;D plus SG&amp;A.</div></section>`;
+}
+
+function ledgerGuidanceHistory(context){
+  const history=Array.isArray(context?.guidanceHistory)?context.guidanceHistory:[];
+  if(history.length) return history;
+  return context?.guidance?[context.guidance]:[];
+}
+
+function ledgerGuidanceScorecard(core){
+  const rows=[];
+  for(const slug of ledgerSlugs()){
+    const company=ledgerCompanies()[slug];
+    for(const row of core.gradeGuidanceHistory(ledgerGuidanceHistory(ledgerContext(slug)),company.periods||[])) rows.push({slug,company,...row});
+  }
+  const head=`<h3>Management guidance vs actual</h3>`;
+  if(!rows.length) return `<section class="lg-section" data-guidance-scorecard>${head}<div class="lg-muted">No guidance sentences are on record yet. Rows appear as each daily refresh stores a filed earnings 8-K sentence.</div></section>`;
+  const body=rows.map(r=>{
+    const g=r.entry, link=ledgerSafeUrl(g.url);
+    const src=`${link?`<a href="${link}" target="_blank" rel="noopener">${ledgerEsc(g.sourceTitle||"SEC 8-K exhibit")}</a>`:ledgerEsc(g.sourceTitle||"SEC 8-K exhibit")}, filed ${ledgerEsc(g.filed)}`;
+    const from=r.range?.derivedFrom?` (from plus or minus ${ledgerEsc(r.range.derivedFrom)})${ledgerTag("DERIVED")}`:"";
+    const guided=r.range
+      ?`${ledgerTag("REAL")}<span class="lg-quote">${r.range.low===r.range.high?ledgerMoney(r.range.low):ledgerMoney(r.range.low)+" to "+ledgerMoney(r.range.high)}${from}</span><div class="lg-meta">&ldquo;${ledgerEsc(g.text)}&rdquo;</div><div class="lg-meta">${src}</div>`
+      :`${ledgerTag("REAL")}<span class="lg-quote">Range not parsed, excerpt shown</span><div class="lg-meta">&ldquo;${ledgerEsc(g.text)}&rdquo;</div><div class="lg-meta">${src}</div>`;
+    const waiting='<span class="lg-muted">Awaiting filing</span>';
+    const target=r.target?`${ledgerEsc(r.target.label)}<div class="lg-meta">ends ${ledgerEsc(r.target.periodEnd)}</div>`:`<span class="lg-muted">Next unfiled quarter</span>`;
+    const actual=r.target&&r.target.metrics?.revenue!=null?`${ledgerTag("REAL")}${ledgerMoney(r.target.metrics.revenue)}`:waiting;
+    const result=r.status==="graded"?`<span class="${r.grade.inside?"lg-inside":"lg-outside"}">${r.grade.inside?"Inside":"Outside"}</span>`:r.status==="unparsed"?'<span class="lg-muted">Not graded</span>':waiting;
+    const mid=r.status==="graded"?ledgerSigned(r.grade.midErrPct,"%"):"n/a";
+    return `<tr><td><b>${ledgerEsc(r.company.name)}</b></td><td class="lg-num">${target}</td><td>${guided}</td><td class="lg-num">${actual}</td><td>${result}</td><td class="lg-num">${mid}</td></tr>`;
+  }).join("");
+  return `<section class="lg-section" data-guidance-scorecard>${head}
+    <div class="lg-scroll"><table class="lg-table"><thead><tr><th>Company</th><th>Target quarter</th><th>Guided revenue</th><th>Actual revenue</th><th>Inside range</th><th>Midpoint error</th></tr></thead><tbody>${body}</tbody></table></div>
+    <div class="subnote">Guidance filed on date D targets the first quarter in the data that ends after D. Guided ranges are the verbatim SEC 8-K sentence, parsed at render time. Midpoint error is the range midpoint minus actual revenue, in percent of actual. Annual guidance is not graded.</div>
+  </section>`;
+}
+
 function ledgerDeltaCell(value){ return value==null?"n/a":(value>0?"+":"")+value.toFixed(2)+"%"; }
 
 function ledgerFilingCell(value,form,date,accession,cik){
@@ -171,7 +222,7 @@ function ledgerRestatementSection(){
   const list=company.restatements;
   let body;
   if(!Array.isArray(list)) body=`<div class="note" style="margin-top:6px">${ledgerUnavailable("change tracking has not been generated yet.")}</div>`;
-  else if(!list.length) body=`<div class="note" style="margin-top:6px">No changed prior-period figures above 0.5% across the seven quarters.</div>`;
+  else if(!list.length) body=`<div class="note" style="margin-top:6px">No changed prior-period figures above 0.5% in the last three years of filings (quarters, half-years, nine months and full years).</div>`;
   else{
     const rows=list.map(row=>`<tr><td>${ledgerEsc(LEDGER_METRIC_LABEL[row.metric]||row.metric)}</td><td class="lg-num">${ledgerEsc(row.label)}<div class="lg-meta">ends ${ledgerEsc(row.periodEnd)}</div></td>`
       +`<td>${row.firstFiled?ledgerFilingCell(row.firstValue,row.firstForm,row.firstFiled,row.firstAccession,company.cik):ledgerUnavailable("first filing date not available")}</td>`
@@ -199,10 +250,10 @@ function renderLedger(v){
     return;
   }
   if(LEDGER_DATA.failed){
-    v.innerHTML=`${ledgerHead()}<div class="note" style="margin-top:10px">${ledgerUnavailable("forecasts.json could not be loaded.")}</div>${ledgerRestatementSection()}`;
+    v.innerHTML=`${ledgerHead()}<div class="note" style="margin-top:10px">${ledgerUnavailable("forecasts.json could not be loaded.")}</div>${ledgerGuidanceScorecard(core)}${ledgerRestatementSection()}`;
     return;
   }
-  v.innerHTML=`${ledgerHead()}${ledgerCallsSection(core,LEDGER_DATA)}${ledgerRestatementSection()}`;
+  v.innerHTML=`${ledgerHead()}${ledgerAccuracySection(core,LEDGER_DATA)}${ledgerCallsSection(core,LEDGER_DATA)}${ledgerGuidanceScorecard(core)}${ledgerRestatementSection()}`;
 }
 
 function ledgerStripInner(){

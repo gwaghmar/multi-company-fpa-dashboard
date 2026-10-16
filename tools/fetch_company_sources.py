@@ -457,6 +457,9 @@ def debt_values(debt_facts: dict[str, list[dict]], period_end: str) -> tuple[flo
 
 RESTATEMENT_FORMS = {"10-Q", "10-K", "10-Q/A", "10-K/A"}
 RESTATEMENT_REL = 0.005
+# Change detection looks back over this many fiscal quarters (about three fiscal years), wider than
+# the seven quarters shown. It never changes a shown value.
+RESTATEMENT_LOOKBACK = 12
 VINTAGE = (
     "as originally filed, earliest filing wins; later changes to a prior-period figure are listed "
     "under restatements and are not applied to the values shown"
@@ -464,90 +467,172 @@ VINTAGE = (
 
 
 def filing_values(items: list[dict]) -> dict[str, dict]:
-    """One fact per filing (accession). The same fact can repeat inside one filing; keep the first."""
+    """One fact per filing (accession). The same fact can repeat inside one filing; keep the first.
+
+    A filing that carries two DIFFERENT values for the same span is ambiguous and is dropped.
+    """
     by_filing: dict[str, dict] = {}
+    conflicted = set()
     for item in sorted(items, key=lambda row: (row.get("filed", ""), row.get("accn", ""))):
-        by_filing.setdefault(item.get("accn", ""), item)
-    return by_filing
+        accn = item.get("accn", "")
+        if accn in by_filing and by_filing[accn].get("val") != item.get("val"):
+            conflicted.add(accn)
+        by_filing.setdefault(accn, item)
+    return {accn: item for accn, item in by_filing.items() if accn not in conflicted}
 
 
-def restatement_rows(payload: dict, metric_tags: dict, periods: list[dict], labels: list[str],
-                     flow_facts: dict[str, list[dict]] | None = None) -> list[dict]:
+def period_label(period: dict, basis: str) -> str:
+    fy = str(period["fy"])[-2:]
+    if basis == "annual":
+        return f"FY{fy}"
+    if basis == "ytd":
+        return f"{'H1' if period['quarter'] == 2 else '9M'} FY{fy}"
+    return f"Q{period['quarter']} FY{fy}"
+
+
+def restatement_change(first_value: float, latest_value: float) -> tuple[bool, float]:
+    """(above threshold?, deltaPct). Threshold: more than 0.5% AND at least 1 ($M)."""
+    change = abs(latest_value - first_value)
+    base = max(abs(first_value), 1)
+    return change / base > RESTATEMENT_REL and change >= 1, round(100 * (latest_value - first_value) / base, 2)
+
+
+def restatement_kind(latest_form: str, totals: dict[str, list]) -> str:
+    """amended: the latest filing is a 10-K/A or 10-Q/A.
+    presentation: revenue AND net income for the same span are present in both the first and the latest
+    filing and identical in both, so the change moved a line without changing the totals.
+    changed: anything else, including totals that could not be read in either filing.
+    """
+    if (latest_form or "").endswith("/A"):
+        return "amended"
+    same = all(pair[0] is not None and pair[0] == pair[1] for pair in (totals["revenue"], totals["netIncome"]))
+    return "presentation" if same else "changed"
+
+
+def lookback_periods(all_periods: list[dict], lookback: int = RESTATEMENT_LOOKBACK) -> list[dict]:
+    """The latest `lookback` fiscal quarters, stopping at the first break in the calendar.
+
+    A break is a gap between consecutive period ends outside 80-100 days, or a quarter number that
+    does not follow the previous one. Older 52/53-week periods can be mislabeled by fiscal_label
+    (Apple's quarter ended 2023-04-01 lands in "Q3", its 2023-07-01 quarter in "Q4"), so the lookback
+    never reaches past a break: a wrong label is never printed and a missing quarter is never implied.
+    """
+    window = list(all_periods[-1:])
+    for period in reversed(all_periods[:-1]):
+        if len(window) >= lookback:
+            break
+        later = window[0]
+        gap = (day(later["end"]) - day(period["end"])).days
+        expected = 4 if later["quarter"] == 1 else later["quarter"] - 1
+        if not (80 <= gap <= 100 and period["quarter"] == expected):
+            break
+        window.insert(0, period)
+    return window
+
+
+def restatement_rows(payload: dict, metric_tags: dict, all_periods: list[dict],
+                     flow_facts: dict[str, list[dict]] | None = None,
+                     lookback: int = RESTATEMENT_LOOKBACK) -> list[dict]:
     """Prior-period figures that a later filing reports differently from the first filing.
 
-    Its own pass over the SEC facts, including 10-K/A and 10-Q/A (the main filter drops amendments).
-    Only the tag that supplied each span (metricTags, or the bridged fallback listed in
-    metricTagFallbacks for a span the primary never filed) and only directly filed facts are compared:
-    the exact three-month fact for income-statement metrics and for first-quarter cash-flow metrics
-    (a first-quarter YTD fact is the quarter), and the instant fact for balance-sheet metrics.
-    Derived values are never compared: fiscal Q4 flow quarters, YTD-differenced cash-flow quarters,
-    free cash flow, total debt, and gross profit built from revenue minus cost.
+    Its own pass over the SEC facts, including 10-K/A and 10-Q/A (the main filter drops amendments),
+    over the last `lookback` fiscal quarters (lookback_periods: stops at a calendar break). Only the tag that supplied each span (metricTags, or the
+    bridged fallback listed in metricTagFallbacks for a span the primary never filed) and only directly
+    filed facts are compared. Each row has a `basis`:
+
+      quarter  the filed three-month fact, fiscal Q1-Q3, income-statement metrics; and the
+               first-quarter cash-flow fact (a first-quarter YTD fact is the quarter)
+      ytd      the filed six- or nine-month cash-flow fact (fiscal Q2, Q3)
+      annual   the filed full-year fact for every flow metric (fiscal Q4 period end)
+      instant  the balance-sheet fact at the period end
+
+    Never compared: fiscal Q4 three-month values (always derived), YTD-differenced cash-flow quarters,
+    free cash flow, total debt, and gross profit built from revenue minus cost. SEC Company Facts holds
+    only facts without dimensions, so segment and member facts never enter.
+
+    Vintage guard: the earliest filing of the fact must be the filing that first reported the period
+    (period sourceFact). When the chosen tag first appears only in a later comparative column (a renamed
+    tag) that earliest value is not the original figure, and the row is skipped.
 
     A row is emitted when the latest-filed value differs from the earliest-filed value by more than
-    0.5% and by at least 1 ($M). kind: amended when the latest form ends with /A; presentation when
-    the same period's revenue and net income are unchanged between the first and the latest filing
-    that reports them (fiscal Q4 uses the annual fact); otherwise changed.
+    0.5% and by at least 1 ($M). kind: see restatement_kind. Revenue and net income are read from the
+    two exact filings being compared (first and latest accession), for the same span basis.
     """
+    flow_facts = flow_facts or {}
+
     def span_tag(key: str, start: str, end: str) -> str | None:
         """Tag that supplied this span: the primary, or the bridged fallback for a span the primary never filed."""
         chosen = [item for item in flow_facts.get(key, []) if item["start"] == start and item["end"] == end]
         return first_filed(chosen)["concept"] if chosen else metric_tags.get(key)
 
-    def revenue_or_income(key: str, period: dict) -> tuple[float | None, float | None]:
-        name = metric_tags.get(key)
+    def span_facts(key: str, start: str, end: str) -> list[dict]:
+        name = span_tag(key, start, end)
         if not name:
-            return None, None
-        start = period["fiscalStart"] if period["quarter"] == 4 else period["start"]
-        items = [item for item in tag_facts(payload, name, forms=RESTATEMENT_FORMS)
-                 if item["start"] == start and item["end"] == period["end"]]
-        ordered = sorted(items, key=lambda row: (row.get("filed", ""), row.get("accn", "")))
-        if not ordered:
-            return None, None
-        return value_millions(ordered[0]), value_millions(ordered[-1])
+            return []
+        return [item for item in tag_facts(payload, name, forms=RESTATEMENT_FORMS)
+                if item["start"] == start and item["end"] == end]
 
-    flow_facts = flow_facts or {}
+    def total_at(key: str, start: str, end: str, accession: str) -> float | None:
+        """Revenue or net income for this span as reported in one filing, from the chosen tag."""
+        fact = filing_values(span_facts(key, start, end)).get(accession)
+        return value_millions(fact)
+
+    window = lookback_periods(all_periods, lookback)
     rows = []
-    for period, label in zip(periods, labels):
-        candidates = []
-        for key in INCOME_KEYS + CASH_FLOW_KEYS:
-            if key in CASH_FLOW_KEYS and period["quarter"] != 1:
-                continue
-            if period["quarter"] == 4 or not metric_tags.get(key):
-                continue
-            name = span_tag(key, period["start"], period["end"])
-            candidates.append((key, [item for item in tag_facts(payload, name, forms=RESTATEMENT_FORMS)
-                                     if item["start"] == period["start"] and item["end"] == period["end"]]))
+    for period in window:
+        source_accn = (period.get("sourceFact") or {}).get("accn")
+        candidates = []  # (metric, basis, start, items)
+        if period["quarter"] == 4:
+            spans = [("annual", period["fiscalStart"], INCOME_KEYS + CASH_FLOW_KEYS)]
+        elif period["quarter"] == 1:
+            spans = [("quarter", period["start"], INCOME_KEYS + CASH_FLOW_KEYS)]
+        else:
+            spans = [("quarter", period["start"], INCOME_KEYS), ("ytd", period["fiscalStart"], CASH_FLOW_KEYS)]
+        for basis, start, keys in spans:
+            for key in keys:
+                if metric_tags.get(key):
+                    candidates.append((key, basis, start, span_facts(key, start, period["end"])))
         for key in INSTANT_CONCEPTS:
             if metric_tags.get(key):
-                candidates.append((key, [item for item in tag_facts(payload, metric_tags[key], instant=True, forms=RESTATEMENT_FORMS)
-                                         if item["end"] == period["end"]]))
-        for key, items in candidates:
+                candidates.append((key, "instant", None, [
+                    item for item in tag_facts(payload, metric_tags[key], instant=True, forms=RESTATEMENT_FORMS)
+                    if item["end"] == period["end"]]))
+        for key, basis, start, items in candidates:
             filings = sorted(filing_values(items).values(), key=lambda row: (row.get("filed", ""), row.get("accn", "")))
             if len(filings) < 2:
                 continue
             first, latest = filings[0], filings[-1]
+            if first.get("accn") != source_accn:
+                continue
             first_value, latest_value = value_millions(first), value_millions(latest)
             if first_value is None or latest_value is None:
                 continue
-            change = abs(latest_value - first_value)
-            if not (change / max(abs(first_value), 1) > RESTATEMENT_REL and change >= 1):
+            above, delta_pct = restatement_change(first_value, latest_value)
+            if not above:
                 continue
-            if latest.get("form", "").endswith("/A"):
-                kind = "amended"
-            else:
-                revenue, income = revenue_or_income("revenue", period), revenue_or_income("netIncome", period)
-                same = all(pair[0] is not None and pair[0] == pair[1] for pair in (revenue, income))
-                kind = "presentation" if same else "changed"
+            # Totals for the same span basis; for a balance-sheet row, the period's own flow span
+            # (three-month for Q1-Q3, full year at a fiscal year end).
+            total_start = start if start else (period["fiscalStart"] if period["quarter"] == 4 else period["start"])
+            totals = {
+                total: [total_at(total, total_start, period["end"], first.get("accn")),
+                        total_at(total, total_start, period["end"], latest.get("accn"))]
+                for total in ("revenue", "netIncome")
+            }
             rows.append({
-                "metric": key, "label": label, "periodEnd": period["end"],
+                "metric": key, "label": period_label(period, basis), "periodEnd": period["end"],
                 "firstValue": first_value, "firstFiled": first.get("filed"),
                 "firstAccession": first.get("accn"), "firstForm": first.get("form"),
                 "latestValue": latest_value, "latestFiled": latest.get("filed"),
                 "latestAccession": latest.get("accn"), "latestForm": latest.get("form"),
-                "deltaPct": round(100 * (latest_value - first_value) / max(abs(first_value), 1), 2),
-                "kind": kind,
+                "deltaPct": delta_pct,
+                "kind": restatement_kind(latest.get("form"), totals),
+                # Extra fields; the UI may ignore them.
+                "basis": basis,
+                "periodStart": start,
+                "tag": first.get("concept"),
+                "totalsChecked": totals,
             })
-    rows.sort(key=lambda row: (row["periodEnd"], row["metric"]))
+    rows.sort(key=lambda row: (row["periodEnd"], row["metric"], row["basis"]))
     return rows
 
 
@@ -650,7 +735,12 @@ def build_company(slug: str, config: dict) -> dict:
         "metricTagFallbacks": fallbacks,
         "unmappedMetrics": UNMAPPED.get(slug, {}),
         "periods": rows,
-        "restatements": restatement_rows(payload, metric_tags, periods, [row["label"] for row in rows], facts),
+        "restatements": restatement_rows(payload, metric_tags, all_periods, facts),
+        # Period ends that change detection covered (wider than the seven quarters shown).
+        "restatementWindow": [
+            {"label": f"Q{period['quarter']} FY{str(period['fy'])[-2:]}", "periodEnd": period["end"]}
+            for period in lookback_periods(all_periods)
+        ],
     }
 
 

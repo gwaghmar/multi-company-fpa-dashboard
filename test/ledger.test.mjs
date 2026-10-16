@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { forecastHash, gradeForecast, parseGuidanceRange, gradeGuidance, guidanceForForecast, ledgerSummary } from "../ledger-core.mjs";
+import { forecastHash, gradeForecast, parseGuidanceRange, gradeGuidance, guidanceForForecast, guidanceTargetPeriod, gradeGuidanceHistory, accuracySummary, ledgerSummary } from "../ledger-core.mjs";
 
 const read = name => JSON.parse(readFileSync(new URL(`../${name}`, import.meta.url), "utf8"));
 const ledger = read("forecasts.json");
@@ -131,4 +131,81 @@ test("stored guidance in company-context.json is verbatim-shaped or null", () =>
     assert.match(g.filed, /^\d{4}-\d{2}-\d{2}$/, slug);
     assert.match(g.url, /^https:\/\/www\.sec\.gov\//, slug);
   }
+});
+
+// Synthetic fixtures below live only in this test file, never in forecasts.json.
+test("accuracySummary with no graded calls reports zero", () => {
+  const s = accuracySummary([], companies);
+  assert.equal(s.graded, 0);
+  assert.equal(s.biasPct, null);
+  assert.equal(s.meanAbsRevenueErrPct, null);
+  const open = accuracySummary([{ company: "synthetic", periodEnd: "2099-01-01", revenue: 1 }], { synthetic: { periods: [] } });
+  assert.equal(open.graded, 0);
+});
+
+test("accuracySummary averages signed and absolute errors over graded calls only", () => {
+  const fake = { co: { periods: [
+    { periodEnd: "2030-03-31", metrics: { revenue: 1000, grossProfit: 400, rd: 100, sellingGeneralAdministrative: 100 } },
+    { periodEnd: "2030-06-30", metrics: { revenue: 2000, grossProfit: 1000, rd: 100 } }
+  ] } };
+  const calls = [
+    { company: "co", periodEnd: "2030-03-31", revenue: 1100, grossMarginPct: 42, opex: 220 },   // +10%, +2 pts, +10%
+    { company: "co", periodEnd: "2030-06-30", revenue: 1800, grossMarginPct: 49, opex: 150 },   // -10%, -1 pt, opex ungradable
+    { company: "co", periodEnd: "2030-09-30", revenue: 5, grossMarginPct: 1, opex: 1 }          // not filed, ignored
+  ];
+  const s = accuracySummary(calls, fake);
+  assert.equal(s.graded, 2);
+  assert.ok(Math.abs(s.meanAbsRevenueErrPct - 10) < 1e-9);
+  assert.ok(Math.abs(s.biasPct) < 1e-9);
+  assert.equal(s.biasLabel, "no bias");
+  assert.ok(Math.abs(s.meanAbsGmErrPts - 1.5) < 1e-9);
+  assert.equal(s.opexN, 1);
+  assert.ok(Math.abs(s.meanAbsOpexErrPct - 10) < 1e-9);
+  const high = accuracySummary([calls[0]], fake);
+  assert.equal(high.biasLabel, "runs high");
+  const low = accuracySummary([calls[1]], fake);
+  assert.equal(low.biasLabel, "runs low");
+  assert.ok(low.biasPct < 0);
+});
+
+test("guidanceTargetPeriod picks the first period ending after the filing date", () => {
+  const periods = [
+    { label: "Q2", periodEnd: "2026-06-30" }, { label: "Q1", periodEnd: "2026-03-31" }, { label: "Q3", periodEnd: "2026-09-30" }
+  ];
+  assert.equal(guidanceTargetPeriod("2026-04-25", periods).label, "Q2");
+  assert.equal(guidanceTargetPeriod("2026-03-30", periods).label, "Q1");
+  assert.equal(guidanceTargetPeriod("2026-03-31", periods).label, "Q2");   // periodEnd must be strictly after
+  assert.equal(guidanceTargetPeriod("2026-09-30", periods), null);          // target quarter not filed yet
+  assert.equal(guidanceTargetPeriod("2026-10-28", periods), null);
+  assert.equal(guidanceTargetPeriod("2025-01-05", periods), null);          // too far before the first stored period
+  assert.equal(guidanceTargetPeriod(null, periods), null);
+  assert.equal(guidanceTargetPeriod("2026-04-25", []), null);
+});
+
+test("gradeGuidanceHistory grades, flags unparsed ranges and awaits unfiled quarters", () => {
+  const periods = [
+    { label: "Q1", periodEnd: "2026-03-31", metrics: { revenue: 62500 } },
+    { label: "Q2", periodEnd: "2026-06-30", metrics: { revenue: 70000 } }
+  ];
+  const history = [
+    { text: "We expect revenue of $61 billion to $64 billion.", filed: "2026-01-30", url: "https://x/1", sourceTitle: "a" },
+    { text: "We expect revenue to be strong.", filed: "2026-04-28", url: "https://x/2", sourceTitle: "b" },
+    { text: "We expect revenue of $70-72 billion.", filed: "2026-07-30", url: "https://x/3", sourceTitle: "c" },
+    { text: "We expect revenue of $70-72 billion.", filed: "2026-07-30", url: "https://x/3", sourceTitle: "dupe" },
+    { text: "", filed: "2026-01-01" }
+  ];
+  const rows = gradeGuidanceHistory(history, periods);
+  assert.equal(rows.length, 3);
+  assert.equal(rows[0].status, "graded");
+  assert.equal(rows[0].target.label, "Q1");
+  assert.equal(rows[0].grade.inside, true);
+  assert.ok(Math.abs(rows[0].grade.midErrPct - 100 * (62500 - 62500) / 62500) < 1e-9);
+  assert.equal(rows[1].status, "unparsed");
+  assert.equal(rows[1].target.label, "Q2");
+  assert.equal(rows[2].status, "awaiting");
+  assert.equal(rows[2].target, null);
+  assert.deepEqual(gradeGuidanceHistory(undefined, periods), []);
+  const outside = gradeGuidanceHistory([{ text: "revenue of $60-62 billion", filed: "2026-01-30" }], periods)[0];
+  assert.equal(outside.grade.inside, false);
+  assert.ok(outside.grade.midErrPct < 0);
 });

@@ -69,6 +69,20 @@ body{
 }
 .brand{font:650 14px/1 "Inter Tight",Inter,sans-serif; letter-spacing:-.01em; white-space:nowrap;flex:0 0 auto}
 .brand span{color:var(--muted); font-weight:500}
+
+/* trust strip: last row of the sticky header. Parts hide themselves when their data is missing. */
+.trustbar{display:flex; flex-wrap:wrap; align-items:center; gap:2px 14px; padding:3px 20px; background:var(--page); border-bottom:1px solid var(--ring); font-size:10.5px; line-height:16px; color:var(--ink2); min-height:22px}
+.trustbar[hidden],.trustbar [hidden]{display:none}
+.trustbar b{color:var(--ink); font-weight:600}
+.trustbar a{color:var(--ink2); text-decoration:none}
+.trustbar a:hover,.trustbar a:focus-visible{color:var(--accent); text-decoration:underline}
+.trustbar .tb-badge{display:inline-flex; align-items:center}
+.trustbar .tb-badge img{height:16px; display:block}
+.site-credit{display:flex; flex-wrap:wrap; gap:2px 12px; align-items:baseline}
+.site-credit a{color:var(--accent); text-decoration:none; font-weight:600}
+.site-credit a:hover,.site-credit a:focus-visible{text-decoration:underline}
+@media (max-width:600px){.trustbar{padding:3px 14px; gap:2px 10px}}
+@media print{.trustbar,.site-credit{display:none!important}}
 /* navbar: a dedicated slim strip for the tab strip, always its own row (not squeezed into .topbar
    alongside the company picker/buttons). Previously nav only got its own row below ~1400px wide --
    above that it shared .topbar and could silently overflow with zero visible cue that later tabs
@@ -967,12 +981,19 @@ footer{
     <nav id="nav" role="tablist"></nav>
     <button type="button" class="nav-chevron" id="navChevron" aria-label="Scroll tabs right">›</button>
   </div>
+  <div class="trustbar" id="trustbar" aria-label="Data and test status" hidden>
+    <span id="tbRefreshed" hidden>Data refreshed <b id="tbRefreshedDate"></b></span>
+    <span id="tbTests" hidden><b id="tbTestsN"></b> tests passing</span>
+    <a id="tbRepo" href="https://github.com/gwaghmar/multi-company-fpa-dashboard" target="_blank" rel="noopener">GitHub repo</a>
+    <a class="tb-badge" id="tbBadge" href="https://github.com/gwaghmar/multi-company-fpa-dashboard/actions/workflows/refresh-company-data.yml" target="_blank" rel="noopener"><img src="https://github.com/gwaghmar/multi-company-fpa-dashboard/actions/workflows/refresh-company-data.yml/badge.svg" alt="Daily data refresh workflow status" height="16" onerror="this.parentNode.hidden=true"></a>
+  </div>
 </div>
 <div class="filterbar" id="filterbar" role="group" aria-label="Filters"></div>
 
 <main id="main"></main>
 
 <footer id="foot"></footer>
+<footer id="siteCredit" class="site-credit"><span>Built by Govind Waghmare. Open to FP&amp;A and finance analytics roles.</span><a href="https://www.linkedin.com/in/govindwaghmare" target="_blank" rel="noopener">LinkedIn</a><a href="https://github.com/gwaghmar/multi-company-fpa-dashboard" target="_blank" rel="noopener">GitHub repo</a></footer>
 <div class="tt" id="tt"></div>
 
 <aside class="ai-drawer" id="aiDrawer" data-open="false" aria-label="Ask AI">
@@ -993,9 +1014,9 @@ footer{
 <button class="sel-pill" id="selPill">✦ Ask AI</button>
 
 <script src="./company-dashboard.js?v=20261014"></script>
-<script type="module" src="./ledger-core.mjs"></script>
+<script type="module" src="./ledger-core.mjs?v=20261016"></script>
 <script type="module" src="./peer-core.mjs"></script>
-<script src="./forecast-ledger.js?v=20261014"></script>
+<script src="./forecast-ledger.js?v=20261016b"></script>
 <script src="./peer-table.js?v=20261014"></script>
 <script>
 "use strict";
@@ -1047,6 +1068,24 @@ footer{
    boot: loadData() -> initFilters -> buildNav -> go()  end of file
    ============================================================ */
 let D = null; // loaded from data.json at startup, see loadData() below
+
+// Header trust strip. Each part shows only when its source loaded: companies.json generatedAt, status.json.
+function renderTrustStrip(status){
+  try{
+    const bar=document.getElementById("trustbar");
+    if(!bar) return;
+    const at=COMPANY_DATA&&COMPANY_DATA.generatedAt?new Date(COMPANY_DATA.generatedAt):null;
+    if(at&&!isNaN(at)){
+      document.getElementById("tbRefreshedDate").textContent=at.toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"});
+      document.getElementById("tbRefreshed").hidden=false;
+    }
+    if(status&&Number.isInteger(status.passed)&&Number.isInteger(status.tests)&&status.failed===0){
+      document.getElementById("tbTestsN").textContent=status.passed;
+      document.getElementById("tbTests").hidden=false;
+    }
+    bar.hidden=false;
+  }catch(e){}
+}
 let COMPANY_DATA = null;
 let PUBLIC_CONTEXT = {companies:{},macro:{}};
 let ENV_CONTEXT = {companies:{}};
@@ -3916,7 +3955,7 @@ function render(){
     relocateFiltersUnit();
     const dl=document.getElementById("dlBtn");
     if(dl) dl.addEventListener("click",()=>csvPrivateCompany());
-    document.getElementById("foot").textContent=`${COMPANY_DATA.companies[companySlug].name} is private -- no SEC filings exist. Every figure above is labeled REAL (the company's own statement) or REPORTED (media/investor-only, not company-confirmed). Built by Govind Waghmare · govindwaghmare.me`;
+    document.getElementById("foot").textContent=`${COMPANY_DATA.companies[companySlug].name} is private -- no SEC filings exist. Every figure above is labeled REAL (the company's own statement) or REPORTED (media/investor-only, not company-confirmed).`;
     updateAICtx();
     if(COMPANY_DATA) renderAISugg();
     applyDropVisibility();
@@ -3935,12 +3974,12 @@ function render(){
   const rangeTxt = periodLabel();
   document.getElementById("foot").textContent =
     companySlug!=="apple" || current==="company" || current==="plan" || current==="reports" || current==="peers" || current==="ledger"
-    ? `Source: ${COMPANY_DATA.companies[companySlug].name} SEC filings via SEC Company Facts. Filed values are shown directly; derived Q4/YTD arithmetic and modeled scenarios are labeled. Showing ${rangeTxt}. Built by Govind Waghmare · govindwaghmare.me`
+    ? `Source: ${COMPANY_DATA.companies[companySlug].name} SEC filings via SEC Company Facts. Filed values are shown directly; derived Q4/YTD arithmetic and modeled scenarios are labeled. Showing ${rangeTxt}.`
     : current==="home"
-    ? `Sources: Apple Inc. FY25 Form 10-K (filed Oct 31, 2025); FY25 Q1–Q3 and FY26 Q1–Q3 Form 10-Qs; Q3 FY26 earnings call (July 30, 2026); 2026 Environmental Progress Report; Apple Newsroom. Showing ${rangeTxt}. Built by Govind Waghmare · govindwaghmare.me`
+    ? `Sources: Apple Inc. FY25 Form 10-K (filed Oct 31, 2025); FY25 Q1–Q3 and FY26 Q1–Q3 Form 10-Qs; Q3 FY26 earnings call (July 30, 2026); 2026 Environmental Progress Report; Apple Newsroom. Showing ${rangeTxt}.`
     : current==="env"
-    ? "Source: Apple 2026 Environmental Progress Report and Apple Newsroom (April 2026). No internal, estimated, or modeled data on-screen; the CSV export's facility-level allocation is modeled and clearly labeled. Built by Govind Waghmare · govindwaghmare.me"
-    : `All figures as reported by Apple Inc. in its SEC filings and earnings call. Showing ${rangeTxt}. CSV exports contain modeled transaction-level detail reconciled to these totals, clearly labeled. Built by Govind Waghmare · govindwaghmare.me`;
+    ? "Source: Apple 2026 Environmental Progress Report and Apple Newsroom (April 2026). No internal, estimated, or modeled data on-screen; the CSV export's facility-level allocation is modeled and clearly labeled."
+    : `All figures as reported by Apple Inc. in its SEC filings and earnings call. Showing ${rangeTxt}. CSV exports contain modeled transaction-level detail reconciled to these totals, clearly labeled.`;
   updateAICtx();
   if(COMPANY_DATA) renderAISugg();
   applyDropVisibility();
@@ -4221,7 +4260,8 @@ async function loadData(){
       '<p style="padding:40px;color:var(--muted)">Couldn\'t load data.json. This dashboard needs to be served over http(s) (not opened as a bare file://), and data.json must sit next to index.html.</p>';
     throw e;
   }
-  await Promise.all([import("./ledger-core.mjs"),import("./peer-core.mjs")]).catch(()=>{}); // deferred module scripts may not have run yet on a deep link
+  await Promise.all([import("./ledger-core.mjs?v=20261016"),import("./peer-core.mjs")]).catch(()=>{}); // deferred module scripts may not have run yet on a deep link
+  fetch("./status.json").then(r=>r.ok?r.json():null).catch(()=>null).then(renderTrustStrip);
   initFilters();
   let restoredTab=parseHashState(); // may mutate state.q/cat/geo/pgeo; returns a tab id or null
   const companySelect=document.getElementById("companySelect");

@@ -150,6 +150,67 @@ export function guidanceForForecast(forecast, contextCompany, periods) {
   return guidance.filed > previousEnd && guidance.filed <= forecast.periodEnd ? guidance : null;
 }
 
+// Guidance filed on date D targets the first period in companies.json whose periodEnd is after D.
+// Returns that period, or null when the target quarter is not filed yet. A guidance sentence filed
+// more than MAX_LEAD_DAYS before the first stored period ends cannot be tied to it (the quarter it
+// guided has rolled out of the window), so it also returns null rather than guessing.
+const MAX_LEAD_DAYS = 135;
+const dayNumber = iso => Date.parse(`${iso}T00:00:00Z`) / 86400000;
+export function guidanceTargetPeriod(filed, periods) {
+  if (typeof filed !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(filed)) return null;
+  const sorted = (periods || []).filter(period => period?.periodEnd).slice().sort((a, b) => a.periodEnd.localeCompare(b.periodEnd));
+  const index = sorted.findIndex(period => period.periodEnd > filed);
+  if (index < 0) return null;
+  if (index === 0 && dayNumber(sorted[0].periodEnd) - dayNumber(filed) > MAX_LEAD_DAYS) return null;
+  return sorted[index];
+}
+
+// One row per guidance entry. status: "awaiting" (target quarter not filed), "unparsed" (range shape not recognised),
+// "graded" (inside plus midErrPct from gradeGuidance). Entries without text or a filed date are skipped.
+export function gradeGuidanceHistory(history, periods) {
+  const seen = new Set();
+  const rows = [];
+  for (const entry of Array.isArray(history) ? history : []) {
+    if (!entry || !entry.text || !entry.filed) continue;
+    const key = `${entry.url || ""}|${entry.text}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const target = guidanceTargetPeriod(entry.filed, periods);
+    const range = parseGuidanceRange(entry.text);
+    const actual = target?.metrics?.revenue;
+    const grade = target && range ? gradeGuidance(range, actual) : null;
+    const status = !target ? "awaiting" : !range ? "unparsed" : grade ? "graded" : "awaiting";
+    rows.push({ entry, target, range, grade, status });
+  }
+  return rows.sort((a, b) => String(a.entry.filed).localeCompare(String(b.entry.filed)));
+}
+
+const mean = values => values.reduce((sum, value) => sum + value, 0) / values.length;
+
+// Accuracy over graded calls (calls whose period is filed). Revenue error is signed, call minus actual, in percent of actual.
+// bias is the mean signed revenue error: positive means calls ran high. Opex and GM stats use only the calls where they can be graded.
+export function accuracySummary(forecasts, companies) {
+  const graded = [];
+  for (const f of Array.isArray(forecasts) ? forecasts : []) {
+    const period = (companies?.[f.company]?.periods || []).find(p => p.periodEnd === f.periodEnd);
+    if (period) graded.push(gradeForecast(f, period));
+  }
+  const pick = key => graded.map(g => g[key]).filter(isNumber);
+  const rev = pick("revenueErrPct"), gm = pick("gmErrPts"), opex = pick("opexErrPct");
+  const bias = rev.length ? mean(rev) : null;
+  return {
+    graded: graded.length,
+    revenueN: rev.length,
+    meanAbsRevenueErrPct: rev.length ? mean(rev.map(Math.abs)) : null,
+    biasPct: bias,
+    biasLabel: bias === null ? null : bias > 0 ? "runs high" : bias < 0 ? "runs low" : "no bias",
+    gmN: gm.length,
+    meanAbsGmErrPts: gm.length ? mean(gm.map(Math.abs)) : null,
+    opexN: opex.length,
+    meanAbsOpexErrPct: opex.length ? mean(opex.map(Math.abs)) : null
+  };
+}
+
 // onRecord: all calls. graded: calls whose period is now filed. next: earliest ungraded call, or null.
 export function ledgerSummary(forecasts, companies) {
   const list = Array.isArray(forecasts) ? forecasts : [];
@@ -162,5 +223,5 @@ export function ledgerSummary(forecasts, companies) {
   };
 }
 
-export const LedgerCore = { gradeForecast, actualOpex, parseGuidanceRange, gradeGuidance, guidanceForForecast, forecastHash, ledgerSummary };
+export const LedgerCore = { gradeForecast, actualOpex, parseGuidanceRange, gradeGuidance, guidanceForForecast, guidanceTargetPeriod, gradeGuidanceHistory, accuracySummary, forecastHash, ledgerSummary };
 globalThis.LedgerCore = LedgerCore;

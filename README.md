@@ -65,8 +65,16 @@ The dashboard parses a range at render time only for these shapes: `$61-64 billi
 `approximately $34.8 billion`; anything else shows the excerpt with "Range not parsed".
 Annual guidance is not graded.
 
-Known limit: only the latest earnings 8-K guidance sentence is stored, so "Guidance in range"
-grading needs a per-quarter guidance history that is not built yet.
+**Forecast accuracy** shows once any call is graded: calls graded, mean absolute revenue error, bias (mean signed
+revenue error, labeled "runs high" or "runs low"), mean absolute gross margin error in points, and mean absolute
+opex error where SG&A is filed under the standard tag. With no graded calls it shows one quiet line instead.
+
+**Management guidance vs actual** grades every sentence in `guidanceHistory` (per company, in `company-context.json`,
+accumulated by the daily refresh). Guidance filed on date D targets the first period in `companies.json` whose
+`periodEnd` is after D. If that quarter is not filed yet the row says "Awaiting filing"; once filed it shows the guided
+range (REAL, with the excerpt and link), actual revenue (REAL), inside or outside, and midpoint error. Ranges the
+parser does not recognise show "Range not parsed, excerpt shown". A sentence filed more than 135 days before the
+first stored quarter ends is not tied to any quarter (that quarter has left the window).
 
 The same tab has a **Figures changed in later filings** section for the selected company. It reads
 `restatements` from `companies.json` when the fetcher provides it and says UNAVAILABLE until then.

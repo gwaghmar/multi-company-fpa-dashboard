@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-15T15:05:02.324387+00:00",
+  "generatedAt": "2026-10-16T05:49:59.346780+00:00",
   "units": "USD millions",
   "vintage": "as originally filed, earliest filing wins; later changes to a prior-period figure are listed under restatements and are not applied to the values shown",
   "methodology": "As originally filed, one primary XBRL tag per metric per company; a renamed tag may fill only spans the primary never filed, after an identical-value bridge check (metricTagFallbacks). Income-statement quarters are filed three-month facts; cash-flow quarters are differences between filed fiscal year-to-date facts; fiscal Q4 is the filed annual fact minus the first three quarters. Total debt is current plus noncurrent carrying value from the balance sheet. Derived values are listed in derivedMetrics.",
@@ -566,7 +566,53 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2023-12-30"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2024-03-30"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-06-29"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-09-28"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2024-12-28"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2025-03-29"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-06-28"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-09-27"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2025-12-27"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2026-03-28"
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2026-06-27"
+        }
+      ]
     },
     "alphabet": {
       "name": "Alphabet",
@@ -1170,7 +1216,86 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [
+        {
+          "metric": "repurchases",
+          "label": "H1 FY25",
+          "periodEnd": "2025-06-30",
+          "firstValue": 28706.0,
+          "firstFiled": "2025-07-24",
+          "firstAccession": "0001652044-25-000062",
+          "firstForm": "10-Q",
+          "latestValue": 28306.0,
+          "latestFiled": "2026-07-23",
+          "latestAccession": "0001652044-26-000071",
+          "latestForm": "10-Q",
+          "deltaPct": -1.39,
+          "kind": "presentation",
+          "basis": "ytd",
+          "periodStart": "2025-01-01",
+          "tag": "PaymentsForRepurchaseOfCommonStock",
+          "totalsChecked": {
+            "revenue": [
+              186662.0,
+              186662.0
+            ],
+            "netIncome": [
+              62736.0,
+              62736.0
+            ]
+          }
+        }
+      ],
+      "restatementWindow": [
+        {
+          "label": "Q3 FY23",
+          "periodEnd": "2023-09-30"
+        },
+        {
+          "label": "Q4 FY23",
+          "periodEnd": "2023-12-31"
+        },
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2024-03-31"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2024-06-30"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-09-30"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-12-31"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2025-03-31"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2025-06-30"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-09-30"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-12-31"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2026-03-31"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2026-06-30"
+        }
+      ]
     },
     "nvidia": {
       "name": "NVIDIA",
@@ -1746,7 +1871,57 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2023-10-29"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-01-28"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2024-04-28"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2024-07-28"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2024-10-27"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-01-26"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2025-04-27"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2025-07-27"
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2025-10-26"
+        },
+        {
+          "label": "Q4 FY26",
+          "periodEnd": "2026-01-25"
+        },
+        {
+          "label": "Q1 FY27",
+          "periodEnd": "2026-04-26"
+        },
+        {
+          "label": "Q2 FY27",
+          "periodEnd": "2026-07-26"
+        }
+      ]
     },
     "microsoft": {
       "name": "Microsoft",
@@ -2300,7 +2475,57 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2023-09-30"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2023-12-31"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-03-31"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-06-30"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2024-09-30"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2024-12-31"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-03-31"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-06-30"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2025-09-30"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2025-12-31"
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2026-03-31"
+        },
+        {
+          "label": "Q4 FY26",
+          "periodEnd": "2026-06-30"
+        }
+      ]
     },
     "amazon": {
       "name": "Amazon",
@@ -2853,7 +3078,57 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q3 FY23",
+          "periodEnd": "2023-09-30"
+        },
+        {
+          "label": "Q4 FY23",
+          "periodEnd": "2023-12-31"
+        },
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2024-03-31"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2024-06-30"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-09-30"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-12-31"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2025-03-31"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2025-06-30"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-09-30"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-12-31"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2026-03-31"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2026-06-30"
+        }
+      ]
     },
     "meta": {
       "name": "Meta",
@@ -3420,7 +3695,114 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [
+        {
+          "metric": "capex",
+          "label": "9M FY23",
+          "periodEnd": "2023-09-30",
+          "firstValue": 19601.0,
+          "firstFiled": "2023-10-26",
+          "firstAccession": "0001326801-23-000103",
+          "firstForm": "10-Q",
+          "latestValue": 19453.0,
+          "latestFiled": "2024-10-31",
+          "latestAccession": "0001326801-24-000081",
+          "latestForm": "10-Q",
+          "deltaPct": -0.76,
+          "kind": "presentation",
+          "basis": "ytd",
+          "periodStart": "2023-01-01",
+          "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "totalsChecked": {
+            "revenue": [
+              94791.0,
+              94791.0
+            ],
+            "netIncome": [
+              25081.0,
+              25081.0
+            ]
+          }
+        },
+        {
+          "metric": "capex",
+          "label": "FY23",
+          "periodEnd": "2023-12-31",
+          "firstValue": 27266.0,
+          "firstFiled": "2024-02-02",
+          "firstAccession": "0001326801-24-000012",
+          "firstForm": "10-K",
+          "latestValue": 27045.0,
+          "latestFiled": "2026-01-29",
+          "latestAccession": "0001628280-26-003942",
+          "latestForm": "10-K",
+          "deltaPct": -0.81,
+          "kind": "presentation",
+          "basis": "annual",
+          "periodStart": "2023-01-01",
+          "tag": "PaymentsToAcquirePropertyPlantAndEquipment",
+          "totalsChecked": {
+            "revenue": [
+              134902.0,
+              134902.0
+            ],
+            "netIncome": [
+              39098.0,
+              39098.0
+            ]
+          }
+        }
+      ],
+      "restatementWindow": [
+        {
+          "label": "Q3 FY23",
+          "periodEnd": "2023-09-30"
+        },
+        {
+          "label": "Q4 FY23",
+          "periodEnd": "2023-12-31"
+        },
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2024-03-31"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2024-06-30"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-09-30"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-12-31"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2025-03-31"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2025-06-30"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-09-30"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-12-31"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2026-03-31"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2026-06-30"
+        }
+      ]
     },
     "amd": {
       "name": "AMD",
@@ -3986,6 +4368,146 @@
       ],
       "restatements": [
         {
+          "metric": "accountsReceivable",
+          "label": "Q4 FY23",
+          "periodEnd": "2023-12-30",
+          "firstValue": 5376.0,
+          "firstFiled": "2024-01-31",
+          "firstAccession": "0000002488-24-000012",
+          "firstForm": "10-K",
+          "latestValue": 4323.0,
+          "latestFiled": "2025-02-05",
+          "latestAccession": "0000002488-25-000012",
+          "latestForm": "10-K",
+          "deltaPct": -19.59,
+          "kind": "presentation",
+          "basis": "instant",
+          "periodStart": null,
+          "tag": "AccountsReceivableNetCurrent",
+          "totalsChecked": {
+            "revenue": [
+              22680.0,
+              22680.0
+            ],
+            "netIncome": [
+              854.0,
+              854.0
+            ]
+          }
+        },
+        {
+          "metric": "sellingGeneralAdministrative",
+          "label": "FY23",
+          "periodEnd": "2023-12-30",
+          "firstValue": 2352.0,
+          "firstFiled": "2024-01-31",
+          "firstAccession": "0000002488-24-000012",
+          "firstForm": "10-K",
+          "latestValue": 2318.0,
+          "latestFiled": "2026-02-04",
+          "latestAccession": "0000002488-26-000018",
+          "latestForm": "10-K",
+          "deltaPct": -1.45,
+          "kind": "presentation",
+          "basis": "annual",
+          "periodStart": "2023-01-01",
+          "tag": "SellingGeneralAndAdministrativeExpense",
+          "totalsChecked": {
+            "revenue": [
+              22680.0,
+              22680.0
+            ],
+            "netIncome": [
+              854.0,
+              854.0
+            ]
+          }
+        },
+        {
+          "metric": "sellingGeneralAdministrative",
+          "label": "Q1 FY24",
+          "periodEnd": "2024-03-30",
+          "firstValue": 620.0,
+          "firstFiled": "2024-05-01",
+          "firstAccession": "0000002488-24-000056",
+          "firstForm": "10-Q",
+          "latestValue": 607.0,
+          "latestFiled": "2025-05-07",
+          "latestAccession": "0000002488-25-000047",
+          "latestForm": "10-Q",
+          "deltaPct": -2.1,
+          "kind": "presentation",
+          "basis": "quarter",
+          "periodStart": "2023-12-31",
+          "tag": "SellingGeneralAndAdministrativeExpense",
+          "totalsChecked": {
+            "revenue": [
+              5473.0,
+              5473.0
+            ],
+            "netIncome": [
+              123.0,
+              123.0
+            ]
+          }
+        },
+        {
+          "metric": "sellingGeneralAdministrative",
+          "label": "Q2 FY24",
+          "periodEnd": "2024-06-29",
+          "firstValue": 650.0,
+          "firstFiled": "2024-07-31",
+          "firstAccession": "0000002488-24-000123",
+          "firstForm": "10-Q",
+          "latestValue": 640.0,
+          "latestFiled": "2025-08-06",
+          "latestAccession": "0000002488-25-000108",
+          "latestForm": "10-Q",
+          "deltaPct": -1.54,
+          "kind": "presentation",
+          "basis": "quarter",
+          "periodStart": "2024-03-31",
+          "tag": "SellingGeneralAndAdministrativeExpense",
+          "totalsChecked": {
+            "revenue": [
+              5835.0,
+              5835.0
+            ],
+            "netIncome": [
+              265.0,
+              265.0
+            ]
+          }
+        },
+        {
+          "metric": "sellingGeneralAdministrative",
+          "label": "Q3 FY24",
+          "periodEnd": "2024-09-28",
+          "firstValue": 721.0,
+          "firstFiled": "2024-10-30",
+          "firstAccession": "0000002488-24-000163",
+          "firstForm": "10-Q",
+          "latestValue": 707.0,
+          "latestFiled": "2025-11-05",
+          "latestAccession": "0000002488-25-000166",
+          "latestForm": "10-Q",
+          "deltaPct": -1.94,
+          "kind": "presentation",
+          "basis": "quarter",
+          "periodStart": "2024-06-30",
+          "tag": "SellingGeneralAndAdministrativeExpense",
+          "totalsChecked": {
+            "revenue": [
+              6819.0,
+              6819.0
+            ],
+            "netIncome": [
+              771.0,
+              771.0
+            ]
+          }
+        },
+        {
           "metric": "accountsPayable",
           "label": "Q4 FY24",
           "periodEnd": "2024-12-28",
@@ -3998,7 +4520,98 @@
           "latestAccession": "0000002488-26-000018",
           "latestForm": "10-K",
           "deltaPct": 23.92,
-          "kind": "presentation"
+          "kind": "presentation",
+          "basis": "instant",
+          "periodStart": null,
+          "tag": "AccountsPayableCurrent",
+          "totalsChecked": {
+            "revenue": [
+              25785.0,
+              25785.0
+            ],
+            "netIncome": [
+              1641.0,
+              1641.0
+            ]
+          }
+        },
+        {
+          "metric": "sellingGeneralAdministrative",
+          "label": "FY24",
+          "periodEnd": "2024-12-28",
+          "firstValue": 2783.0,
+          "firstFiled": "2025-02-05",
+          "firstAccession": "0000002488-25-000012",
+          "firstForm": "10-K",
+          "latestValue": 2735.0,
+          "latestFiled": "2026-02-04",
+          "latestAccession": "0000002488-26-000018",
+          "latestForm": "10-K",
+          "deltaPct": -1.72,
+          "kind": "presentation",
+          "basis": "annual",
+          "periodStart": "2023-12-31",
+          "tag": "SellingGeneralAndAdministrativeExpense",
+          "totalsChecked": {
+            "revenue": [
+              25785.0,
+              25785.0
+            ],
+            "netIncome": [
+              1641.0,
+              1641.0
+            ]
+          }
+        }
+      ],
+      "restatementWindow": [
+        {
+          "label": "Q3 FY23",
+          "periodEnd": "2023-09-30"
+        },
+        {
+          "label": "Q4 FY23",
+          "periodEnd": "2023-12-30"
+        },
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2024-03-30"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2024-06-29"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-09-28"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-12-28"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2025-03-29"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2025-06-28"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-09-27"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-12-27"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2026-03-28"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2026-06-27"
         }
       ]
     },
@@ -4597,7 +5210,57 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q4 FY23",
+          "periodEnd": "2023-10-29"
+        },
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2024-02-04"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2024-05-05"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-08-04"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-11-03"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2025-02-02"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2025-05-04"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-08-03"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-11-02"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2026-02-01"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2026-05-03"
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2026-08-02"
+        }
+      ]
     },
     "oracle": {
       "name": "Oracle",
@@ -5164,7 +5827,57 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2023-11-30"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-02-29"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-05-31"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2024-08-31"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2024-11-30"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-02-28"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-05-31"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2025-08-31"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2025-11-30"
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2026-02-28"
+        },
+        {
+          "label": "Q4 FY26",
+          "periodEnd": "2026-05-31"
+        },
+        {
+          "label": "Q1 FY27",
+          "periodEnd": "2026-08-31"
+        }
+      ]
     },
     "salesforce": {
       "name": "Salesforce",
@@ -5781,7 +6494,57 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2023-10-31"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-01-31"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2024-04-30"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2024-07-31"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2024-10-31"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-01-31"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2025-04-30"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2025-07-31"
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2025-10-31"
+        },
+        {
+          "label": "Q4 FY26",
+          "periodEnd": "2026-01-31"
+        },
+        {
+          "label": "Q1 FY27",
+          "periodEnd": "2026-04-30"
+        },
+        {
+          "label": "Q2 FY27",
+          "periodEnd": "2026-07-31"
+        }
+      ]
     },
     "intel": {
       "name": "Intel",
@@ -6351,7 +7114,57 @@
           }
         }
       ],
-      "restatements": []
+      "restatements": [],
+      "restatementWindow": [
+        {
+          "label": "Q3 FY23",
+          "periodEnd": "2023-09-30"
+        },
+        {
+          "label": "Q4 FY23",
+          "periodEnd": "2023-12-30"
+        },
+        {
+          "label": "Q1 FY24",
+          "periodEnd": "2024-03-30"
+        },
+        {
+          "label": "Q2 FY24",
+          "periodEnd": "2024-06-29"
+        },
+        {
+          "label": "Q3 FY24",
+          "periodEnd": "2024-09-28"
+        },
+        {
+          "label": "Q4 FY24",
+          "periodEnd": "2024-12-28"
+        },
+        {
+          "label": "Q1 FY25",
+          "periodEnd": "2025-03-29"
+        },
+        {
+          "label": "Q2 FY25",
+          "periodEnd": "2025-06-28"
+        },
+        {
+          "label": "Q3 FY25",
+          "periodEnd": "2025-09-27"
+        },
+        {
+          "label": "Q4 FY25",
+          "periodEnd": "2025-12-27"
+        },
+        {
+          "label": "Q1 FY26",
+          "periodEnd": "2026-03-28"
+        },
+        {
+          "label": "Q2 FY26",
+          "periodEnd": "2026-06-27"
+        }
+      ]
     }
   }
 }
