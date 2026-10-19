@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-18T14:02:39.263072+00:00",
+  "generatedAt": "2026-10-19T16:59:32.526217+00:00",
   "units": "USD millions",
   "vintage": "as originally filed, earliest filing wins; later changes to a prior-period figure are listed under restatements and are not applied to the values shown",
   "methodology": "As originally filed, one primary XBRL tag per metric per company; a renamed tag may fill only spans the primary never filed, after an identical-value bridge check (metricTagFallbacks). Income-statement quarters are filed three-month facts; cash-flow quarters are differences between filed fiscal year-to-date facts; fiscal Q4 is the filed annual fact minus the first three quarters. Total debt is current plus noncurrent carrying value from the balance sheet. Derived values are listed in derivedMetrics.",
