@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-19T16:59:36.096308+00:00",
+  "generatedAt": "2026-10-20T15:08:08.936433+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-16",
-      "threeMonth": "4.26",
-      "twoYear": "4.74",
-      "tenYear": "5.09",
-      "thirtyYear": "5.43",
+      "date": "2026-10-19",
+      "threeMonth": "4.27",
+      "twoYear": "4.77",
+      "tenYear": "5.15",
+      "thirtyYear": "5.48",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-10-19",
+      "asOf": "2026-10-20",
       "ratesPerEuro": {
-        "CNY": 7.4991,
-        "GBP": 0.84205,
-        "JPY": 177.63,
-        "USD": 1.1225
+        "CNY": 7.4894,
+        "GBP": 0.84028,
+        "JPY": 177.34,
+        "USD": 1.1215
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -2015,6 +2015,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-10-20",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000119312526425881/d516983d8k.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-09-17",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000210/crm-20260916.htm"
@@ -2054,12 +2060,6 @@
           "filed": "2026-06-01",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000131/crm-20260528.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-05-28",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/1108524/000110852426000127/crm-20260430.htm"
         }
       ],
       "documents": [
