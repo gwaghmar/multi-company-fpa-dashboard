@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-21T15:18:54.690590+00:00",
+  "generatedAt": "2026-10-22T15:19:43.742024+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-20",
-      "threeMonth": "4.26",
-      "twoYear": "4.79",
-      "tenYear": "5.12",
+      "date": "2026-10-21",
+      "threeMonth": "4.25",
+      "twoYear": "4.81",
+      "tenYear": "5.13",
       "thirtyYear": "5.42",
       "unit": "%",
       "source": "U.S. Treasury",
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-10-21",
+      "asOf": "2026-10-22",
       "ratesPerEuro": {
-        "CNY": 7.4999,
-        "GBP": 0.83825,
-        "JPY": 177.36,
-        "USD": 1.1234
+        "CNY": 7.4786,
+        "GBP": 0.8377,
+        "JPY": 175.97,
+        "USD": 1.1205
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -1121,6 +1121,18 @@
       "recentFilings": [
         {
           "form": "10-Q",
+          "filed": "2026-10-22",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-10-21",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-20261019.htm"
+        },
+        {
+          "form": "10-Q",
           "filed": "2026-07-30",
           "description": "10-Q",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
@@ -1154,88 +1166,82 @@
           "filed": "2026-04-29",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/meta-20260429.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-14",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025108/meta-20260408.htm"
-        },
-        {
-          "form": "10-K",
-          "filed": "2026-01-29",
-          "description": "10-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
+        },
+        {
+          "title": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta10202026-ex101.htm"
         },
         {
           "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm"
+          "filed": "2026-10-22",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm"
         }
       ],
       "managementSignals": [
         {
           "category": "Guidance",
-          "text": "We expect third quarter 2026 total revenue to be in the range of $61-64 billion.",
+          "text": "Our guidance assumes foreign currency is an approximately 1% headwind to year-over-year total revenue growth, based on current exchange rates.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
         },
         {
           "category": "Demand and revenue",
-          "text": "\u2022Revenue \u2013 Revenue was $60.80 billion, an increase of 28% year-over-year.",
+          "text": "\u2022Revenue \u2013 Revenue was $64.60 billion, an increase of 26% year-over-year on both a reported and constant currency basis.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "\u2022Costs and expenses \u2013 Total costs and expenses were $42.03 billion, an increase of 55% year-over-year.",
+          "text": "Third quarter 2026 costs and expenses includes a $9.89 billion charge related to this agreement.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
         },
         {
           "category": "Investment",
-          "text": "\u2022Capital expenditures \u2013 Capital expenditures, including principal payments on finance leases, were $31.08 billion.",
+          "text": "\"Our investments are paying off, the core business is strong, and we're seeing velocity across the board.\".",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
         },
         {
           "category": "Workforce",
-          "text": "This includes $2.40 billion of charges related to legal proceedings and $1.18 billion of severance expenses in connection with the May 2026 headcount reduction.",
+          "text": "\u2022Headcount \u2013 Headcount was 66,775 as of September 30, 2026, a decrease of 15% year-over-year.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "Finally, we continue to monitor active legal and regulatory matters that could significantly impact our business and financial results.",
+          "text": "Additionally, we continue to monitor active legal and regulatory matters that could significantly impact our business and financial results.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm"
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
         }
       ],
       "guidance": {
-        "text": "We expect third quarter 2026 total revenue to be in the range of $61-64 billion.",
-        "filed": "2026-07-29",
-        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm",
+        "text": "We expect fourth quarter 2026 total revenue to be in the range of $73-76 billion.",
+        "filed": "2026-10-21",
+        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm",
         "sourceTitle": "Earnings release exhibit"
       },
       "annualReport": {
@@ -1333,6 +1339,12 @@
           "text": "We expect third quarter 2026 total revenue to be in the range of $61-64 billion.",
           "filed": "2026-07-29",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-06302026xexhibit991.htm",
+          "sourceTitle": "Earnings release exhibit"
+        },
+        {
+          "text": "We expect fourth quarter 2026 total revenue to be in the range of $73-76 billion.",
+          "filed": "2026-10-21",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm",
           "sourceTitle": "Earnings release exhibit"
         }
       ]
