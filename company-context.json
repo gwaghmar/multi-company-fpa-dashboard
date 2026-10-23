@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-22T15:19:43.742024+00:00",
+  "generatedAt": "2026-10-23T15:08:56.089867+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-21",
-      "threeMonth": "4.25",
-      "twoYear": "4.81",
-      "tenYear": "5.13",
-      "thirtyYear": "5.42",
+      "date": "2026-10-22",
+      "threeMonth": "4.22",
+      "twoYear": "4.65",
+      "tenYear": "4.96",
+      "thirtyYear": "5.29",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-10-22",
+      "asOf": "2026-10-23",
       "ratesPerEuro": {
-        "CNY": 7.4786,
-        "GBP": 0.8377,
-        "JPY": 175.97,
-        "USD": 1.1205
+        "CNY": 7.466,
+        "GBP": 0.83728,
+        "JPY": 175.51,
+        "USD": 1.1193
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
