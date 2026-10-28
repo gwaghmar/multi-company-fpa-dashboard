@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-27T15:54:01.581093+00:00",
+  "generatedAt": "2026-10-28T16:41:18.861959+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-26",
+      "date": "2026-10-27",
       "threeMonth": "4.22",
-      "twoYear": "4.68",
-      "tenYear": "5.00",
-      "thirtyYear": "5.31",
+      "twoYear": "4.70",
+      "tenYear": "4.99",
+      "thirtyYear": "5.30",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-10-27",
+      "asOf": "2026-10-28",
       "ratesPerEuro": {
-        "CNY": 7.4343,
-        "GBP": 0.83658,
-        "JPY": 175.97,
-        "USD": 1.115
+        "CNY": 7.4217,
+        "GBP": 0.83785,
+        "JPY": 175.86,
+        "USD": 1.1133
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -1586,6 +1586,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001730168.json",
       "recentFilings": [
         {
+          "form": "8-K",
+          "filed": "2026-10-27",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000119312526434271/d148323d8k.htm"
+        },
+        {
           "form": "10-Q",
           "filed": "2026-09-10",
           "description": "10-Q",
@@ -1626,12 +1632,6 @@
           "filed": "2026-06-03",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000051/avgo-20260603.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-21",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000039/avgo-20260420.htm"
         }
       ],
       "documents": [
