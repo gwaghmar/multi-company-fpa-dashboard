@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-28T16:41:14.783470+00:00",
+  "generatedAt": "2026-10-29T16:56:38.062372+00:00",
   "units": "USD millions",
   "vintage": "as originally filed, earliest filing wins; later changes to a prior-period figure are listed under restatements and are not applied to the values shown",
   "methodology": "As originally filed, one primary XBRL tag per metric per company; a renamed tag may fill only spans the primary never filed, after an identical-value bridge check (metricTagFallbacks). Income-statement quarters are filed three-month facts; cash-flow quarters are differences between filed fiscal year-to-date facts; fiscal Q4 is the filed annual fact minus the first three quarters. Total debt is current plus noncurrent carrying value from the balance sheet. Derived values are listed in derivedMetrics.",
@@ -664,6 +664,14 @@
               "value": 4977.0,
               "primaryAccession": "0001652044-25-000062",
               "fallbackAccession": "0001652044-26-000071"
+            },
+            {
+              "tag": "PaymentsOfOrdinaryDividends",
+              "start": "2025-01-01",
+              "end": "2025-09-30",
+              "value": 7513.0,
+              "primaryAccession": "0001652044-25-000091",
+              "fallbackAccession": "0001652044-26-000084"
             }
           ],
           "spans": [
@@ -675,95 +683,21 @@
               "form": "10-Q",
               "filed": "2026-07-23",
               "accession": "0001652044-26-000071"
+            },
+            {
+              "tag": "PaymentsOfOrdinaryDividends",
+              "start": "2026-01-01",
+              "end": "2026-09-30",
+              "value": 8167.0,
+              "form": "10-Q",
+              "filed": "2026-10-29",
+              "accession": "0001652044-26-000084"
             }
           ]
         }
       },
       "unmappedMetrics": {},
       "periods": [
-        {
-          "label": "Q4 FY24",
-          "periodEnd": "2024-12-31",
-          "metrics": {
-            "revenue": 96469.0,
-            "costOfRevenue": 40613.0,
-            "grossProfit": 55856.0,
-            "operatingIncome": 30972.0,
-            "netIncome": 26536.0,
-            "rd": 13116.0,
-            "sellingGeneralAdministrative": null,
-            "interestExpense": 53.0,
-            "incomeTaxExpense": 5707.0,
-            "operatingCashFlow": 39113.0,
-            "capex": 14276.0,
-            "repurchases": 15551.0,
-            "dividends": 2442.0,
-            "shareBasedCompensation": 5810.0,
-            "depreciationAmortization": 4205.0,
-            "acquisitions": null,
-            "freeCashFlow": 24837.0,
-            "cash": 23466.0,
-            "shortTermInvestments": 72191.0,
-            "accountsReceivable": 52340.0,
-            "accountsPayable": 7987.0,
-            "currentAssets": 163711.0,
-            "currentLiabilities": 89122.0,
-            "totalAssets": 450256.0,
-            "totalLiabilities": 125172.0,
-            "inventory": null,
-            "goodwill": 31885.0,
-            "propertyPlantEquipment": 171036.0,
-            "deferredRevenueCurrent": 5036.0,
-            "marketableSecuritiesNoncurrent": 266.0,
-            "debtCurrent": 3299.0,
-            "debtNoncurrent": 10883.0,
-            "totalDebt": 14182.0
-          },
-          "fiscalYtdMetrics": {
-            "revenue": 350018.0,
-            "costOfRevenue": 146306.0,
-            "grossProfit": null,
-            "operatingIncome": 112390.0,
-            "netIncome": 100118.0,
-            "rd": 49326.0,
-            "sellingGeneralAdministrative": null,
-            "interestExpense": 268.0,
-            "incomeTaxExpense": 19697.0,
-            "operatingCashFlow": 125299.0,
-            "capex": 52535.0,
-            "repurchases": 62222.0,
-            "dividends": 7363.0,
-            "shareBasedCompensation": 22785.0,
-            "depreciationAmortization": 15311.0,
-            "acquisitions": null,
-            "freeCashFlow": 72764.0
-          },
-          "derivedMetrics": [
-            "capex",
-            "costOfRevenue",
-            "depreciationAmortization",
-            "dividends",
-            "freeCashFlow",
-            "grossProfit",
-            "incomeTaxExpense",
-            "interestExpense",
-            "netIncome",
-            "operatingCashFlow",
-            "operatingIncome",
-            "rd",
-            "repurchases",
-            "revenue",
-            "shareBasedCompensation",
-            "totalDebt"
-          ],
-          "source": {
-            "form": "10-K",
-            "filed": "2025-02-05",
-            "firstFiled": "2025-02-05",
-            "accession": "0001652044-25-000014",
-            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/"
-          }
-        },
         {
           "label": "Q1 FY25",
           "periodEnd": "2025-03-31",
@@ -1214,6 +1148,82 @@
             "accession": "0001652044-26-000071",
             "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/"
           }
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2026-09-30",
+          "metrics": {
+            "revenue": 127577.0,
+            "costOfRevenue": 51419.0,
+            "grossProfit": 76158.0,
+            "operatingIncome": 40576.0,
+            "netIncome": 26468.0,
+            "rd": 20640.0,
+            "sellingGeneralAdministrative": null,
+            "interestExpense": 967.0,
+            "incomeTaxExpense": 5887.0,
+            "operatingCashFlow": 42290.0,
+            "capex": 51355.0,
+            "repurchases": 0.0,
+            "dividends": 2936.0,
+            "shareBasedCompensation": 8630.0,
+            "depreciationAmortization": 8369.0,
+            "acquisitions": null,
+            "freeCashFlow": -9065.0,
+            "cash": 56334.0,
+            "shortTermInvestments": 208764.0,
+            "accountsReceivable": 72784.0,
+            "accountsPayable": 21975.0,
+            "currentAssets": 374665.0,
+            "currentLiabilities": 134501.0,
+            "totalAssets": 1003312.0,
+            "totalLiabilities": 325763.0,
+            "inventory": 13308.0,
+            "goodwill": 58117.0,
+            "propertyPlantEquipment": null,
+            "deferredRevenueCurrent": 9429.0,
+            "marketableSecuritiesNoncurrent": null,
+            "debtCurrent": 1016.0,
+            "debtNoncurrent": 125102.0,
+            "totalDebt": 126118.0
+          },
+          "fiscalYtdMetrics": {
+            "revenue": 357269.0,
+            "costOfRevenue": 138633.0,
+            "grossProfit": null,
+            "operatingIncome": 121042.0,
+            "netIncome": 201239.0,
+            "rd": 55891.0,
+            "sellingGeneralAdministrative": null,
+            "interestExpense": 2778.0,
+            "incomeTaxExpense": 47281.0,
+            "operatingCashFlow": 127149.0,
+            "capex": 131953.0,
+            "repurchases": 0.0,
+            "dividends": 8167.0,
+            "shareBasedCompensation": 23338.0,
+            "depreciationAmortization": 21955.0,
+            "acquisitions": null,
+            "freeCashFlow": -4804.0
+          },
+          "derivedMetrics": [
+            "capex",
+            "depreciationAmortization",
+            "dividends",
+            "freeCashFlow",
+            "grossProfit",
+            "operatingCashFlow",
+            "repurchases",
+            "shareBasedCompensation",
+            "totalDebt"
+          ],
+          "source": {
+            "form": "10-Q",
+            "filed": "2026-10-29",
+            "firstFiled": "2026-10-29",
+            "accession": "0001652044-26-000084",
+            "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/"
+          }
         }
       ],
       "restatements": [
@@ -1244,13 +1254,37 @@
               62736.0
             ]
           }
+        },
+        {
+          "metric": "repurchases",
+          "label": "9M FY25",
+          "periodEnd": "2025-09-30",
+          "firstValue": 40210.0,
+          "firstFiled": "2025-10-30",
+          "firstAccession": "0001652044-25-000091",
+          "firstForm": "10-Q",
+          "latestValue": 39810.0,
+          "latestFiled": "2026-10-29",
+          "latestAccession": "0001652044-26-000084",
+          "latestForm": "10-Q",
+          "deltaPct": -0.99,
+          "kind": "presentation",
+          "basis": "ytd",
+          "periodStart": "2025-01-01",
+          "tag": "PaymentsForRepurchaseOfCommonStock",
+          "totalsChecked": {
+            "revenue": [
+              289007.0,
+              289007.0
+            ],
+            "netIncome": [
+              97715.0,
+              97715.0
+            ]
+          }
         }
       ],
       "restatementWindow": [
-        {
-          "label": "Q3 FY23",
-          "periodEnd": "2023-09-30"
-        },
         {
           "label": "Q4 FY23",
           "periodEnd": "2023-12-31"
@@ -1294,6 +1328,10 @@
         {
           "label": "Q2 FY26",
           "periodEnd": "2026-06-30"
+        },
+        {
+          "label": "Q3 FY26",
+          "periodEnd": "2026-09-30"
         }
       ]
     },
@@ -1964,75 +2002,6 @@
       "unmappedMetrics": {},
       "periods": [
         {
-          "label": "Q2 FY25",
-          "periodEnd": "2024-12-31",
-          "metrics": {
-            "revenue": 69632.0,
-            "costOfRevenue": 21799.0,
-            "grossProfit": 47833.0,
-            "operatingIncome": 31653.0,
-            "netIncome": 24108.0,
-            "rd": 7917.0,
-            "sellingGeneralAdministrative": null,
-            "interestExpense": 594.0,
-            "incomeTaxExpense": 5257.0,
-            "operatingCashFlow": 22291.0,
-            "capex": 15804.0,
-            "repurchases": 4986.0,
-            "dividends": 6170.0,
-            "shareBasedCompensation": 3089.0,
-            "depreciationAmortization": 5200.0,
-            "acquisitions": null,
-            "freeCashFlow": 6487.0,
-            "cash": 17482.0,
-            "shortTermInvestments": 54073.0,
-            "accountsReceivable": 48188.0,
-            "accountsPayable": 22608.0,
-            "currentAssets": 147080.0,
-            "currentLiabilities": 108882.0,
-            "totalAssets": 533898.0,
-            "totalLiabilities": 231203.0,
-            "inventory": 909.0,
-            "goodwill": 119191.0,
-            "propertyPlantEquipment": 166902.0,
-            "deferredRevenueCurrent": 45508.0,
-            "marketableSecuritiesNoncurrent": null,
-            "debtCurrent": 5248.0,
-            "debtNoncurrent": 39722.0,
-            "totalDebt": 44970.0
-          },
-          "fiscalYtdMetrics": {
-            "revenue": 135217.0,
-            "costOfRevenue": 41898.0,
-            "grossProfit": 93319.0,
-            "operatingIncome": 62205.0,
-            "netIncome": 48775.0,
-            "rd": 15461.0,
-            "sellingGeneralAdministrative": null,
-            "interestExpense": 1176.0,
-            "incomeTaxExpense": 10859.0,
-            "operatingCashFlow": 56471.0,
-            "capex": 30727.0,
-            "repurchases": 9093.0,
-            "dividends": 11744.0,
-            "shareBasedCompensation": 5921.0,
-            "depreciationAmortization": 9900.0,
-            "acquisitions": null,
-            "freeCashFlow": 25744.0
-          },
-          "derivedMetrics": [
-            "freeCashFlow",
-            "totalDebt"
-          ],
-          "source": {
-            "form": "10-Q",
-            "filed": "2025-01-29",
-            "firstFiled": "2025-01-29",
-            "accession": "0000950170-25-010491",
-            "url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010491/"
-          }
-        },
-        {
           "label": "Q3 FY25",
           "periodEnd": "2025-03-31",
           "metrics": {
@@ -2473,14 +2442,79 @@
             "accession": "0001193125-26-323660",
             "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/"
           }
+        },
+        {
+          "label": "Q1 FY27",
+          "periodEnd": "2026-09-30",
+          "metrics": {
+            "revenue": 92279.0,
+            "costOfRevenue": 29720.0,
+            "grossProfit": 62559.0,
+            "operatingIncome": 45915.0,
+            "netIncome": 36629.0,
+            "rd": 9047.0,
+            "sellingGeneralAdministrative": null,
+            "interestExpense": 870.0,
+            "incomeTaxExpense": 9324.0,
+            "operatingCashFlow": 58000.0,
+            "capex": 39367.0,
+            "repurchases": 4379.0,
+            "dividends": 6757.0,
+            "shareBasedCompensation": 3134.0,
+            "depreciationAmortization": 11100.0,
+            "acquisitions": null,
+            "freeCashFlow": 18633.0,
+            "cash": 20281.0,
+            "shortTermInvestments": 44228.0,
+            "accountsReceivable": 62084.0,
+            "accountsPayable": 42625.0,
+            "currentAssets": 186137.0,
+            "currentLiabilities": 151968.0,
+            "totalAssets": 779403.0,
+            "totalLiabilities": 308894.0,
+            "inventory": 1835.0,
+            "goodwill": 119646.0,
+            "propertyPlantEquipment": 346844.0,
+            "deferredRevenueCurrent": 66866.0,
+            "marketableSecuritiesNoncurrent": null,
+            "debtCurrent": 4391.0,
+            "debtNoncurrent": 31090.0,
+            "totalDebt": 35481.0
+          },
+          "fiscalYtdMetrics": {
+            "revenue": 92279.0,
+            "costOfRevenue": 29720.0,
+            "grossProfit": 62559.0,
+            "operatingIncome": 45915.0,
+            "netIncome": 36629.0,
+            "rd": 9047.0,
+            "sellingGeneralAdministrative": null,
+            "interestExpense": 870.0,
+            "incomeTaxExpense": 9324.0,
+            "operatingCashFlow": 58000.0,
+            "capex": 39367.0,
+            "repurchases": 4379.0,
+            "dividends": 6757.0,
+            "shareBasedCompensation": 3134.0,
+            "depreciationAmortization": 11100.0,
+            "acquisitions": null,
+            "freeCashFlow": 18633.0
+          },
+          "derivedMetrics": [
+            "freeCashFlow",
+            "totalDebt"
+          ],
+          "source": {
+            "form": "10-Q",
+            "filed": "2026-10-28",
+            "firstFiled": "2026-10-28",
+            "accession": "0001193125-26-436133",
+            "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/"
+          }
         }
       ],
       "restatements": [],
       "restatementWindow": [
-        {
-          "label": "Q1 FY24",
-          "periodEnd": "2023-09-30"
-        },
         {
           "label": "Q2 FY24",
           "periodEnd": "2023-12-31"
@@ -2524,6 +2558,10 @@
         {
           "label": "Q4 FY26",
           "periodEnd": "2026-06-30"
+        },
+        {
+          "label": "Q1 FY27",
+          "periodEnd": "2026-09-30"
         }
       ]
     },

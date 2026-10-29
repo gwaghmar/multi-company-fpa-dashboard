@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-28T16:41:18.861959+00:00",
+  "generatedAt": "2026-10-29T16:56:41.516639+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-27",
-      "threeMonth": "4.22",
-      "twoYear": "4.70",
-      "tenYear": "4.99",
-      "thirtyYear": "5.30",
+      "date": "2026-10-28",
+      "threeMonth": "4.18",
+      "twoYear": "4.67",
+      "tenYear": "5.05",
+      "thirtyYear": "5.37",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-10-28",
+      "asOf": "2026-10-29",
       "ratesPerEuro": {
-        "CNY": 7.4217,
-        "GBP": 0.83785,
-        "JPY": 175.86,
-        "USD": 1.1133
+        "CNY": 7.4144,
+        "GBP": 0.83578,
+        "JPY": 175.92,
+        "USD": 1.113
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -252,6 +252,18 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001652044.json",
       "recentFilings": [
         {
+          "form": "10-Q",
+          "filed": "2026-10-29",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-10-28",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/goog-20261028.htm"
+        },
+        {
           "form": "8-K",
           "filed": "2026-08-10",
           "description": "8-K",
@@ -286,82 +298,70 @@
           "filed": "2026-06-05",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/goog-20260602.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-06-04",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/d83560d8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-21",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/d144566d8k.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-22",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm"
         },
         {
           "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"
         }
       ],
       "managementSignals": [
         {
           "category": "Demand and revenue",
-          "text": "\u2022Consolidated Alphabet revenues increased 24%, or 23% in constant currency, to $119.8 billion, reflecting strong performance across the business and our 12th consecutive quarter\u2026",
+          "text": "\u2022Consolidated Alphabet revenues increased 25% to $127.6 billion, reflecting strong performance across the business and our 13th consecutive quarter of double-digit revenue growth.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-22",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "\u2022Consolidated Alphabet operating income increased 30% and operating margin expanded by 2 percentage points to 34%.",
+          "text": "\u2022Consolidated Alphabet operating income increased 30% and operating margin was 31.8%.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-22",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm"
         },
         {
           "category": "Investment",
-          "text": "\u2022Google Cloud saw a meaningful acceleration in growth as revenues increased 82% to $24.8 billion, led by an increase in Google Cloud Platform (GCP)\u2026",
+          "text": "\u2022Google Cloud delivered record growth as revenues increased 103% to $30.7 billion, led by strong growth in Google Cloud Platform (GCP) across enterprise AI\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-22",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm"
         },
         {
           "category": "Guidance",
           "text": "In May 2026, the FASB issued ASU 2026-02 \"Environmental Credits and Environmental Credit Obligations (Topic 818)\u201d to provide recognition, measurement, presentation, and disclosure guidance\u2026",
           "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"
         },
         {
           "category": "Workforce",
           "text": "These costs, including the associated depreciation, are allocated to operating segments as a service cost generally based on usage, headcount, or revenue.",
           "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"
         },
         {
           "category": "Risk and supply",
           "text": "Our valuation methods include option pricing models, market comparable approach, and common stock equivalent method, which may include a combination of the observable transaction\u2026",
           "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"
         }
       ],
       "guidance": null,
@@ -679,6 +679,24 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-10-28",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436149/msft-20261028.htm"
+        },
+        {
+          "form": "10-Q",
+          "filed": "2026-10-28",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-10-28",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-20261028.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-09-02",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965d8k.htm"
@@ -706,88 +724,70 @@
           "filed": "2026-05-14",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526224155/d125909d8k.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-04-29",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191507/msft-20260331.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-29",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/msft-20260429.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-01-28",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027207/msft-20251231.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-ex99_1.htm"
         },
         {
-          "title": "Latest 10-K narrative",
+          "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm"
         }
       ],
       "managementSignals": [
         {
           "category": "Guidance",
-          "text": "Several discrete items impacted our financial results in the quarter when compared to our forward-looking guidance provided on April 29, 2026, resulting in a\u2026",
+          "text": "Microsoft will provide forward-looking guidance in connection with this quarterly earnings announcement on its earnings conference call and webcast.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-ex99_1.htm"
         },
         {
           "category": "Demand and revenue",
-          "text": "\u2022 Revenue was $90.0 billion and increased 18% (up 17% in constant currency).",
+          "text": "\u201cWe delivered a strong start to the fiscal year with Microsoft Cloud revenue of $63.9 billion, with growth accelerating to 30% (up 31% in\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-ex99_1.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "These include a $3.2 billion gain from our investment in Anthropic and lower-than-expected expenses related to the Voluntary Retirement Program which were partially offset\u2026",
+          "text": "\u201cWe are delivering greater capability, choice, control, and cost efficiency for customers across our entire stack,\u201d said Satya Nadella, chairman and chief executive officer\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-ex99_1.htm"
         },
         {
           "category": "Investment",
           "text": "\u2022 Non-GAAP results exclude the impact from investments in OpenAI, explained in the Non-GAAP Definition section below.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-ex99_1.htm"
         },
         {
           "category": "Risk and supply",
           "text": "\u2022 substantial investments in cloud and AI strategy that depend on customer demand, technological developments, competitive dynamics, and regulatory condition.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-ex99_1.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-ex99_1.htm"
         },
         {
           "category": "Workforce",
-          "text": "Through our employee listening systems, we gather direct feedback from our workforce, enabling us to adapt our programs and address employee needs globally with\u2026",
-          "sourceTitle": "Latest 10-K narrative",
+          "text": "Each allocation is measured differently based on the specific facts and circumstances of the costs being allocated and is generally based on relative gross\u2026",
+          "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-29",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm"
+          "filed": "2026-10-28",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm"
         }
       ],
       "guidance": null,
@@ -1811,6 +1811,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-10-28",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526435853/d75538d8k.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-09-14",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389753/d20034d8k.htm"
@@ -1850,12 +1856,6 @@
           "filed": "2026-04-06",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526142939/d132760d8k.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-03-11",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526101045/orcl-20260228.htm"
         }
       ],
       "documents": [
