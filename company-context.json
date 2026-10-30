@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-10-29T16:56:41.516639+00:00",
+  "generatedAt": "2026-10-30T16:42:45.934477+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-28",
+      "date": "2026-10-29",
       "threeMonth": "4.18",
-      "twoYear": "4.67",
-      "tenYear": "5.05",
-      "thirtyYear": "5.37",
+      "twoYear": "4.61",
+      "tenYear": "4.98",
+      "thirtyYear": "5.32",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-10-29",
+      "asOf": "2026-10-30",
       "ratesPerEuro": {
-        "CNY": 7.4144,
-        "GBP": 0.83578,
-        "JPY": 175.92,
-        "USD": 1.113
+        "CNY": 7.4326,
+        "GBP": 0.8338,
+        "JPY": 175.68,
+        "USD": 1.1172
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -890,6 +890,18 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001018724.json",
       "recentFilings": [
         {
+          "form": "10-Q",
+          "filed": "2026-10-30",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-10-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20261029.htm"
+        },
+        {
           "form": "8-K",
           "filed": "2026-09-14",
           "description": "FORM 8-K",
@@ -924,94 +936,82 @@
           "filed": "2026-06-12",
           "description": "FORM 8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926073562/tm2613616d5_8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-06-10",
-          "description": "FORM 8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926072140/tm2613616d4_8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-22",
-          "description": "FORM 8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926065717/tm2614288d1_8k.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm"
         },
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex992.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex992.htm"
         },
         {
           "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-31",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+          "filed": "2026-10-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm"
         }
       ],
       "managementSignals": [
         {
           "category": "Guidance",
-          "text": "This guidance anticipates an unfavorable impact of approximately 80 basis points from foreign exchange rates.",
+          "text": "This guidance anticipates an unfavorable impact of approximately 60 basis points from foreign exchange rates.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm"
         },
         {
           "category": "Demand and revenue",
-          "text": "AWS net sales increased 37%\u2014its fastest growth in 18 quarters\u2014to a $169 billion annualized revenue run rate.",
+          "text": "AWS net sales increased 39.3%\u2014its fastest growth in nearly five years\u2014to a $184 billion annualized revenue run rate.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "Kiro is up to 50% more cost-effective than alternatives and tripled in usage quarter-over-quarter.",
+          "text": "Operating income was $28.1 billion and operating margin was 13.9%\u2014Amazon\u2019s highest operating margin ever.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm"
         },
         {
           "category": "Investment",
-          "text": "\u2022Second quarter 2026 net income includes non-operating pre-tax other income of $53.4 billion, primarily from our investments in Anthropic.",
+          "text": "This decrease is driven primarily by pre-tax gains of $9.5 billion in third quarter 2025 included in non-operating income (expense) from our investments in\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "\u2022Launched Amazon Supply Chain Services so any business can move, store, and deliver everything from raw materials to finished products using the same supply\u2026",
+          "text": "In addition, global economic and geopolitical conditions and additional or unforeseen circumstances, developments, or events may give rise to or amplify many of these\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm"
         },
         {
           "category": "Workforce",
           "text": "In addition, changes in laws and regulations applicable to employees, independent contractors, and temporary personnel could increase our payroll costs, decrease our operational flexibility,\u2026",
           "sourceTitle": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-31",
-          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm"
+          "filed": "2026-10-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000040/amzn-20260930.htm"
         }
       ],
       "guidance": {
-        "text": "Net sales are expected to be between $197.0 billion and $202.0 billion, or to grow between 9% and 12% compared with third quarter 2025.",
-        "filed": "2026-07-30",
-        "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm",
+        "text": "Net sales are expected to be between $240.0 billion and $247.0 billion, or to grow between 12% and 16% compared with fourth quarter 2025.",
+        "filed": "2026-10-29",
+        "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm",
         "sourceTitle": "Earnings release exhibit"
       },
       "annualReport": {
@@ -1110,6 +1110,12 @@
           "filed": "2026-07-30",
           "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000024/amzn-20260630xex991.htm",
           "sourceTitle": "Earnings release exhibit"
+        },
+        {
+          "text": "Net sales are expected to be between $240.0 billion and $247.0 billion, or to grow between 12% and 16% compared with fourth quarter 2025.",
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000038/amzn-20260930xex991.htm",
+          "sourceTitle": "Earnings release exhibit"
         }
       ]
     },
@@ -1119,6 +1125,12 @@
       "irUrl": "https://investor.atmeta.com/",
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001326801.json",
       "recentFilings": [
+        {
+          "form": "8-K",
+          "filed": "2026-10-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm"
+        },
         {
           "form": "10-Q",
           "filed": "2026-10-22",
@@ -1160,12 +1172,6 @@
           "filed": "2026-04-30",
           "description": "10-Q",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-29",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/meta-20260429.htm"
         }
       ],
       "documents": [
@@ -2250,6 +2256,18 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0000050863.json",
       "recentFilings": [
         {
+          "form": "10-Q",
+          "filed": "2026-10-30",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000191/intc-20260926.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-10-29",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/intc-20261029.htm"
+        },
+        {
           "form": "8-K",
           "filed": "2026-08-12",
           "description": "8-K",
@@ -2284,88 +2302,68 @@
           "filed": "2026-04-24",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000083/intc-20260424.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-04-24",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000079/intc-20260328.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-23",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000077/intc-20260423.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm"
         },
         {
           "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-24",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000157/intc-20260627.htm"
+          "filed": "2026-10-30",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000191/intc-20260926.htm"
         }
       ],
       "managementSignals": [
         {
           "category": "Guidance",
-          "text": "\u25aaForecasting third-quarter 2026 revenue of $15.8 billion to $16.8 billion; expecting third-quarter EPS attributable to Intel of $0.31 and non-GAAP EPS attributable to Intel\u2026",
+          "text": "\u25aaForecasting fourth-quarter 2026 revenue of $15.0 billion to $16.0 billion; forecasting fourth-quarter EPS attributable to Intel of $0.10 and non-GAAP EPS attributable to Intel\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm"
         },
         {
           "category": "Demand and revenue",
-          "text": "\u25aaSecond-quarter revenue was $16.1 billion, up 25% year-over-year (YoY).",
+          "text": "\u25aaThird-quarter revenue was $16.5 billion, up 21% year-over-year (YoY).",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "The gross margin and EPS outlooks are based on the midpoint of the revenue range.",
+          "text": "Revenue, gross margin and earnings per share exceeded guidance, including our strongest data center revenue growth in 15 years,\u201d said David Zinsner, Intel CFO.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm"
         },
         {
           "category": "Investment",
-          "text": "\u201cAI-driven compute continues to strengthen, and to support expected growth this year and next across products and foundry, we are meaningfully increasing our investments\u2026",
+          "text": "\u201cLooking ahead, we see the PC slowdown continuing at least through the first half of next year, but we remain optimistic about the opportunities\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
-        },
-        {
-          "category": "Workforce",
-          "text": "\u25aaIntel and Google Cloud expanded their multi-year strategic collaboration to scale AI capabilities across Intel\u2019s workforce and strengthen existing workflows as part of Intel\u2019s\u2026",
-          "sourceTitle": "Earnings release exhibit",
-          "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "\u25aaIntel launched next-generation data center CPU, Xeon\u00ae 6+, Intel's first server class product on Intel 18A for sustained performance under real-world power constraints.",
+          "text": "\u201cOur Q3 results demonstrate improving execution, meaningful progress expanding supply and continued advancement of our process technology,\u201d said Lip-Bu Tan, Intel CEO.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-23",
-          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm"
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm"
         }
       ],
       "guidance": {
-        "text": "Forecasting third-quarter 2026 revenue of $15.8 billion to $16.8 billion; expecting third-quarter EPS attributable to Intel of $0.31 and non-GAAP EPS attributable to Intel of $0.38.",
-        "filed": "2026-07-23",
-        "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm",
+        "text": "Forecasting fourth-quarter 2026 revenue of $15.0 billion to $16.0 billion; forecasting fourth-quarter EPS attributable to Intel of $0.10 and non-GAAP EPS attributable to Intel of $0.25.",
+        "filed": "2026-10-29",
+        "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm",
         "sourceTitle": "Earnings release exhibit"
       },
       "annualReport": {
@@ -2463,6 +2461,12 @@
           "text": "Forecasting third-quarter 2026 revenue of $15.8 billion to $16.8 billion; expecting third-quarter EPS attributable to Intel of $0.31 and non-GAAP EPS attributable to Intel of $0.38.",
           "filed": "2026-07-23",
           "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000155/q226earningsrelease.htm",
+          "sourceTitle": "Earnings release exhibit"
+        },
+        {
+          "text": "Forecasting fourth-quarter 2026 revenue of $15.0 billion to $16.0 billion; forecasting fourth-quarter EPS attributable to Intel of $0.10 and non-GAAP EPS attributable to Intel of $0.25.",
+          "filed": "2026-10-29",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000188/q326earningsrelease.htm",
           "sourceTitle": "Earnings release exhibit"
         }
       ]
