@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-02T20:23:04.280338+00:00",
+  "generatedAt": "2026-11-12T14:28:19.518807+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-10-30",
-      "threeMonth": "4.16",
-      "twoYear": "4.56",
-      "tenYear": "4.94",
-      "thirtyYear": "5.31",
+      "date": "2026-11-10",
+      "threeMonth": "4.30",
+      "twoYear": "4.73",
+      "tenYear": "4.98",
+      "thirtyYear": "5.35",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -16,25 +16,25 @@
     "labor": {
       "status": "connected",
       "cpi": {
-        "period": "2026-09",
-        "index": 336.94,
-        "yearOverYearPct": 3.74
+        "period": "2026-10",
+        "index": 337.511,
+        "yearOverYearPct": null
       },
       "unemployment": {
-        "period": "2026-09",
-        "ratePct": 4.2
+        "period": "2026-10",
+        "ratePct": 4.1
       },
       "source": "U.S. Bureau of Labor Statistics",
       "sourceUrl": "https://www.bls.gov/developers/"
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-11-02",
+      "asOf": "2026-11-11",
       "ratesPerEuro": {
-        "CNY": 7.4567,
-        "GBP": 0.8358,
-        "JPY": 177.1,
-        "USD": 1.1216
+        "CNY": 7.4225,
+        "GBP": 0.83618,
+        "JPY": 177.18,
+        "USD": 1.1127
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -47,6 +47,24 @@
       "irUrl": "https://investor.apple.com/",
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0000320193.json",
       "recentFilings": [
+        {
+          "form": "8-K",
+          "filed": "2026-11-09",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126042798/ef20085077_8k.htm"
+        },
+        {
+          "form": "10-K",
+          "filed": "2026-11-03",
+          "description": "10-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-11-02",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/aapl-20261102.htm"
+        },
         {
           "form": "10-Q",
           "filed": "2026-07-31",
@@ -76,161 +94,143 @@
           "filed": "2026-04-20",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126015711/ef20071035_8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-02-24",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126006577/ef20060722_8k.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-01-30",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000006/aapl-20251227.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-01-29",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000005/aapl-20260129.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
+          "filed": "2026-11-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/a8-kex991q4202609262026.htm"
         },
         {
-          "title": "Latest 10-Q narrative",
+          "title": "Latest 10-K narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-31",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
         }
       ],
       "managementSignals": [
         {
           "category": "Demand and revenue",
-          "text": "June quarter records for total company revenue and EPS.",
+          "text": "September quarter records for total company revenue, iPhone revenue, and EPS.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
+          "filed": "2026-11-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/a8-kex991q4202609262026.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "Company gross margin was 50.1 percent, including a favorable impact of approximately 2 percentage points from tariff refunds.",
+          "text": "Company gross margin was 47.9 percent, including a favorable impact of approximately 1 percentage point from tariff refunds.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-07-30",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000018/a8-kex991q3202606272026.htm"
+          "filed": "2026-11-02",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000024/a8-kex991q4202609262026.htm"
         },
         {
           "category": "Investment",
-          "text": "The following tables show the Company\u2019s cash, cash equivalents and marketable securities by significant investment category as of June 27, 2026 and September 27,\u2026",
-          "sourceTitle": "Latest 10-Q narrative",
+          "text": "The Company also competes with a number of companies in the development and deployment of artificial intelligence and has made significant investments in building\u2026",
+          "sourceTitle": "Latest 10-K narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-31",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
         },
         {
           "category": "Workforce",
-          "text": "Research and development (\u201cR&D\u201d) expense increased during the third quarter and first nine months of 2026 compared to the same periods in 2025 primarily\u2026",
-          "sourceTitle": "Latest 10-Q narrative",
+          "text": "In addition to competition for talent, workforce dynamics are constantly evolving, and the Company must navigate changes effectively in order to achieve its strategic\u2026",
+          "sourceTitle": "Latest 10-K narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-31",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "The Company may use derivative instruments to partially offset its business exposure to foreign exchange and interest rate risk.",
-          "sourceTitle": "Latest 10-Q narrative",
+          "text": "For example, the Company is experiencing supply constraints and rising costs driven by industry-wide supply-demand imbalances for key components, including advanced semiconductors, memory and\u2026",
+          "sourceTitle": "Latest 10-K narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-07-31",
-          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
         }
       ],
       "guidance": null,
       "annualReport": {
-        "title": "FY2025 annual report",
+        "title": "FY2026 annual report",
         "sourceType": "SEC 10-K annual report",
-        "fiscalYear": "2025",
-        "filed": "2025-10-31",
-        "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+        "fiscalYear": "2026",
+        "filed": "2026-11-03",
+        "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
         "evidence": [
           {
             "area": "Business and segments",
             "text": "Although the reportable segments provide similar hardware and software products and similar services, each one is managed separately to better align with the location of the Company\u2019s customers and distribution partners and\u2026",
-            "sourceTitle": "FY2025 annual report",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           },
           {
             "area": "Revenue and demand",
-            "text": "The Company\u2019s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment in Note 13, \u201cSegment Information and Geographic Data\u201d for 2025, 2024 and 2023, except in\u2026",
-            "sourceTitle": "FY2025 annual report",
+            "text": "The Company\u2019s proportion of net sales by disaggregated revenue source was generally consistent for each reportable segment (refer to Note 14, \u201cSegment Information and Geographic Data\u201d) for 2026, 2025 and 2024, except\u2026",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           },
           {
             "area": "Strategy and investment",
-            "text": "The Company continues to develop new technologies to enhance existing products and services, and to expand the range of its offerings through research and development (\u201cR&D\u201d), licensing of intellectual property and acquisition\u2026",
-            "sourceTitle": "FY2025 annual report",
+            "text": "Investment in data center capacity involves significant expenditures and long-term commitments, including for components and equipment, which increase the Company\u2019s capital expenditures, liabilities and obligations.",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           },
           {
             "area": "Liquidity and capital",
             "text": "The Company uses net proceeds from the commercial paper program for general corporate purposes, including dividends and share repurchases.",
-            "sourceTitle": "FY2025 annual report",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           },
           {
             "area": "Workforce",
-            "text": "Periods of intense competition for talent in particular fields can lead to increased costs as the Company seeks to offer competitive compensation to recruit and retain highly skilled employees.",
-            "sourceTitle": "FY2025 annual report",
+            "text": "Periods of intense competition for talent in particular fields have led and are expected to continue to lead to increased costs as the Company seeks to offer competitive compensation to recruit and\u2026",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           },
           {
             "area": "Risk and supply",
-            "text": "Global supply chains can be highly concentrated, and an escalation of geopolitical tensions or conflict could result in significant disruptions.",
-            "sourceTitle": "FY2025 annual report",
+            "text": "The Company and its global supply chain are dependent on complex information technology systems and are exposed to information technology system failures or network disruptions caused by natural disasters, accidents, power disruptions,\u2026",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           },
           {
             "area": "Market and FX",
             "text": "Additionally, to manage foreign exchange rate risk on certain of its foreign currency\u2013denominated notes, the Company uses cross-currency swaps to effectively convert these notes to U.S.",
-            "sourceTitle": "FY2025 annual report",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           },
           {
             "area": "Legal and regulatory",
-            "text": "The Company is also currently subject to antitrust investigations and litigation in various jurisdictions around the world, which can result in legal proceedings and claims against the Company that could, individually or\u2026",
-            "sourceTitle": "FY2025 annual report",
+            "text": "The Company is also currently subject to antitrust investigations and litigation in various jurisdictions around the world, which can result in legal proceedings and claims that could, individually or in the aggregate,\u2026",
+            "sourceTitle": "FY2026 annual report",
             "sourceType": "SEC 10-K annual report",
-            "fiscalYear": "2025",
-            "filed": "2025-10-31",
-            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"
+            "fiscalYear": "2026",
+            "filed": "2026-11-03",
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"
           }
         ]
       },
@@ -251,6 +251,12 @@
       "irUrl": "https://abc.xyz/investor/",
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0001652044.json",
       "recentFilings": [
+        {
+          "form": "8-K",
+          "filed": "2026-11-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526449835/d174184d8k.htm"
+        },
         {
           "form": "10-Q",
           "filed": "2026-10-29",
@@ -292,12 +298,6 @@
           "filed": "2026-06-05",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/d36818d8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-06-05",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/goog-20260602.htm"
         }
       ],
       "documents": [
@@ -465,6 +465,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-12",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000082/nvda-20261111.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-09-03",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/nvda-20260902.htm"
@@ -504,12 +510,6 @@
           "filed": "2026-06-18",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-05-20",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm"
         }
       ],
       "documents": [
@@ -679,6 +679,18 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526448357/d177209d8k.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-11-04",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526447173/d178557d8k.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-10-28",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436149/msft-20261028.htm"
@@ -712,18 +724,6 @@
           "filed": "2026-07-29",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-20260729.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-06-05",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526258667/d26760d8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-14",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526224155/d125909d8k.htm"
         }
       ],
       "documents": [
@@ -1127,6 +1127,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-05",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450074/d166273d8k.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-10-29",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm"
@@ -1166,12 +1172,6 @@
           "filed": "2026-05-04",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526204128/d134616d8k.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-04-30",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm"
         }
       ],
       "documents": [
@@ -1362,6 +1362,18 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0000002488.json",
       "recentFilings": [
         {
+          "form": "10-Q",
+          "filed": "2026-11-04",
+          "description": "10-Q",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000191/amd-20260926.htm"
+        },
+        {
+          "form": "8-K",
+          "filed": "2026-11-03",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amd-20261103.htm"
+        },
+        {
           "form": "8-K",
           "filed": "2026-09-28",
           "description": "8-K",
@@ -1396,94 +1408,82 @@
           "filed": "2026-07-01",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000115/amd-20260626.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-15",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000119312526226746/d118163d8k.htm"
-        },
-        {
-          "form": "10-Q",
-          "filed": "2026-05-06",
-          "description": "10-Q",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000076/amd-20260328.htm"
         }
       ],
       "documents": [
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amdq32026earningsslidesf.htm"
         },
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/q32026991.htm"
         },
         {
           "title": "Latest 10-Q narrative",
           "sourceType": "SEC filing narrative",
-          "filed": "2026-08-05",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
+          "filed": "2026-11-04",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000191/amd-20260926.htm"
         }
       ],
       "managementSignals": [
         {
           "category": "Guidance",
-          "text": "17 | | Q2 2026 FINANCIAL RESULTS \u2013 August 4, 2026 Financial Outlook \u2013 NON-GAAP(1) (1) See Cautionary Statement on Slide 2.",
+          "text": "17 | | Q3 2026 FINANCIAL RESULTS \u2013 November 3, 2026 Financial Outlook \u2013 NON-GAAP(1) (1) See Cautionary Statement on Slide 2.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amdq32026earningsslidesf.htm"
         },
         {
           "category": "Demand and revenue",
-          "text": "6 | | Q2 2026 FINANCIAL RESULTS \u2013 August 4, 2026 Q2 2026 Revenue Record revenue of $11.5 billion, up 50% y/y Driven by\u2026",
+          "text": "6 | | Q3 2026 FINANCIAL RESULTS \u2013 November 3, 2026 Q3 2026 Revenue Record revenue of $13.4 billion, up 45% y/y Driven by\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amdq32026earningsslidesf.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "Additionally, AMD has provided an adjusted non-GAAP gross profit and gross margin for Q2\u201925 which excludes the inventory and related charges associated with U.S.",
+          "text": "14 | | Q3 2026 FINANCIAL RESULTS \u2013 November 3, 2026 Driven by strong demand for AMD EPYC processors and the launch of AMD\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amdq32026earningsslidesf.htm"
         },
         {
           "category": "Investment",
-          "text": "\u25aa Launched AMD Instinct MI350P GPUs, bringing seamless AI acceleration to existing infrastructure with leadership token economics.",
+          "text": "13 | | Q3 2026 FINANCIAL RESULTS \u2013 November 3, 2026 $ in millions Q3\u201926 Q2\u201926 Q/Q Cash, Cash Equivalents and Short-term Investments $15,776\u2026",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amdq32026earningsslidesf.htm"
         },
         {
           "category": "Workforce",
-          "text": "21 | | Q2 2026 FINANCIAL RESULTS \u2013 August 4, 2026 Appendices (1) Acquisition-related and other costs primarily include transaction costs, purchase price fair\u2026",
+          "text": "(2) Acquisition-related and other costs primarily included transaction costs, purchase price fair value adjustments for inventory, certain compensation charges, and workforce rebalancing charges.",
           "sourceTitle": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-04",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amdq22026earningsslidesf.htm"
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amdq32026earningsslidesf.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "The Company enters into foreign currency forward contracts to hedge its exposure to foreign currency exchange rate risk related to future forecasted transactions denominated\u2026",
-          "sourceTitle": "Latest 10-Q narrative",
-          "sourceType": "SEC filing narrative",
-          "filed": "2026-08-05",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000123/amd-20260627.htm"
+          "text": "and World Labs Technologies, Inc., which are expected to close by the end of 2026, subject to regulatory approvals and customary closing conditions.",
+          "sourceTitle": "Earnings release exhibit",
+          "sourceType": "SEC 8-K exhibit",
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/amdq32026earningsslidesf.htm"
         }
       ],
       "guidance": {
-        "text": "For the third quarter of 2026, AMD expects revenue to be approximately $13 billion, plus or minus $300 million.",
-        "filed": "2026-08-04",
-        "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm",
+        "text": "For the fourth quarter of 2026, AMD expects revenue to be approximately $17 billion, plus or minus 3%.",
+        "filed": "2026-11-03",
+        "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/q32026991.htm",
         "sourceTitle": "Earnings release exhibit"
       },
       "annualReport": {
@@ -1581,6 +1581,12 @@
           "text": "For the third quarter of 2026, AMD expects revenue to be approximately $13 billion, plus or minus $300 million.",
           "filed": "2026-08-04",
           "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm",
+          "sourceTitle": "Earnings release exhibit"
+        },
+        {
+          "text": "For the fourth quarter of 2026, AMD expects revenue to be approximately $17 billion, plus or minus 3%.",
+          "filed": "2026-11-03",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000188/q32026991.htm",
           "sourceTitle": "Earnings release exhibit"
         }
       ]
@@ -1817,6 +1823,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-04",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526447507/d131790d8k.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-10-28",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526435853/d75538d8k.htm"
@@ -1856,12 +1868,6 @@
           "filed": "2026-05-12",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526219708/d76569d8k.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-04-06",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526142939/d132760d8k.htm"
         }
       ],
       "documents": [
