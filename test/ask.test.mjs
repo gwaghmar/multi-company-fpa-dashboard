@@ -3,8 +3,21 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import handler, { __test } from "../api/ask.js";
 
+// The Apple window slides with every new 10-Q/10-K (daily refresh), so selections come from data.json,
+// not fixed positions: the latest fiscal year's Q1..Q3 (a filed nine-month span) and the last three quarters.
+const apple = JSON.parse(readFileSync(new URL("../data.json", import.meta.url), "utf8"));
+const windowLabels = apple.meta.quarters.map(label => String(label).replace(/\s+/g, " ").trim());
+const lastThree = [windowLabels.length - 3, windowLabels.length - 2, windowLabels.length - 1];
+const nineMonth = (() => {
+  for (let i = windowLabels.length - 3; i >= 0; i -= 1) {
+    const m = /^Q1 FY(\d{2})$/.exec(windowLabels[i]);
+    if (m && windowLabels[i + 1] === `Q2 FY${m[1]}` && windowLabels[i + 2] === `Q3 FY${m[1]}`) return { fy: m[1], indexes: [i, i + 1, i + 2] };
+  }
+  throw new Error("no fiscal Q1..Q3 span in the Apple window");
+})();
+
 const filters = {
-  quarterIndexes: [4, 5, 6],
+  quarterIndexes: nineMonth.indexes,
   categories: ["iPhone", "Services"],
   geographies: ["Americas", "Europe"],
 };
@@ -57,7 +70,7 @@ test("scope routing does not confuse short substrings with dashboard terms", () 
 
 test("dashboard evidence uses structured filters and relevant tools only", () => {
   const evidence = __test.buildDashboardEvidence("What is iPhone revenue?", "", "balance", filters);
-  assert.deepEqual(evidence.activeFilters.quarters, ["Q1 FY26", "Q2 FY26", "Q3 FY26"]);
+  assert.deepEqual(evidence.activeFilters.quarters, nineMonth.indexes.map(index => windowLabels[index]));
   assert.deepEqual(evidence.activeFilters.categories, ["iPhone", "Services"]);
   assert.deepEqual([...new Set(evidence.results.map(result => result.section))], ["is", "cat"]);
   const categories = evidence.results.find(result => result.tool === "getBreakdown");
@@ -68,7 +81,9 @@ test("dashboard evidence uses structured filters and relevant tools only", () =>
 test("EPS tool uses Apple's filed exact-period values and never sums arbitrary quarters", () => {
   const filed = __test.buildDashboardEvidence("What is diluted EPS?", "", "profit", filters);
   const filedKpi = filed.results.find(result => result.tool === "calculateKpi" && result.section === "is");
-  assert.equal(filedKpi.selectedPeriodTotals.dilutedEpsFiledForExactSelection, 6.88);
+  const filedNineMonthEps = apple.is.epsDiluted9mo[`fy${nineMonth.fy}`];
+  assert.ok(typeof filedNineMonthEps === "number", "data.json carries the filed nine-month EPS");
+  assert.equal(filedKpi.selectedPeriodTotals.dilutedEpsFiledForExactSelection, filedNineMonthEps);
 
   const arbitrary = __test.buildDashboardEvidence("What is diluted EPS?", "", "profit", { ...filters, quarterIndexes: [0, 4] });
   const arbitraryKpi = arbitrary.results.find(result => result.tool === "calculateKpi" && result.section === "is");
@@ -213,13 +228,13 @@ test("planning AI receives the visible modeled scenario and labels it modeled", 
     return fakeAnthropicStream("Answer");
   };
   const res = responseRecorder();
-  await handler({ method: "POST", headers: SAME_ORIGIN, body: { tab: "plan", company: "apple", filters: { quarterIndexes: [4, 5, 6], scenario: { scenario: "downside", revenueGrowth: 0, grossMarginDelta: -2, opexGrowth: 5, decision: { initialInvestment: 1000, annualBenefit: 400, annualRunCost: 100, years: 5, discountRate: 10 } } }, question: "Explain this scenario and investment case." } }, res);
+  await handler({ method: "POST", headers: SAME_ORIGIN, body: { tab: "plan", company: "apple", filters: { quarterIndexes: lastThree, scenario: { scenario: "downside", revenueGrowth: 0, grossMarginDelta: -2, opexGrowth: 5, decision: { initialInvestment: 1000, annualBenefit: 400, annualRunCost: 100, years: 5, discountRate: 10 } } }, question: "Explain this scenario and investment case." } }, res);
   globalThis.fetch = priorFetch;
   if (priorKey === undefined) delete process.env.ANTHROPIC_API_KEY; else process.env.ANTHROPIC_API_KEY = priorKey;
   assert.equal(findEvent(res, "done").meta.route, "company_source");
   assert.match(requestBody.system, /user-visible modeled FP&A scenario/);
   assert.match(requestBody.system, /"scenario":"downside"/);
-  assert.match(requestBody.system, /"basePeriod":"Q3 FY26"/);
+  assert.ok(requestBody.system.includes(`"basePeriod":"${windowLabels.at(-1)}"`));
   assert.match(requestBody.system, /"modeledNextQuarter"/);
   assert.match(requestBody.system, /"operatingMarginPct"/);
   assert.match(requestBody.system, /"investmentDecisionModel"/);

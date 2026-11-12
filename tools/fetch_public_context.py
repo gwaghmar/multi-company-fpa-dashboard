@@ -427,8 +427,15 @@ def bls_context() -> dict:
     payload = json.dumps({"seriesid": ["CUUR0000SA0", "LNS14000000"], "startyear": str(year - 1), "endyear": str(year)}).encode()
     response = fetch_json(url, body=payload, content_type="application/json")
     series = {item["seriesID"]: item["data"] for item in response.get("Results", {}).get("series", [])}
-    cpi_rows = [row for row in series.get("CUUR0000SA0", []) if row.get("period") != "M13"]
-    unemployment_rows = [row for row in series.get("LNS14000000", []) if row.get("period") != "M13"]
+    # BLS publishes "-" (with a footnote) for months it did not collect, so keep only numeric months.
+    def numeric(row):
+        try:
+            float(row["value"])
+            return True
+        except (KeyError, TypeError, ValueError):
+            return False
+    cpi_rows = [row for row in series.get("CUUR0000SA0", []) if row.get("period") != "M13" and numeric(row)]
+    unemployment_rows = [row for row in series.get("LNS14000000", []) if row.get("period") != "M13" and numeric(row)]
     latest_cpi = cpi_rows[0]
     prior_cpi = next((row for row in cpi_rows if row["period"] == latest_cpi["period"] and int(row["year"]) == int(latest_cpi["year"]) - 1), None)
     cpi_yoy = None if not prior_cpi else round(100 * (float(latest_cpi["value"]) / float(prior_cpi["value"]) - 1), 2)
