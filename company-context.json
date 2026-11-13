@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-12T14:28:19.518807+00:00",
+  "generatedAt": "2026-11-13T17:48:06.531634+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-11-10",
-      "threeMonth": "4.30",
-      "twoYear": "4.73",
-      "tenYear": "4.98",
-      "thirtyYear": "5.35",
+      "date": "2026-11-12",
+      "threeMonth": "4.32",
+      "twoYear": "4.86",
+      "tenYear": "5.10",
+      "thirtyYear": "5.43",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-11-11",
+      "asOf": "2026-11-13",
       "ratesPerEuro": {
-        "CNY": 7.4225,
-        "GBP": 0.83618,
-        "JPY": 177.18,
-        "USD": 1.1127
+        "CNY": 7.3738,
+        "GBP": 0.83559,
+        "JPY": 176.83,
+        "USD": 1.1052
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -1127,6 +1127,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-12",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526458525/d177728d8k.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-11-05",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450074/d166273d8k.htm"
@@ -1166,12 +1172,6 @@
           "filed": "2026-05-29",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026039193/meta-20260527.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-04",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526204128/d134616d8k.htm"
         }
       ],
       "documents": [
