@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-17T19:12:16.626523+00:00",
+  "generatedAt": "2026-11-18T18:52:32.590564+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-11-16",
-      "threeMonth": "4.34",
-      "twoYear": "4.83",
-      "tenYear": "5.12",
+      "date": "2026-11-17",
+      "threeMonth": "4.33",
+      "twoYear": "4.80",
+      "tenYear": "5.10",
       "thirtyYear": "5.46",
       "unit": "%",
       "source": "U.S. Treasury",
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-11-17",
+      "asOf": "2026-11-18",
       "ratesPerEuro": {
-        "CNY": 7.3254,
-        "GBP": 0.83305,
-        "JPY": 175.05,
-        "USD": 1.0989
+        "CNY": 7.3126,
+        "GBP": 0.8329,
+        "JPY": 174.85,
+        "USD": 1.0968
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -465,6 +465,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-17",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/nvda-20261117.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-11-12",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000082/nvda-20261111.htm"
@@ -504,26 +510,20 @@
           "filed": "2026-06-30",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-06-18",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm"
         }
       ],
       "documents": [
         {
           "title": "CFO commentary",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+          "filed": "2026-11-17",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm"
         },
         {
           "title": "Earnings release exhibit",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27pr.htm"
+          "filed": "2026-11-17",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27pr.htm"
         },
         {
           "title": "Latest 10-Q narrative",
@@ -535,41 +535,41 @@
       "managementSignals": [
         {
           "category": "Demand and revenue",
-          "text": "During the second quarter we reclassified a company from AI Clouds, Industrial, & Enterprise (ACIE) to Hyperscale due to a change in their business\u2026",
+          "text": "Revenue for the third quarter was a record $115.8 billion, up 103% from a year ago and up 20% sequentially.",
           "sourceTitle": "CFO commentary",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+          "filed": "2026-11-17",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm"
         },
         {
           "category": "Margin and cost",
-          "text": "GAAP and non-GAAP gross margins for the second quarter increased from a year ago on improved mix from Blackwell Ultra.",
+          "text": "GAAP and non-GAAP gross margins for the third quarter increased from a year ago on improved mix from Blackwell Ultra.",
           "sourceTitle": "CFO commentary",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+          "filed": "2026-11-17",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm"
         },
         {
           "category": "Investment",
-          "text": "Data Center revenue for the second quarter was a record $89.0 billion, up 117% from a year ago and up 18% sequentially, driven by\u2026",
+          "text": "Our Hyperscale and AI Clouds, Industrial, & Enterprise platforms both grew substantially, driven by the introduction of our Rubin infrastructure, our fastest architecture ramp\u2026",
           "sourceTitle": "CFO commentary",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+          "filed": "2026-11-17",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm"
         },
         {
           "category": "Risk and supply",
-          "text": "We continue to make strategic commitments across our supply, infrastructure, and partner ecosystems to capitalize on the substantial growth opportunities ahead of us.",
+          "text": "We have entered into strategic commitments across our supply, infrastructure, and partner ecosystems to capitalize on future growth opportunities and support our business.",
           "sourceTitle": "CFO commentary",
           "sourceType": "SEC 8-K exhibit",
-          "filed": "2026-08-26",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+          "filed": "2026-11-17",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm"
         }
       ],
       "guidance": {
-        "text": "Revenue is expected to be $108.0 billion, plus or minus 2%.",
-        "filed": "2026-08-26",
-        "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
+        "text": "Revenue is expected to be $130.0 billion, plus or minus 3%.",
+        "filed": "2026-11-17",
+        "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm",
         "sourceTitle": "CFO commentary"
       },
       "annualReport": {
@@ -667,6 +667,12 @@
           "text": "Revenue is expected to be $108.0 billion, plus or minus 2%.",
           "filed": "2026-08-26",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
+          "sourceTitle": "CFO commentary"
+        },
+        {
+          "text": "Revenue is expected to be $130.0 billion, plus or minus 3%.",
+          "filed": "2026-11-17",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm",
           "sourceTitle": "CFO commentary"
         }
       ]
