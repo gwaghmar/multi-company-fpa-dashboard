@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-20T18:38:01.742744+00:00",
+  "generatedAt": "2026-11-21T17:36:25.051971+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-11-19",
-      "threeMonth": "4.34",
-      "twoYear": "4.76",
-      "tenYear": "5.04",
-      "thirtyYear": "5.40",
+      "date": "2026-11-20",
+      "threeMonth": "4.32",
+      "twoYear": "4.63",
+      "tenYear": "4.92",
+      "thirtyYear": "5.31",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -1368,6 +1368,12 @@
       "submissionsUrl": "https://data.sec.gov/submissions/CIK0000002488.json",
       "recentFilings": [
         {
+          "form": "8-K",
+          "filed": "2026-11-20",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000218/amd-20261118.htm"
+        },
+        {
           "form": "10-Q",
           "filed": "2026-11-04",
           "description": "10-Q",
@@ -1408,12 +1414,6 @@
           "filed": "2026-08-04",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/amd-20260804.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-07-01",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000115/amd-20260626.htm"
         }
       ],
       "documents": [
@@ -1829,6 +1829,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-20",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526470351/orcl-20261118.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-11-04",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526447507/d131790d8k.htm"
@@ -1868,12 +1874,6 @@
           "filed": "2026-06-10",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-20260610.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-12",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526219708/d76569d8k.htm"
         }
       ],
       "documents": [
