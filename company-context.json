@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-11-22T17:52:28.280323+00:00",
+  "generatedAt": "2026-11-23T22:04:23.716814+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
       "status": "connected",
-      "date": "2026-11-20",
-      "threeMonth": "4.32",
+      "date": "2026-11-23",
+      "threeMonth": "4.37",
       "twoYear": "4.63",
       "tenYear": "4.92",
-      "thirtyYear": "5.31",
+      "thirtyYear": "5.29",
       "unit": "%",
       "source": "U.S. Treasury",
       "sourceUrl": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026"
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-11-20",
+      "asOf": "2026-11-23",
       "ratesPerEuro": {
-        "CNY": 7.3388,
-        "GBP": 0.83735,
-        "JPY": 174.35,
-        "USD": 1.099
+        "CNY": 7.2905,
+        "GBP": 0.83673,
+        "JPY": 174.01,
+        "USD": 1.0939
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
@@ -465,6 +465,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-23",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nvda-20261122.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-11-17",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/nvda-20261117.htm"
@@ -504,12 +510,6 @@
           "filed": "2026-07-02",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-06-30",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm"
         }
       ],
       "documents": [
@@ -1133,6 +1133,12 @@
       "recentFilings": [
         {
           "form": "8-K",
+          "filed": "2026-11-23",
+          "description": "8-K",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026075541/meta-20261118.htm"
+        },
+        {
+          "form": "8-K",
           "filed": "2026-11-12",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526458525/d177728d8k.htm"
@@ -1172,12 +1178,6 @@
           "filed": "2026-07-29",
           "description": "8-K",
           "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-20260729.htm"
-        },
-        {
-          "form": "8-K",
-          "filed": "2026-05-29",
-          "description": "8-K",
-          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026039193/meta-20260527.htm"
         }
       ],
       "documents": [
