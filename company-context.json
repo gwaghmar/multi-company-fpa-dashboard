@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T22:04:23.716814+00:00",
+  "generatedAt": "2026-11-24T20:41:20.454097+00:00",
   "methodology": "Official public sources only. Management signals are short source excerpts, not AI-generated causal conclusions. Internal plans, consensus and stock prices remain unavailable.",
   "macro": {
     "treasury": {
@@ -29,12 +29,12 @@
     },
     "fx": {
       "status": "connected",
-      "asOf": "2026-11-23",
+      "asOf": "2026-11-24",
       "ratesPerEuro": {
-        "CNY": 7.2905,
-        "GBP": 0.83673,
-        "JPY": 174.01,
-        "USD": 1.0939
+        "CNY": 7.3063,
+        "GBP": 0.837,
+        "JPY": 174.39,
+        "USD": 1.0963
       },
       "source": "European Central Bank",
       "sourceUrl": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD+GBP+JPY+CNY.EUR.SP00.A?format=csvdata&lastNObservations=1"
